@@ -137,13 +137,16 @@ my $tabBarBody="
 	    </div>
 	</body>";
 my $usernameLink="<a href=\"\">username</a>"
-my @portfolioArray=("portfolio1","portfolio2");
+my @portfolioArray;
+$portfolioArray[0]="portfolio1";
+$portfolioArray[1]="portfolio2";
 
 print header,
 	$tabBarHeader,
 	start_html('hello world'),
-	h1($usernameLink."|<a href=\"".$portfolioArray[0]."\">".$portfolioArray[0]."</a>
-		<span style=\"float:right;\"><a href=\"\">Log out</a></span>"),
+	h1($usernameLink."|<a href=\"".$portfolioArray[0]."\">".$portfolioArray[0].
+		"</a><span style=\"float:right;\"><a href=\"\">Log out</a></span>"), 
+		# The span here makes the text aligned to the right while the rest of the file stays left aligned
 	$tabBarBody,
 	end_html();
 
