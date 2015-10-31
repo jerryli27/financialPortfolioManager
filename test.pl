@@ -198,7 +198,7 @@ print header,
 		button(-name=>'deleteButton',
 			   -value=>'Delete',
 			   -onClick=>"DeleteClicked()"),
-		"</p>"
+		"</p>",
 		"<span style=\"float:right;\"><a href=\"\">Edit transactions</a>|<a href=\"\">Edit portfolio</a>|<a href=\"\">Delete portfolio</a></span>", #create a link aligned to the right on the same line
 		"<form name=\"tableForm\" action=\"\" method=\"post\">",
 		table({-width=>'100%', -border=>'0'},
