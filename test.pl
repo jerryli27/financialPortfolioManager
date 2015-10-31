@@ -141,6 +141,22 @@ my $usernameLink="<a href=\"\">username</a>";
 
 my @portfolioArray=("portfolio1","portfolio2");
 
+my $table1 = new HTML::Table(-rows=>26,
+                            -cols=>2,
+                            -align=>'center',
+                            -rules=>'rows',
+                            -border=>0,
+                            -bgcolor=>'blue',
+                            -width=>'50%',
+                            -spacing=>0,
+                            -padding=>0,
+                            -style=>'color: blue',
+                            -class=>'myclass',
+                            -evenrowclass=>'even',
+                            -oddrowclass=>'odd',
+                            -head=> ['head1', 'head2'],
+                            -data=> [ ['1:1', '1:2'], ['2:1', '2:2'] ] );
+
 print header,
 	$tabBarHeader,
 	start_html('hello world'),
@@ -148,6 +164,14 @@ print header,
 		"</a><span style=\"float:right;\"><a href=\"\">Log out</a></span>"), 
 		# The span here makes the text aligned to the right while the rest of the file stays left aligned
 	$tabBarBody,
+	button(-name=>'deleteButton',
+		   -value=>'Delete',
+		   -onClick=>"DeleteClicked()"),
+	$table1,
+	#
+	# The Javascript portion of our app
+	#
+    "<script type=\"text/javascript\" src=\"test.js\"> </script>",
 	end_html();
 
 
