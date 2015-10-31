@@ -129,18 +129,21 @@ my $tabBarBody="
 	<body>
 	    <div id=\"tabContainer\">
 	        <ul id=\"topTab\">
-	            <li><a href=\"\" title=\"Overview\" class=\"current\">Overview</a></li>
-	            <li><a href=\"\" title=\"Overview\">Statistics</a></li>
-	            <li><a href=\"\" title=\"Overview\">Performances</a></li>
-	            <li><a href=\"\" title=\"Overview\">Transactions</a></li>
+	            <li><a href=\"http://murphy.wot.eecs.northwestern.edu/~jlt709/portfolio/test.pl?debug=0\" title=\"Overview\" class=\"current\">Overview</a></li>
+	            <li><a href=\"http://murphy.wot.eecs.northwestern.edu/~jlt709/portfolio/test.pl?debug=1\" title=\"Overview\">Statistics</a></li>
+	            <li><a href=\"http://murphy.wot.eecs.northwestern.edu/~jlt709/portfolio/test.pl?debug=1\" title=\"Overview\">Performances</a></li>
+	            <li><a href=\"http://murphy.wot.eecs.northwestern.edu/~jlt709/portfolio/test.pl?debug=1\" title=\"Overview\">Transactions</a></li>
 	        </ul>
 	    </div>
 	</body>";
+my $usernameLink="<a href=\"\">username</a>"
+my @portfolioArray=("portfolio1","portfolio2");
 
 print header,
 	$tabBarHeader,
 	start_html('hello world'),
-	h1('Hello world! debug = '.$debug),
+	h1($usernameLink."|<a href=\"".$portfolioArray[0]."\">".$portfolioArray[0]."</a>
+		<span style=\"float:right;\"><a href=\"\">Log out</a></span>"),
 	$tabBarBody,
 	end_html();
 
