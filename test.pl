@@ -68,6 +68,7 @@ if (defined(param("debug"))) {
   }
 } 
 
+# style header for tab bar
 my $tabBarHeader="<style type=\"text/css\">
 	#tabContainer {
 	  padding: 25px 15px 0 15px;
@@ -137,6 +138,33 @@ my $tabBarBody="
 	        </ul>
 	    </div>
 	</body>";
+
+# style header for table
+my $tableStyleHeader="
+<style>
+table {
+    width:100%;
+}
+table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+th, td {
+    padding: 5px;
+    text-align: left;
+}
+table tr:nth-child(even) {
+    background-color: #eee;
+}
+table tr:nth-child(odd) {
+   background-color:#fff;
+}
+table th	{
+    background-color: black;
+    color: white;
+}
+</style>";
+
 my $usernameLink="<a href=\"\">username</a>";
 
 my @portfolioArray=("portfolio1","portfolio2");
@@ -153,17 +181,19 @@ print header,
 	button(-name=>'deleteButton',
 		   -value=>'Delete',
 		   -onClick=>"DeleteClicked()"),
+	"<form name=\"tableForm\" action=\"mailto:youremail@email.com\" method=\"post\">",
 	table({-border=>undef},
-           caption('When Should You Eat Your Vegetables?'),
+           #caption('When Should You Eat Your Vegetables?'),
            Tr({-align=>'CENTER',-valign=>'TOP'},
            [
-              th(['Vegetable', 'Breakfast','Lunch','Dinner']),
-              td(['Tomatoes' , 'no', 'yes', 'yes']),
+              th(['<input type="checkbox" name="checkAll" value=""/>', 'Symbol','Last price','Change',"Volume","Open","Close","High","Low"]),
+              td(['<input type="checkbox" name="checkbox1" value=""/>','<a href=\"General Electric\">username</a>',"GE",15.70,"0.24(1.55%)","4.1T", 26.94, 27.55, 27.91, 26.8]),
               td(['Broccoli' , 'no', 'no',  'yes']),
               td(['Onions'   , 'yes','yes', 'yes'])
            ]
            )
         ),
+	"</form>",
 	#
 	# The Javascript portion of our app
 	#
