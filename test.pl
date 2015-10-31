@@ -162,12 +162,12 @@ my $cssStyleHeader="<style type=\"text/css\">
 
 my $tabBarBody="
 	<body>
-	    <div id=\"tabContainer\" class=\"container\">
+	    <div id=\"tabContainer\" class=\"nav nav-tabs\">
 	        <ul id=\"topTab\">
 	            <li class=\"active\"><a data-toggle=\"tab\" href=\"#overview\" class=\"current\">Overview</a></li>
-	            <li><a href=\"#statistics\" >Statistics</a></li>
-	            <li><a href=\"#performances\" >Performances</a></li>
-	            <li><a href=\"#transactions\" >Transactions</a></li>
+	            <li><a data-toggle=\"tab\" href=\"#statistics\" >Statistics</a></li>
+	            <li><a data-toggle=\"tab\" href=\"#performances\" >Performances</a></li>
+	            <li><a data-toggle=\"tab\" href=\"#transactions\" >Transactions</a></li>
 	        </ul>" # Deleted the div and body here
 	;
 
@@ -184,8 +184,8 @@ print header,
  	<script src=\"https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js\"></script>
 	<script src=\"http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js\"></script>",
 	$cssStyleHeader,
-	start_html('hello world'),
-	h1($usernameLink."|<a href=\"".$portfolioArray[0]."\">".$portfolioArray[0].
+	start_html('Portfolio'),
+	h3($usernameLink."|<a href=\"".$portfolioArray[0]."\">".$portfolioArray[0].
 		"</a><span style=\"float:right;\"><a href=\"\">Log out</a></span>"), 
 		# The span here makes the text aligned to the right while the rest of the file stays left aligned
 	$tabBarBody,
