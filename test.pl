@@ -141,7 +141,7 @@ my $usernameLink="<a href=\"\">username</a>";
 
 my @portfolioArray=("portfolio1","portfolio2");
 
-my $table1 = new HTML::Table(-rows=>26,
+my $table1 = new table(-rows=>26,
                             -cols=>2,
                             -align=>'center',
                             -rules=>'rows',
