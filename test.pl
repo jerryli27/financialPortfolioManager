@@ -67,9 +67,83 @@ if (defined(param("debug"))) {
   }
 } 
 
+my $tabBarHeader="";
+$tabBarHeader.="<style type=\"text/css\">
+#tabContainer {
+  padding: 25px 15px 0 15px;
+  background: #67A897;
+}
+
+ul#topTab {
+  list-style-type: none;
+  width: 100%;
+  position: relative;
+  height: 27px;
+  font-size: 13px;
+  font-weight: bold;
+  margin: 0;
+  padding: 11px 0 0 0;
+}
+
+ul#topTab li {
+  display: block;
+  float: left;
+  margin: 0 0 0 4px;
+  height: 27px;
+}
+
+ul#topTab li.left {
+  margin: 0;
+}
+
+ul#topTab li a {
+  display: block;
+  float: left;
+  color: #fff;
+  background: #4A6867;
+  line-height: 27px;
+  text-decoration: none;
+  padding: 0 17px 0 18px;
+  height: 27px;
+}
+
+ul#topTab li a.right {
+  padding-right: 19px;
+}
+
+ul#topTab li a:hover {
+  background: #2E4560;
+}
+
+ul#topTab li a.current {
+  color: #2E4560;
+  background: #fff;
+}
+
+ul#topTab li a.current:hover {
+  color: #2E4560;
+  background: #fff;
+}
+</style>";
+
+my tabBarBody="<body>
+    <div id=\"tabContainer\">
+        <ul id=\"topTab\">
+            <li><a href=\"\" title=\"Home\" class=\"current\">Home</a></li>
+            <li><a href=\"\" title=\"Home\">Resources</a></li>
+            <li><a href=\"\" title=\"Home\">Inspiration</a></li>
+            <li><a href=\"\" title=\"Home\">Forums</a></li>
+            <li><a href=\"\" title=\"Home\">About Us</a></li>
+            <li><a href=\"\" title=\"Home\">Contact Us</a></li>
+        </ul>
+    </div>
+</body>";
+
 print header,
-	start_html('hello world! debug = '.$debug),
-	h1('hello world'),
+	tabBarHeader,
+	start_html('hello world'),
+	h1('Hello world! debug = '.$debug),
+	tabBarBody,
 	end_html();
 
 
