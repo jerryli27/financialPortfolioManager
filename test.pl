@@ -67,77 +67,75 @@ if (defined(param("debug"))) {
   }
 } 
 
-my $tabBarHeader="";
-$tabBarHeader.="<style type=\"text/css\">
-#tabContainer {
-  padding: 25px 15px 0 15px;
-  background: #67A897;
-}
+my $tabBarHeader="<style type=\"text/css\">
+	#tabContainer {
+	  padding: 25px 15px 0 15px;
+	  background: #000000;
+	}
 
-ul#topTab {
-  list-style-type: none;
-  width: 100%;
-  position: relative;
-  height: 27px;
-  font-size: 13px;
-  font-weight: bold;
-  margin: 0;
-  padding: 11px 0 0 0;
-}
+	ul#topTab {
+	  list-style-type: none;
+	  width: 100%;
+	  position: relative;
+	  height: 27px;
+	  font-size: 13px;
+	  font-weight: bold;
+	  margin: 0;
+	  padding: 11px 0 0 0;
+	}
 
-ul#topTab li {
-  display: block;
-  float: left;
-  margin: 0 0 0 4px;
-  height: 27px;
-}
+	ul#topTab li {
+	  display: block;
+	  float: left;
+	  margin: 0 0 0 4px;
+	  height: 27px;
+	}
 
-ul#topTab li.left {
-  margin: 0;
-}
+	ul#topTab li.left {
+	  margin: 0;
+	}
 
-ul#topTab li a {
-  display: block;
-  float: left;
-  color: #fff;
-  background: #4A6867;
-  line-height: 27px;
-  text-decoration: none;
-  padding: 0 17px 0 18px;
-  height: 27px;
-}
+	ul#topTab li a {
+	  display: block;
+	  float: left;
+	  color: #fff;
+	  background: #363636;
+	  line-height: 27px;
+	  text-decoration: none;
+	  padding: 0 17px 0 18px;
+	  height: 27px;
+	}
 
-ul#topTab li a.right {
-  padding-right: 19px;
-}
+	ul#topTab li a.right {
+	  padding-right: 19px;
+	}
 
-ul#topTab li a:hover {
-  background: #2E4560;
-}
+	ul#topTab li a:hover {
+	  background: #6C6C6C;
+	}
 
-ul#topTab li a.current {
-  color: #2E4560;
-  background: #fff;
-}
+	ul#topTab li a.current {
+	  color: #2E4560;
+	  background: #fff;
+	}
 
-ul#topTab li a.current:hover {
-  color: #2E4560;
-  background: #fff;
-}
-</style>";
+	ul#topTab li a.current:hover {
+	  color: #2E4560;
+	  background: #fff;
+	}
+	</style>";
 
-my $tabBarBody="<body>
-    <div id=\"tabContainer\">
-        <ul id=\"topTab\">
-            <li><a href=\"\" title=\"Home\" class=\"current\">Home</a></li>
-            <li><a href=\"\" title=\"Home\">Resources</a></li>
-            <li><a href=\"\" title=\"Home\">Inspiration</a></li>
-            <li><a href=\"\" title=\"Home\">Forums</a></li>
-            <li><a href=\"\" title=\"Home\">About Us</a></li>
-            <li><a href=\"\" title=\"Home\">Contact Us</a></li>
-        </ul>
-    </div>
-</body>";
+my $tabBarBody="
+	<body>
+	    <div id=\"tabContainer\">
+	        <ul id=\"topTab\">
+	            <li><a href=\"\" title=\"Overview\" class=\"current\">Overview</a></li>
+	            <li><a href=\"\" title=\"Overview\">Statistics</a></li>
+	            <li><a href=\"\" title=\"Overview\">Performances</a></li>
+	            <li><a href=\"\" title=\"Overview\">Transactions</a></li>
+	        </ul>
+	    </div>
+	</body>";
 
 print header,
 	$tabBarHeader,
