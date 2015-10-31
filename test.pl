@@ -137,6 +137,9 @@ my $tabBarBody="
 	    </div>
 	</body>";
 my $usernameLink="<a href=\"\">username</a>"
+my @array = ("One fish", "Two fish", "Red Fish", "Blue Fish");
+
+print join("\n", @array), "\n";
 my @portfolioArray;
 $portfolioArray[0]="portfolio1";
 $portfolioArray[1]="portfolio2";
