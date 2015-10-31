@@ -162,15 +162,14 @@ my $cssStyleHeader="<style type=\"text/css\">
 
 my $tabBarBody="
 	<body>
-	    <div id=\"tabContainer\">
+	    <div id=\"tabContainer\" class=\"container\">
 	        <ul id=\"topTab\">
-	            <li><a href=\"http://murphy.wot.eecs.northwestern.edu/~jlt709/portfolio/test.pl?debug=0\" title=\"Overview\" class=\"current\">Overview</a></li>
-	            <li><a href=\"http://murphy.wot.eecs.northwestern.edu/~jlt709/portfolio/test.pl?debug=1\" title=\"Overview\">Statistics</a></li>
-	            <li><a href=\"http://murphy.wot.eecs.northwestern.edu/~jlt709/portfolio/test.pl?debug=1\" title=\"Overview\">Performances</a></li>
-	            <li><a href=\"http://murphy.wot.eecs.northwestern.edu/~jlt709/portfolio/test.pl?debug=1\" title=\"Overview\">Transactions</a></li>
-	        </ul>
-	    </div>
-	</body>";
+	            <li class=\"active\"><a data-toggle=\"tab\" href=\"#overview\" class=\"current\">Overview</a></li>
+	            <li><a href=\"#statistics\" >Statistics</a></li>
+	            <li><a href=\"#performances\" >Performances</a></li>
+	            <li><a href=\"#transactions\" >Transactions</a></li>
+	        </ul>" # Deleted the div and body here
+	;
 
 
 
@@ -181,30 +180,39 @@ my @portfolioArray=("portfolio1","portfolio2");
 
 
 print header,
+	"<script src=\"http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js\"></script>"
 	$cssStyleHeader,
 	start_html('hello world'),
 	h1($usernameLink."|<a href=\"".$portfolioArray[0]."\">".$portfolioArray[0].
 		"</a><span style=\"float:right;\"><a href=\"\">Log out</a></span>"), 
 		# The span here makes the text aligned to the right while the rest of the file stays left aligned
 	$tabBarBody,
-	button(-name=>'deleteButton',
-		   -value=>'Delete',
-		   -onClick=>"DeleteClicked()"),
-	"<span style=\"float:right;\"><a href=\"\">Edit transactions</a>|<a href=\"\">Edit portfolio</a>|<a href=\"\">Delete portfolio</a></span>", #create a link aligned to the right on the same line
-	"<form name=\"tableForm\" action=\"\" method=\"post\">",
-	table({-width=>'100%', -border=>'0'},
-           #caption('When Should You Eat Your Vegetables?'),
-           Tr({-align=>'CENTER',-valign=>'TOP'},
-           [
-              th(['<input type="checkbox" name="checkAll" value=""/>', 'Symbol','Last price','Change',"Volume","Open","Close","High","Low"]),
-              td(['<input type="checkbox" name="checkboxGE" value=""/>','<a href=\"\">GE</a>',15.70,"0.24(1.55%)","4.1T", 26.94, 27.55, 27.91, 26.8]),
-              td(['<input type="checkbox" name="checkboxAPLL" value=""/>','<a href=\"\">APLL</a>',15.70,"0.24(1.55%)","4.1T", 26.94, 27.55, 27.91, 26.8]),
-              td(['<input type="checkbox" name="checkboxFB" value=""/>','<a href=\"\">FB</a>',15.70,"0.24(1.55%)","4.1T", 26.94, 27.55, 27.91, 26.8]),
-           ]
-           )
-        ),
-	"</form>",
-	"<p>\tCash - <a href=\"\">Deposit</a> / <a href=\"\">Withdraw</a>",
+	# The div of each individual tab
+
+	"<div class=\"tab-content\">
+	    <div id=\"overview\" class=\"tab-pane fade in active\">",
+		button(-name=>'deleteButton',
+			   -value=>'Delete',
+			   -onClick=>"DeleteClicked()"),
+		"<span style=\"float:right;\"><a href=\"\">Edit transactions</a>|<a href=\"\">Edit portfolio</a>|<a href=\"\">Delete portfolio</a></span>", #create a link aligned to the right on the same line
+		"<form name=\"tableForm\" action=\"\" method=\"post\">",
+		table({-width=>'100%', -border=>'0'},
+	           #caption('When Should You Eat Your Vegetables?'),
+	           Tr({-align=>'CENTER',-valign=>'TOP'},
+	           [
+	              th(['<input type="checkbox" name="checkAll" value=""/>', 'Symbol','Last price','Change',"Volume","Open","Close","High","Low"]),
+	              td(['<input type="checkbox" name="checkboxGE" value=""/>','<a href=\"\">GE</a>',15.70,"0.24(1.55%)","4.1T", 26.94, 27.55, 27.91, 26.8]),
+	              td(['<input type="checkbox" name="checkboxAPLL" value=""/>','<a href=\"\">APLL</a>',15.70,"0.24(1.55%)","4.1T", 26.94, 27.55, 27.91, 26.8]),
+	              td(['<input type="checkbox" name="checkboxFB" value=""/>','<a href=\"\">FB</a>',15.70,"0.24(1.55%)","4.1T", 26.94, 27.55, 27.91, 26.8]),
+	           ]
+	           )
+	        ),
+		"</form>",
+		"<p>\tCash - <a href=\"\">Deposit</a> / <a href=\"\">Withdraw</a>",
+		"</div>",
+	"</div>", # the div for tab-content
+	"</div>",# the div of the container.
+	"</body>",
 	#
 	# The Javascript portion of our app
 	#
