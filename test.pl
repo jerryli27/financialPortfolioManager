@@ -45,8 +45,30 @@ use DBI;
 #
 use Time::ParseDate;
 
+#
+# Debugging
+#
+# database input and output is paired into the two arrays noted
+#
+my $debug=0; # default - will be overriden by a form parameter or cookie
+my @sqlinput=();
+my @sqloutput=();
+
+
+# 
+# Initialize section
+# 
+if (defined(param("debug"))) { 
+  # parameter has priority over cookie
+  if (param("debug") == 0) { 
+    $debug = 0;
+  } else {
+    $debug = 1;
+  }
+} 
+
 print header,
-	start_html('hello world'),
+	start_html('hello world! debug = '.$debug),
 	h1('hello world'),
 	end_html();
 
