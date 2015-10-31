@@ -118,12 +118,12 @@ my $cssStyleHeader="<style type=\"text/css\">
 	  background: #6C6C6C;
 	}
 
-	ul#topTab li a.current {
+	ul#topTab li a.active {
 	  color: #2E4560;
 	  background: #fff;
 	}
 
-	ul#topTab li a.current:hover {
+	ul#topTab li a.active:hover {
 	  color: #2E4560;
 	  background: #fff;
 	}
@@ -164,7 +164,7 @@ my $tabBarBody="
 	<body>
 	    <div id=\"tabContainer\" class=\"nav nav-tabs\">
 	        <ul id=\"topTab\">
-	            <li class=\"active\"><a data-toggle=\"tab\" href=\"#overview\" class=\"current\">Overview</a></li>
+	            <li class=\"active\"><a data-toggle=\"tab\" href=\"#overview\">Overview</a></li>
 	            <li><a data-toggle=\"tab\" href=\"#statistics\" >Statistics</a></li>
 	            <li><a data-toggle=\"tab\" href=\"#performances\" >Performances</a></li>
 	            <li><a data-toggle=\"tab\" href=\"#transactions\" >Transactions</a></li>
@@ -193,10 +193,12 @@ print header,
 
 	"<div class=\"tab-content\">",
 		# OVERVIEW
-	    "<div id=\"overview\" class=\"tab-pane fade in active\">\n",
+	    "<div id=\"overview\" class=\"tab-pane fade in active\">",
+	    "<p>\t",
 		button(-name=>'deleteButton',
 			   -value=>'Delete',
 			   -onClick=>"DeleteClicked()"),
+		"</p>"
 		"<span style=\"float:right;\"><a href=\"\">Edit transactions</a>|<a href=\"\">Edit portfolio</a>|<a href=\"\">Delete portfolio</a></span>", #create a link aligned to the right on the same line
 		"<form name=\"tableForm\" action=\"\" method=\"post\">",
 		table({-width=>'100%', -border=>'0'},
@@ -214,7 +216,7 @@ print header,
 		"<p>\tCash - <a href=\"\">Deposit</a> / <a href=\"\">Withdraw</a>",
 		"</div>",
 		# STATISTICS
-		"<div id=\"overview\" class=\"tab-pane fade\">\n",
+		"<div id=\"statistics\" class=\"tab-pane fade\">\n",
 		button(-name=>'deleteButton',
 			   -value=>'Delete',
 			   -onClick=>"DeleteClicked()"),
