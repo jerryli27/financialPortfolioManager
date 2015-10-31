@@ -9,7 +9,7 @@
 # 
 # Alan Fu, Jerry Li
 #
-my @portfolioArray=("1","2");
+
 
 #
 # The combination of -w and use strict enforces various 
@@ -137,10 +137,9 @@ my $tabBarBody="
 	        </ul>
 	    </div>
 	</body>";
-my $usernameLink="<a href=\"\">username</a>"
+my $usernameLink="<a href=\"\">username</a>";
 
-print @portfolioArray;
-print $portfolioArray;
+my @portfolioArray=("1","2");
 print $portfolioArray[0];
 
 print header,
