@@ -126,7 +126,7 @@ ul#topTab li a.current:hover {
 }
 </style>";
 
-my tabBarBody="<body>
+my $tabBarBody="<body>
     <div id=\"tabContainer\">
         <ul id=\"topTab\">
             <li><a href=\"\" title=\"Home\" class=\"current\">Home</a></li>
@@ -140,10 +140,10 @@ my tabBarBody="<body>
 </body>";
 
 print header,
-	tabBarHeader,
+	$tabBarHeader,
 	start_html('hello world'),
 	h1('Hello world! debug = '.$debug),
-	tabBarBody,
+	$tabBarBody,
 	end_html();
 
 
