@@ -46,8 +46,6 @@ use DBI;
 #
 use Time::ParseDate;
 
-# A module that makes it easy to create a table
-use HTML::Table;
 #
 # Debugging
 #
@@ -143,21 +141,7 @@ my $usernameLink="<a href=\"\">username</a>";
 
 my @portfolioArray=("portfolio1","portfolio2");
 
-my $table1 = new HTML::Table(-rows=>26,
-                            -cols=>2,
-                            -align=>'center',
-                            -rules=>'rows',
-                            -border=>0,
-                            -bgcolor=>'blue',
-                            -width=>'50%',
-                            -spacing=>0,
-                            -padding=>0,
-                            -style=>'color: blue',
-                            -class=>'myclass',
-                            -evenrowclass=>'even',
-                            -oddrowclass=>'odd',
-                            -head=> ['head1', 'head2'],
-                            -data=> [ ['1:1', '1:2'], ['2:1', '2:2'] ] );
+
 
 print header,
 	$tabBarHeader,
@@ -169,7 +153,17 @@ print header,
 	button(-name=>'deleteButton',
 		   -value=>'Delete',
 		   -onClick=>"DeleteClicked()"),
-	$table1,
+	table({-border=>undef},
+           caption('When Should You Eat Your Vegetables?'),
+           Tr({-align=>'CENTER',-valign=>'TOP'},
+           [
+              th(['Vegetable', 'Breakfast','Lunch','Dinner']),
+              td(['Tomatoes' , 'no', 'yes', 'yes']),
+              td(['Broccoli' , 'no', 'no',  'yes']),
+              td(['Onions'   , 'yes','yes', 'yes'])
+           ]
+           )
+        ),
 	#
 	# The Javascript portion of our app
 	#
