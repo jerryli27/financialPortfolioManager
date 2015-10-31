@@ -69,7 +69,9 @@ if (defined(param("debug"))) {
 } 
 
 # style header for tab bar
-my $tabBarHeader="<style type=\"text/css\">
+my $cssStyleHeader="<style type=\"text/css\">
+
+	<!-- tab bar styles -->
 	#tabContainer {
 	  padding: 25px 15px 0 15px;
 	  background: #000000;
@@ -125,6 +127,37 @@ my $tabBarHeader="<style type=\"text/css\">
 	  color: #2E4560;
 	  background: #fff;
 	}
+	<!-- end of tab bar styles -->
+
+	<!-- table styles -->
+	table {
+	    width:100%;
+	}
+	table, th, td {
+	    border: 1px solid black;
+	    border-collapse: collapse;
+	}
+	th, td {
+	    padding: 5px;
+	    text-align: left;
+	}
+	table tr:nth-child(even) {
+	    background-color: #eee;
+	}
+	table tr:nth-child(odd) {
+	   background-color:#fff;
+	}
+	table th	{
+	    background-color: black;
+	    color: white;
+	}
+	<!-- end of table styles -->
+
+	<!-- hyperlink styles -->
+	a {
+		font-size: 0.875em; /* 14px/16=0.875em */
+	}
+	<!-- end of hyperlink styles -->
 	</style>";
 
 my $tabBarBody="
@@ -139,31 +172,7 @@ my $tabBarBody="
 	    </div>
 	</body>";
 
-# style header for table
-my $tableStyleHeader="
-<style>
-table {
-    width:100%;
-}
-table, th, td {
-    border: 1px solid black;
-    border-collapse: collapse;
-}
-th, td {
-    padding: 5px;
-    text-align: left;
-}
-table tr:nth-child(even) {
-    background-color: #eee;
-}
-table tr:nth-child(odd) {
-   background-color:#fff;
-}
-table th	{
-    background-color: black;
-    color: white;
-}
-</style>";
+
 
 my $usernameLink="<a href=\"\">username</a>";
 
@@ -172,7 +181,7 @@ my @portfolioArray=("portfolio1","portfolio2");
 
 
 print header,
-	$tabBarHeader,
+	$cssStyleHeader,
 	start_html('hello world'),
 	h1($usernameLink."|<a href=\"".$portfolioArray[0]."\">".$portfolioArray[0].
 		"</a><span style=\"float:right;\"><a href=\"\">Log out</a></span>"), 
@@ -181,19 +190,21 @@ print header,
 	button(-name=>'deleteButton',
 		   -value=>'Delete',
 		   -onClick=>"DeleteClicked()"),
+	"<span style=\"float:right;\"><a href=\"\">Edit transactions</a>|<a href=\"\">Edit portfolio</a>|<a href=\"\">Delete portfolio</a></span>" #create a link aligned to the right on the same line
 	"<form name=\"tableForm\" action=\"\" method=\"post\">",
-	table({-border=>undef},
+	table({-width=>'100%', -border=>'0'},
            #caption('When Should You Eat Your Vegetables?'),
            Tr({-align=>'CENTER',-valign=>'TOP'},
            [
               th(['<input type="checkbox" name="checkAll" value=""/>', 'Symbol','Last price','Change',"Volume","Open","Close","High","Low"]),
-              td(['<input type="checkbox" name="checkbox1" value=""/>','<a href=\"General Electric\">username</a>',"GE",15.70,"0.24(1.55%)","4.1T", 26.94, 27.55, 27.91, 26.8]),
-              td(['Broccoli' , 'no', 'no',  'yes']),
-              td(['Onions'   , 'yes','yes', 'yes'])
+              td(['<input type="checkbox" name="checkboxGE" value=""/>','<a href=\"\">GE</a>',15.70,"0.24(1.55%)","4.1T", 26.94, 27.55, 27.91, 26.8]),
+              td(['<input type="checkbox" name="checkboxAPLL" value=""/>','<a href=\"\">APLL</a>',15.70,"0.24(1.55%)","4.1T", 26.94, 27.55, 27.91, 26.8]),
+              td(['<input type="checkbox" name="checkboxFB" value=""/>','<a href=\"\">FB</a>',15.70,"0.24(1.55%)","4.1T", 26.94, 27.55, 27.91, 26.8]),
            ]
            )
         ),
 	"</form>",
+	"<p>\tCash - <a href=\"\">Deposit</a> / <a href=\"\">Withdraw</a>"
 	#
 	# The Javascript portion of our app
 	#
