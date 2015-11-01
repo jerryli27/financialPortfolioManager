@@ -61,6 +61,57 @@ my @sqloutput=();
 my $dbuser="yfo776";
 my $dbpasswd="zv0XOar1o";
 
+# The session cookie will contain the user's name and password so that 
+# he doesn't have to type it again and again. 
+#
+# "RWBSession"=>"user/password"
+#
+# BOTH ARE UNENCRYPTED AND THE SCRIPT IS ALLOWED TO BE RUN OVER HTTP
+# THIS IS FOR ILLUSTRATION PURPOSES.  IN REALITY YOU WOULD ENCRYPT THE COOKIE
+# AND CONSIDER SUPPORTING ONLY HTTPS
+#
+my $cookiename="RWBSession";
+#
+# And another cookie to preserve the debug state
+#
+my $debugcookiename="RWBDebug";
+
+#
+# Get the session input and debug cookies, if any
+#
+my $inputcookiecontent = cookie($cookiename);
+my $inputdebugcookiecontent = cookie($debugcookiename);
+
+#
+# Will be filled in as we process the cookies and paramters
+#
+my $outputcookiecontent = undef;
+my $outputdebugcookiecontent = undef;
+my $deletecookie=0;
+my $user = undef;
+my $password = undef;
+my $logincomplain=0;
+
+#
+# Get the user action and whether he just wants the form or wants us to
+# run the form
+#
+my $action;
+my $run;
+
+
+if (defined(param("act"))) { 
+  $action=param("act");
+  if (defined(param("run"))) { 
+    $run = param("run") == 1;
+  } else {
+    $run = 0;
+  }
+} else {
+  $action="base";
+  $run = 1;
+}
+
 # 
 # Initialize section
 # 
@@ -71,7 +122,62 @@ if (defined(param("debug"))) {
   } else {
     $debug = 1;
   }
+}
+
+ 
+#
+#
+# Who is this?  Use the cookie or anonymous credentials
+#
+#
+if (defined($inputcookiecontent)) { 
+  # Has cookie, let's decode it
+  ($user,$password) = split(/\//,$inputcookiecontent);
+  $outputcookiecontent = $inputcookiecontent;
+} else {
+  # No cookie, treat as anonymous user
+  ($user,$password) = ("anon","anonanon");
+}
+
+#
+# Is this a login request or attempt?
+# Ignore cookies in this case.
+#
+if ($action eq "login") { 
+  if ($run) { 
+    #
+    # Login attempt
+    #
+    # Ignore any input cookie.  Just validate user and
+    # generate the right output cookie, if any.
+    #
+    ($user,$password) = (param('user'),param('password'));
+    if (ValidUser($user,$password)) { 
+      # if the user's info is OK, then give him a cookie
+      # that contains his username and password 
+      # the cookie will expire in one hour, forcing him to log in again
+      # after one hour of inactivity.
+      # Also, land him in the base query screen
+      $outputcookiecontent=join("/",$user,$password);
+      $action = "base";
+      $run = 1;
+    } else {
+      # uh oh.  Bogus login attempt.  Make him try again.
+      # don't give him a cookie
+      $logincomplain=1;
+      $action="login";
+      $run = 0;
+    }
+  } else {
+    #
+    # Just a login screen request, but we should toss out any cookie
+    # we were given
+    #
+    undef $inputcookiecontent;
+    ($user,$password)=("anon","anonanon");
+  }
 } 
+
 
 # style header for tab bar
 my $cssStyleHeader="<style type=\"text/css\">
@@ -176,125 +282,233 @@ my $tabBarBody="
 	        </ul>" # Deleted the div and body here
 	;
 
-
-
 my $usernameLink="<a href=\"\">username</a>";
 
 my @portfolioArray=("portfolio1","portfolio2");
 
 
-
 print header,
-	"<link rel=\"stylesheet\" href=\"http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css\">
- 	<script src=\"https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js\"></script>
-	<script src=\"http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js\"></script>",
-	$cssStyleHeader,
-	start_html('Portfolio'),
-	h3($usernameLink."|<a href=\"".$portfolioArray[0]."\">".$portfolioArray[0].
-		"</a><span style=\"float:right;\"><a href=\"\">Log out</a></span>"), 
-		# The span here makes the text aligned to the right while the rest of the file stays left aligned
-	$tabBarBody,
-	# The div of each individual tab
+	"<center>";
 
-	"<div class=\"tab-content\">",
-		# OVERVIEW
-	    "<div id=\"overview\" class=\"tab-pane fade in active\">",
-	    "<div>\t",
-		button(-name=>'deleteButton',
-			   -value=>'Delete',
-			   -onClick=>"DeleteClicked()"),
-		"</div>",
-		"<span style=\"float:right;\"><a href=\"\">Edit transactions</a>|<a href=\"\">Edit portfolio</a>|<a href=\"\">Delete portfolio</a></span>", #create a link aligned to the right on the same line
-		"<form name=\"tableForm\" action=\"\" method=\"post\">",
-		table({-width=>'100%', -border=>'0'},
-	           #caption('When Should You Eat Your Vegetables?'),
-	           Tr({-align=>'CENTER',-valign=>'TOP'},
-	           [
-	              th(['<input type="checkbox" name="checkAll" value=""/>', 'Symbol','Last price','Change',"Volume","Open","Close","High","Low"]),
-	              td(['<input type="checkbox" name="checkboxGE" value=""/>','<a href=\"\">GE</a>',15.70,"0.24(1.55%)","4.1T", 26.94, 27.55, 27.91, 26.8]),
-	              td(['<input type="checkbox" name="checkboxAPLL" value=""/>','<a href=\"\">APLL</a>',15.70,"0.24(1.55%)","4.1T", 26.94, 27.55, 27.91, 26.8]),
-	              td(['<input type="checkbox" name="checkboxFB" value=""/>','<a href=\"\">FB</a>',15.70,"0.24(1.55%)","4.1T", 26.94, 27.55, 27.91, 26.8]),
-	           ]
-	           )
-	        ),
-		"</form>",
-		"<p>\tCash - <a href=\"\">Deposit</a> / <a href=\"\">Withdraw</a>",
-		"</div>",
-		# STATISTICS
-		"<div id=\"statistics\" class=\"tab-pane fade\">\n",
-		button(-name=>'deleteButton',
-			   -value=>'Delete',
-			   -onClick=>"DeleteClicked()"),
-		"<span style=\"float:right;\"><a href=\"\">Edit transactions</a>|<a href=\"\">Edit portfolio</a>|<a href=\"\">Delete portfolio</a></span>", #create a link aligned to the right on the same line
-		"<form name=\"tableForm\" action=\"\" method=\"post\">",
-		table({-width=>'100%', -border=>'0'},
-	           #caption('When Should You Eat Your Vegetables?'),
-	           Tr({-align=>'CENTER',-valign=>'TOP'},
-	           [
-	              th(['<input type="checkbox" name="checkAll" value=""/>', 'Symbol','Last price','Change',"Volume","Open","Close","High","Low"]),
-	              td(['<input type="checkbox" name="checkboxGE" value=""/>','<a href=\"\">GE</a>',15.70,"0.24(1.55%)","4.1T", 26.94, 27.55, 27.91, 26.8]),
-	              td(['<input type="checkbox" name="checkboxAPLL" value=""/>','<a href=\"\">APLL</a>',15.70,"0.24(1.55%)","4.1T", 26.94, 27.55, 27.91, 26.8]),
-	              td(['<input type="checkbox" name="checkboxFB" value=""/>','<a href=\"\">FB</a>',15.70,"0.24(1.55%)","4.1T", 26.94, 27.55, 27.91, 26.8]),
-	           ]
-	           )
-	        ),
-		"</form>",
-		"<p>\tCash - <a href=\"\">Deposit</a> / <a href=\"\">Withdraw</a>",
-		"</div>",
-		# PERFORMANCES
-		"<div id=\"performances\" class=\"tab-pane fade\">\n",
-		"<div>\t",
-		button(-name=>'deleteButton',
-			   -value=>'Delete',
-			   -onClick=>"DeleteClicked()"),
-		"</div>",
-		"<span style=\"float:right;\"><a href=\"\">Edit transactions</a>|<a href=\"\">Edit portfolio</a>|<a href=\"\">Delete portfolio</a></span>", #create a link aligned to the right on the same line
-		"<form name=\"tableForm\" action=\"\" method=\"post\">",
-		table({-width=>'100%', -border=>'0'},
-	           #caption('When Should You Eat Your Vegetables?'),
-	           Tr({-align=>'CENTER',-valign=>'TOP'},
-	           [
-	              th(['<input type="checkbox" name="checkAll" value=""/>', 'Symbol','Last price','Change',"Volume","Open","Close","High","Low"]),
-	              td(['<input type="checkbox" name="checkboxGE" value=""/>','<a href=\"\">GE</a>',15.70,"0.24(1.55%)","4.1T", 26.94, 27.55, 27.91, 26.8]),
-	              td(['<input type="checkbox" name="checkboxAPLL" value=""/>','<a href=\"\">APLL</a>',15.70,"0.24(1.55%)","4.1T", 26.94, 27.55, 27.91, 26.8]),
-	              td(['<input type="checkbox" name="checkboxFB" value=""/>','<a href=\"\">FB</a>',15.70,"0.24(1.55%)","4.1T", 26.94, 27.55, 27.91, 26.8]),
-	           ]
-	           )
-	        ),
-		"</form>",
-		"<p>\tCash - <a href=\"\">Deposit</a> / <a href=\"\">Withdraw</a>",
-		"</div>",
-		# TRANSACTIONS
-		"<div id=\"transactions\" class=\"tab-pane fade\">\n",
-			"<div>\t",
-			button(-name=>'deleteButton',
-				   -value=>'Delete',
-				   -onClick=>"DeleteClicked()"),
-			"</div>",
-		"<span style=\"float:right;\"><a href=\"\">Edit transactions</a>|<a href=\"\">Edit portfolio</a>|<a href=\"\">Delete portfolio</a></span>", #create a link aligned to the right on the same line
-		"<form name=\"tableForm\" action=\"\" method=\"post\">",
-		table({-width=>'100%', -border=>'0'},
-	           #caption('When Should You Eat Your Vegetables?'),
-	           Tr({-align=>'CENTER',-valign=>'TOP'},
-	           [
-	              th(['<input type="checkbox" name="checkAll" value=""/>', 'Symbol','Last price','Change',"Volume","Open","Close","High","Low"]),
-	              td(['<input type="checkbox" name="checkboxGE" value=""/>','<a href=\"\">GE</a>',15.70,"0.24(1.55%)","4.1T", 26.94, 27.55, 27.91, 26.8]),
-	              td(['<input type="checkbox" name="checkboxAPLL" value=""/>','<a href=\"\">APLL</a>',15.70,"0.24(1.55%)","4.1T", 26.94, 27.55, 27.91, 26.8]),
-	              td(['<input type="checkbox" name="checkboxFB" value=""/>','<a href=\"\">FB</a>',15.70,"0.24(1.55%)","4.1T", 26.94, 27.55, 27.91, 26.8]),
-	           ]
-	           )
-	        ),
-		"</form>",
-		"<p>\tCash - <a href=\"\">Deposit</a> / <a href=\"\">Withdraw</a>",
-		"</div>",
-	"</div>", # the div for tab-content
-	"</div>",# the div of the container.
-	"</body>",
-	#
-	# The Javascript portion of our app
-	#
-    "<script type=\"text/javascript\" src=\"test.js\"> </script>",
-	end_html();
+# LOGIN
+#
+# Login is a special case since we handled running the filled out form up above
+# in the cookie-handling code.  So, here we only show the form if needed
+# 
+#
+if ($action eq "login") { 
+  if ($logincomplain) { 
+    print "Login failed.  Try again.<p>"
+  } 
+  if ($logincomplain or !$run) { 
+    print start_form(-name=>'Login'),
+      h2('Login to Portfolio Management'),
+	"Userame:",textfield(-name=>'user'),	p,
+	  "Password:",password_field(-name=>'password'),p,
+	    hidden(-name=>'act',default=>['login']),
+	      hidden(-name=>'run',default=>['1']),
+		submit,
+		  end_form;
+  }
+}
+
+
+
+if ($action eq "base") {
+	print start_html('Portfolio Management');
+	if ($user eq "anon") { 
+	print h2("Welcome to portfolio management. You are currently anonymous"),
+		"<p>Please <a href=\"test.pl?act=register\">register</a></p>",
+		"<p>or <a href=\"test.pl?act=login\">login</a></p>";
+ 	} else {
+ 		print h2("You have logged in");
+ 		#
+ 		# the majority of printing should come here
+ 		#
+ 		#
+ 		#
+ 	}
+} 	
+
+if ($action eq "register") {
+	print start_html('Registration');
+	if (!$run){
+		$run = 1;
+		print h2("Register for Portfolio Management"),
+			start_form(-name=>'Register'),
+			"Username: ", textfield(-name=>'user'), p,
+		    "Password: ", textfield(-name=>'password'), p,
+		    hidden(-name=>'run',-default=>['1']),
+			hidden(-name=>'act',-default=>['register']),
+			  submit,
+			    end_form,
+			      hr;
+	} else {
+		my $user=param('user');
+		my $password=param('password');
+		my $error;
+		$error=UserAdd($user,$password);
+		if ($error) { 
+			print h3("Can't add user because: $error");
+		} else {
+			print h3("You have successfully registered");
+		}
+	}
+	print "<p><a href=\"test.pl?act=login\">Login</a></p>";
+	print "<p><a href=\"test.pl?act=base&run=1\">Return</a></p>";
+} 	
+
+
+# print header,
+# 	"<link rel=\"stylesheet\" href=\"http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css\">
+#  	<script src=\"https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js\"></script>
+# 	<script src=\"http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js\"></script>",
+# 	$cssStyleHeader,
+# 	start_html('Portfolio'),
+# 	h3($usernameLink."|<a href=\"".$portfolioArray[0]."\">".$portfolioArray[0].
+# 		"</a><span style=\"float:right;\"><a href=\"\">Log out</a></span>"), 
+# 		# The span here makes the text aligned to the right while the rest of the file stays left aligned
+# 	$tabBarBody,
+# 	# The div of each individual tab
+
+# 	"<div class=\"tab-content\">",
+# 		# OVERVIEW
+# 	    "<div id=\"overview\" class=\"tab-pane fade in active\">",
+# 	    "<div>\t",
+# 		button(-name=>'deleteButton',
+# 			   -value=>'Delete',
+# 			   -onClick=>"DeleteClicked()"),
+# 		"</div>",
+# 		"<span style=\"float:right;\"><a href=\"\">Edit transactions</a>|<a href=\"\">Edit portfolio</a>|<a href=\"\">Delete portfolio</a></span>", #create a link aligned to the right on the same line
+# 		"<form name=\"tableForm\" action=\"\" method=\"post\">",
+# 		table({-width=>'100%', -border=>'0'},
+# 	           #caption('When Should You Eat Your Vegetables?'),
+# 	           Tr({-align=>'CENTER',-valign=>'TOP'},
+# 	           [
+# 	              th(['<input type="checkbox" name="checkAll" value=""/>', 'Symbol','Last price','Change',"Volume","Open","Close","High","Low"]),
+# 	              td(['<input type="checkbox" name="checkboxGE" value=""/>','<a href=\"\">GE</a>',15.70,"0.24(1.55%)","4.1T", 26.94, 27.55, 27.91, 26.8]),
+# 	              td(['<input type="checkbox" name="checkboxAPLL" value=""/>','<a href=\"\">APLL</a>',15.70,"0.24(1.55%)","4.1T", 26.94, 27.55, 27.91, 26.8]),
+# 	              td(['<input type="checkbox" name="checkboxFB" value=""/>','<a href=\"\">FB</a>',15.70,"0.24(1.55%)","4.1T", 26.94, 27.55, 27.91, 26.8]),
+# 	           ]
+# 	           )
+# 	        ),
+# 		"</form>",
+# 		"<p>\tCash - <a href=\"\">Deposit</a> / <a href=\"\">Withdraw</a>",
+# 		"</div>",
+# 		# STATISTICS
+# 		"<div id=\"statistics\" class=\"tab-pane fade\">\n",
+# 		button(-name=>'deleteButton',
+# 			   -value=>'Delete',
+# 			   -onClick=>"DeleteClicked()"),
+# 		"<span style=\"float:right;\"><a href=\"\">Edit transactions</a>|<a href=\"\">Edit portfolio</a>|<a href=\"\">Delete portfolio</a></span>", #create a link aligned to the right on the same line
+# 		"<form name=\"tableForm\" action=\"\" method=\"post\">",
+# 		table({-width=>'100%', -border=>'0'},
+# 	           #caption('When Should You Eat Your Vegetables?'),
+# 	           Tr({-align=>'CENTER',-valign=>'TOP'},
+# 	           [
+# 	              th(['<input type="checkbox" name="checkAll" value=""/>', 'Symbol','Last price','Change',"Volume","Open","Close","High","Low"]),
+# 	              td(['<input type="checkbox" name="checkboxGE" value=""/>','<a href=\"\">GE</a>',15.70,"0.24(1.55%)","4.1T", 26.94, 27.55, 27.91, 26.8]),
+# 	              td(['<input type="checkbox" name="checkboxAPLL" value=""/>','<a href=\"\">APLL</a>',15.70,"0.24(1.55%)","4.1T", 26.94, 27.55, 27.91, 26.8]),
+# 	              td(['<input type="checkbox" name="checkboxFB" value=""/>','<a href=\"\">FB</a>',15.70,"0.24(1.55%)","4.1T", 26.94, 27.55, 27.91, 26.8]),
+# 	           ]
+# 	           )
+# 	        ),
+# 		"</form>",
+# 		"<p>\tCash - <a href=\"\">Deposit</a> / <a href=\"\">Withdraw</a>",
+# 		"</div>",
+# 		# PERFORMANCES
+# 		"<div id=\"performances\" class=\"tab-pane fade\">\n",
+# 		"<div>\t",
+# 		button(-name=>'deleteButton',
+# 			   -value=>'Delete',
+# 			   -onClick=>"DeleteClicked()"),
+# 		"</div>",
+# 		"<span style=\"float:right;\"><a href=\"\">Edit transactions</a>|<a href=\"\">Edit portfolio</a>|<a href=\"\">Delete portfolio</a></span>", #create a link aligned to the right on the same line
+# 		"<form name=\"tableForm\" action=\"\" method=\"post\">",
+# 		table({-width=>'100%', -border=>'0'},
+# 	           #caption('When Should You Eat Your Vegetables?'),
+# 	           Tr({-align=>'CENTER',-valign=>'TOP'},
+# 	           [
+# 	              th(['<input type="checkbox" name="checkAll" value=""/>', 'Symbol','Last price','Change',"Volume","Open","Close","High","Low"]),
+# 	              td(['<input type="checkbox" name="checkboxGE" value=""/>','<a href=\"\">GE</a>',15.70,"0.24(1.55%)","4.1T", 26.94, 27.55, 27.91, 26.8]),
+# 	              td(['<input type="checkbox" name="checkboxAPLL" value=""/>','<a href=\"\">APLL</a>',15.70,"0.24(1.55%)","4.1T", 26.94, 27.55, 27.91, 26.8]),
+# 	              td(['<input type="checkbox" name="checkboxFB" value=""/>','<a href=\"\">FB</a>',15.70,"0.24(1.55%)","4.1T", 26.94, 27.55, 27.91, 26.8]),
+# 	           ]
+# 	           )
+# 	        ),
+# 		"</form>",
+# 		"<p>\tCash - <a href=\"\">Deposit</a> / <a href=\"\">Withdraw</a>",
+# 		"</div>",
+# 		# TRANSACTIONS
+# 		"<div id=\"transactions\" class=\"tab-pane fade\">\n",
+# 			"<div>\t",
+# 			button(-name=>'deleteButton',
+# 				   -value=>'Delete',
+# 				   -onClick=>"DeleteClicked()"),
+# 			"</div>",
+# 		"<span style=\"float:right;\"><a href=\"\">Edit transactions</a>|<a href=\"\">Edit portfolio</a>|<a href=\"\">Delete portfolio</a></span>", #create a link aligned to the right on the same line
+# 		"<form name=\"tableForm\" action=\"\" method=\"post\">",
+# 		table({-width=>'100%', -border=>'0'},
+# 	           #caption('When Should You Eat Your Vegetables?'),
+# 	           Tr({-align=>'CENTER',-valign=>'TOP'},
+# 	           [
+# 	              th(['<input type="checkbox" name="checkAll" value=""/>', 'Symbol','Last price','Change',"Volume","Open","Close","High","Low"]),
+# 	              td(['<input type="checkbox" name="checkboxGE" value=""/>','<a href=\"\">GE</a>',15.70,"0.24(1.55%)","4.1T", 26.94, 27.55, 27.91, 26.8]),
+# 	              td(['<input type="checkbox" name="checkboxAPLL" value=""/>','<a href=\"\">APLL</a>',15.70,"0.24(1.55%)","4.1T", 26.94, 27.55, 27.91, 26.8]),
+# 	              td(['<input type="checkbox" name="checkboxFB" value=""/>','<a href=\"\">FB</a>',15.70,"0.24(1.55%)","4.1T", 26.94, 27.55, 27.91, 26.8]),
+# 	           ]
+# 	           )
+# 	        ),
+# 		"</form>",
+# 		"<p>\tCash - <a href=\"\">Deposit</a> / <a href=\"\">Withdraw</a>",
+# 		"</div>",
+# 	"</div>", # the div for tab-content
+# 	"</div>",# the div of the container.
+# 	"</body>",
+# 	#
+# 	# The Javascript portion of our app
+# 	#
+#     "<script type=\"text/javascript\" src=\"test.js\"> </script>",
+# 	end_html();
+
+print "</center>";
+print end_html();
+
+
+#
+#
+# Check to see if user and password combination exist
+#
+# $ok = ValidUser($user,$password)
+#
+#
+sub ValidUser {
+  my ($user,$password)=@_;
+  my @col;
+  eval {@col=ExecSQL($dbuser,$dbpasswd, "select count(*) from portfolio_users where user_name=? and password=?","COL",$user,$password);};
+  if ($@) { 
+    return 0;
+  } else {
+    return $col[0]>0;
+  }
+}
+
+
+
+
+#
+# Add a user
+# call with email, password
+#
+# returns false on success, error string on failure.
+# 
+# UserAdd($email,$password)
+#
+sub UserAdd { 
+  eval { ExecSQL($dbuser,$dbpasswd,
+		 "insert into portfolio_users (user_name,password) values (?,?)",undef,@_);};
+  return $@;
+}
 
 
 #

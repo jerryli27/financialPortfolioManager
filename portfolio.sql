@@ -7,13 +7,13 @@
 create table portfolio_users
   (user_name varchar(64) not null,
   password varchar(64) not null,
-  cash number default 0,
   primary key (user_name)
   );
 
 create table portfolio_portfolio
   (portfolio_name varchar(64) not null,
   user_name varchar(64) not null,
+  cash number default 0,
   foreign key (user_name) references portfolio_users(user_name),
   unique (portfolio_name,user_name)
   );
