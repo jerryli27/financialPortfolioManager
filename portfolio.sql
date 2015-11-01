@@ -40,6 +40,7 @@ create sequence seq_transaction_id
   increment by 1
   cache 10;
 
+-- when inserting into portfolio_transactions, transaction_id value has to be seq_transaction_id.nextval
 create table portfolio_transactions
   (transaction_id int not null,
   portfolio_name varchar(64) not null,
