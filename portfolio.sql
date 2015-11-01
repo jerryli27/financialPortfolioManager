@@ -29,15 +29,16 @@ create table portfolio_stocks
   PRIMARY KEY (symbol,timestamp)
   );
 
+create table portfolio_stock_symbols
+  (symbol varchar(64) not null)
+  primary key (symbol));
+
+-- this sequence is for transaction_id in portfolio_transactions
 create sequence seq_transaction_id
   minvalue 1
   start with 1
   increment by 1
   cache 10;
-
-create table portfolio_stock_symbols
-  (symbol varchar(64) not null)
-  primary key (symbol));
 
 create table portfolio_transactions
   (transaction_id int not null,
