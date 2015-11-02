@@ -616,8 +616,8 @@ sub generateUserPortfolioLogoutLine{
 	my ($user,$portfolioNum,@portfolioArray)=@_;
 	my $ret;
 	# If the portfolio array exists and portfolio index is legal.
-	if (scalar(@portfolioArray)>=portfolioNum){
-		return h4($usernameLink."|<a href=\"\">".$portfolioArray[portfolioNum].
+	if (scalar(@portfolioArray)>=$portfolioNum){
+		return h4($usernameLink."|<a href=\"\">".$portfolioArray[$portfolioNum].
 			"</a><span style=\"float:right;\"><a href=\"test.pl?act=logout\">Log out</a></span>");
 	}elsif (scalar(@portfolioArray)==0){
 		# If the portfolio array does not exist.
