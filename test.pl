@@ -544,7 +544,7 @@ print end_html();
 sub getUserPortfolioList{
 	my ($user)=@_;
 	# select the first column
-	return ExecSQL($dbuser, $dbpasswd, "select portfolio_name from portfolio_portfolio where user_name = ".$user,"COL");
+	return ExecSQL($dbuser, $dbpasswd, "select portfolio_name from portfolio_portfolio where user_name=?","COL",$user);
 }
 
 #
