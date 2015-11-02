@@ -392,7 +392,7 @@ if ($action eq "createNewPortfolio") {
 	print "<center>";
 	if (length($newPortfolioName)<=0){
 		print "You need to enter a portfolio name. Redirecting back to overview in 3 seconds.";
-	}else if (length($newPortfolioName)<=0){
+	}elsif  (length($newPortfolioName)<=0){
 		print "The portfolio name has to be less than 64 characters. Redirecting back to overview in 3 seconds.";
 	}else{
 		ExecSQL($dbuser, $dbpasswd, "insert into portfolio_portfolio values('$newPortfolioName','$user',0)",undef);
@@ -619,7 +619,7 @@ sub generateUserPortfolioLogoutLine{
 	if (scalar(@portfolioArray)>=portfolioNum){
 		return h4($usernameLink."|<a href=\"\">".$portfolioArray[portfolioNum].
 			"</a><span style=\"float:right;\"><a href=\"test.pl?act=logout\">Log out</a></span>");
-	}else if (scalar(@portfolioArray)==0){
+	}elsif (scalar(@portfolioArray)==0){
 		# If the portfolio array does not exist.
 		return h4($usernameLink."|<a href=\"\">please create a portfolio
 			</a><span style=\"float:right;\"><a href=\"test.pl?act=logout\">Log out</a></span>");
