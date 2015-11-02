@@ -344,6 +344,8 @@ my $tabBarBody="
 my $usernameLink="<a data-toggle=\"modal\" href=\"\#openPortfolioSelectionModal\">".$user."</a>";
 my @portfolioArray=getUserPortfolioList($user);
 my $portfolioSelectionModal=generatePortfolioSelectionModal(@portfolioArray);
+my $portfolioNum; # *******NOTE: I think we need to store which portfolio the user visited in the database (Just an index or the name of it). 
+# So when the user first entered, or when the user switch from one portfolio to another, update that.
 
 # print the header of html
 print header,start_html('Portfolio Management');
@@ -566,10 +568,9 @@ sub generatePortfolioSelectionModal {
 	    </div>
 	    <div class=\"modal-body\">";
 	foreach (@portfolioArray){
-        $portfolioSelectionModal.="<p>".$_."</p>";
+        $portfolioSelectionModal.="<p><a href=\"\">".$_."</a></p>";
     }
 	$portfolioSelectionModal.="
-	      <p>List of portfolios dynamically generated.</p>
 	    </div>
 	    <div class=\"modal-footer\">
 	      <button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\">Close</button>
