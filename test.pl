@@ -342,8 +342,8 @@ my $tabBarBody="
 	;
 
 my $usernameLink="<a data-toggle=\"modal\" href=\"\#openPortfolioSelectionModal\">".$user."</a>";
-my @portfolioArray=getUserPortfolioList();
-my $portfolioSelectionModal=generatePortfolioSelectionModal();
+my @portfolioArray=getUserPortfolioList($user);
+my $portfolioSelectionModal=generatePortfolioSelectionModal(@portfolioArray);
 
 # print the header of html
 print header,start_html('Portfolio Management');
@@ -542,6 +542,7 @@ print end_html();
 #
 #
 sub getUserPortfolioList{
+	my ($user)=@_;
 	# select the first column
 	return ExecSQL($dbuser, $dbpasswd, "select portfolio_name from portfolio_portfolio where user_name = ".$user,"COL");
 }
@@ -552,6 +553,7 @@ sub getUserPortfolioList{
 #
 #
 sub generatePortfolioSelectionModal {
+	my (@portfolioArray)=@_;
 	$portfolioSelectionModal="<!-- Modal -->
 	<div class=\"modal fade\" id=\"openPortfolioSelectionModal\" role=\"dialog\">
 	<div class=\"modal-dialog\">
