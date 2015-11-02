@@ -341,12 +341,31 @@ my $tabBarBody="
 	        </ul>" # Deleted the div and body here
 	;
 
-my $usernameLink="<a href=\"\">username</a>";
-
+my $usernameLink="<a data-toggle=\"modal\" href=\"\#openPortfolioSelectionModal\">username</a>";
 my @portfolioArray=("portfolio1","portfolio2");
+my portfolioSelectionModal="<!-- Modal -->
+  <div class=\"modal fade\" id=\"myModal\" role=\"dialog\">
+    <div class=\"modal-dialog\">
+    
+      <!-- Modal content-->
+      <div class=\"modal-content\">
+        <div class=\"modal-header\">
+          <button type=\"button\" class=\"close\" data-dismiss=\"modal\">&times;</button>
+          <h4 class=\"modal-title\">".$user."\'s portfolios</h4>
+        </div>
+        <div class=\"modal-body\">
+          <p>List of portfolios dynamically generated.</p>
+        </div>
+        <div class=\"modal-footer\">
+          <button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\">Close</button>
+        </div>
+      </div>
+      
+    </div>
+  </div>";
 
 # print the header of html
-print header;
+print header,start_html('Portfolio Management');
 
 # LOGIN
 #
@@ -371,22 +390,11 @@ if ($action eq "login") {
   }
   print "</center>";
 }
-#
-# If we are being asked to log out, we already deleted the cookie in previous section of the code.
-# We just need to print notification to user.
-#
-if ($action eq "logout") {
-	print 
-	start_html('Portfolio Management'),
-	"<head>
-        <meta http-equiv=\"refresh\" content=\"3;url=test.pl\" />
-    </head>"
 
-}
 
 
 if ($action eq "base") {
-	print start_html('Portfolio Management');
+	
 	if ($user eq "anon") { 
 	print h2("Welcome to portfolio management. You are currently anonymous"),
 		"<p>Please <a href=\"test.pl?act=register\">register</a></p>",
@@ -404,10 +412,10 @@ if ($action eq "base") {
 	 	<script src=\"https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js\"></script>
 		<script src=\"http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js\"></script>",
 		$cssStyleHeader,
-		start_html('Portfolio'),
-		h3($usernameLink."|<a href=\"".$portfolioArray[0]."\">".$portfolioArray[0].
+		h4($usernameLink."|<a href=\"".$portfolioArray[0]."\">".$portfolioArray[0].
 			"</a><span style=\"float:right;\"><a href=\"test.pl?act=logout\">Log out</a></span>"), 
 			# The span here makes the text aligned to the right while the rest of the file stays left aligned
+		$portfolioSelectionModal, # html for modal(hidden unless click on username)
 		$tabBarBody,
 		# The div of each individual tab
 
@@ -514,7 +522,7 @@ if ($action eq "base") {
 } 	
 
 if ($action eq "register") {
-	print start_html('Registration'),"<center>";
+	print "<center>";
 	if (!$run){
 		$run = 1;
 		print h2("Register for Portfolio Management"),
