@@ -388,15 +388,15 @@ if ($action eq "createNewPortfolio") {
 	my $newPortfolioName=param("newPortfolioName");
 	print "<head>
 				<meta http-equiv=\"refresh\" content=\"3;url=test.pl\" />
-			</head>"
+			</head>";
 	print "<center>";
 	if (length($newPortfolioName)<=0){
-		print "You need to enter a portfolio name. Redirecting back to overview in 3 seconds."
+		print "You need to enter a portfolio name. Redirecting back to overview in 3 seconds.";
 	}else if (length($newPortfolioName)<=0){
-		print "The portfolio name has to be less than 64 characters. Redirecting back to overview in 3 seconds."
+		print "The portfolio name has to be less than 64 characters. Redirecting back to overview in 3 seconds.";
 	}else{
-		ExecSQL($dbuser, $dbpasswd, "insert into portfolio_portfolio values('".$newPortfolioName."','".$user."',0)",undef);
-		print "The portfolio $newPortfolioName has been created. Redirecting back to overview in 3 seconds."
+		ExecSQL($dbuser, $dbpasswd, "insert into portfolio_portfolio values('$newPortfolioName','$user',0)",undef);
+		print "The portfolio $newPortfolioName has been created. Redirecting back to overview in 3 seconds.";
 	}
 	print "</center>";
 }
@@ -593,10 +593,10 @@ sub generatePortfolioSelectionModal {
 	      <h4 class=\"modal-title\">".$user."\'s portfolios</h4>
 	    </div>
 	    <div class=\"modal-body\">";
-	my counter=1;
+	my $counter=1;
 	foreach (@portfolioArray){
         $portfolioSelectionModal.="<p><a href=\"test.pl?portfolioNum=$counter\">".$_."</a></p>";
-        counter=counter+1;
+        $counter=$counter+1;
     }
 	$portfolioSelectionModal.="
 	    </div>
