@@ -346,6 +346,13 @@ my @portfolioArray=getUserPortfolioList($user);
 my $portfolioSelectionModal=generatePortfolioSelectionModal(@portfolioArray);
 my $portfolioNum; # *******NOTE: I think we need to store which portfolio the user visited in the database (Just an index or the name of it). 
 # So when the user first entered, or when the user switch from one portfolio to another, update that.
+if (defined(param("portfolioNum"))) { 
+  $portfolioNum=param("portfolioNum");
+} else {
+  $portfolioNum=1;
+}
+# This is the line that appears at the top with switching portfolios, logout and stuff.
+my $userPortfolioLogoutLine=generateUserPortfolioLogoutLine($user,$portfolioNum,@portfolioArray);
 
 # print the header of html
 print header,start_html('Portfolio Management');
@@ -373,6 +380,26 @@ if ($action eq "login") {
   }
   print "</center>";
 }
+# createNewPortfolio
+#
+# creates a new portfolio in the database. If the portfolio name is more than 64 characters, inform the user.
+#
+if ($action eq "createNewPortfolio") { 
+	my $newPortfolioName=param("newPortfolioName");
+	print "<head>
+				<meta http-equiv=\"refresh\" content=\"3;url=test.pl\" />
+			</head>"
+	print "<center>";
+	if (length($newPortfolioName)<=0){
+		print "You need to enter a portfolio name. Redirecting back to overview in 3 seconds."
+	}else if (length($newPortfolioName)<=0){
+		print "The portfolio name has to be less than 64 characters. Redirecting back to overview in 3 seconds."
+	}else{
+		ExecSQL($dbuser, $dbpasswd, "insert into portfolio_portfolio values('".$newPortfolioName."','".$user."',0)",undef);
+		print "The portfolio $newPortfolioName has been created. Redirecting back to overview in 3 seconds."
+	}
+	print "</center>";
+}
 
 
 
@@ -395,8 +422,7 @@ if ($action eq "base") {
 	 	<script src=\"https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js\"></script>
 		<script src=\"http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js\"></script>",
 		$cssStyleHeader,
-		h4($usernameLink."|<a href=\"".$portfolioArray[0]."\">".$portfolioArray[0].
-			"</a><span style=\"float:right;\"><a href=\"test.pl?act=logout\">Log out</a></span>"), 
+		userPortfolioLogoutLine, 
 			# The span here makes the text aligned to the right while the rest of the file stays left aligned
 		$portfolioSelectionModal, # html for modal(hidden unless click on username)
 		$tabBarBody,
@@ -567,18 +593,41 @@ sub generatePortfolioSelectionModal {
 	      <h4 class=\"modal-title\">".$user."\'s portfolios</h4>
 	    </div>
 	    <div class=\"modal-body\">";
+	my counter=1;
 	foreach (@portfolioArray){
-        $portfolioSelectionModal.="<p><a href=\"\">".$_."</a></p>";
+        $portfolioSelectionModal.="<p><a href=\"test.pl?portfolioNum=$counter\">".$_."</a></p>";
+        counter=counter+1;
     }
 	$portfolioSelectionModal.="
 	    </div>
 	    <div class=\"modal-footer\">
-	      <button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\">Close</button>
+	    	<form role=\"form\" id=\"newPortfolioForm\">
+				<label for=\"newPortfolioName\">Your New Portfolio's Name:</label>
+				<input type=\"text\" class=\"form-control\" id=\"newPortfolioName\">
+				<button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\" id=\"newPortfolioSubmit\">Create New Portfolio</button>
+	    	</form>
 	    </div>
 	  </div>
-	  
 	</div>
 	</div>";
+}
+
+sub generateUserPortfolioLogoutLine{
+	my ($user,$portfolioNum,@portfolioArray)=@_;
+	my $ret;
+	# If the portfolio array exists and portfolio index is legal.
+	if (scalar(@portfolioArray)>=portfolioNum){
+		return h4($usernameLink."|<a href=\"\">".$portfolioArray[portfolioNum].
+			"</a><span style=\"float:right;\"><a href=\"test.pl?act=logout\">Log out</a></span>");
+	}else if (scalar(@portfolioArray)==0){
+		# If the portfolio array does not exist.
+		return h4($usernameLink."|<a href=\"\">please create a portfolio
+			</a><span style=\"float:right;\"><a href=\"test.pl?act=logout\">Log out</a></span>");
+	}else{
+		# If the portfolio array is shorter than portfolio index
+		return h4($usernameLink."|<a href=\"\">".$portfolioArray[scalar(@portfolioArray)].
+			"</a><span style=\"float:right;\"><a href=\"test.pl?act=logout\">Log out</a></span>");
+	}
 }
 
 #
