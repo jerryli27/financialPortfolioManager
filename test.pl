@@ -341,28 +341,9 @@ my $tabBarBody="
 	        </ul>" # Deleted the div and body here
 	;
 
-my $usernameLink="<a data-toggle=\"modal\" href=\"\#openPortfolioSelectionModal\">username</a>";
-my @portfolioArray=("portfolio1","portfolio2");
-my $portfolioSelectionModal="<!-- Modal -->
-  <div class=\"modal fade\" id=\"openPortfolioSelectionModal\" role=\"dialog\">
-    <div class=\"modal-dialog\">
-    
-      <!-- Modal content-->
-      <div class=\"modal-content\">
-        <div class=\"modal-header\">
-          <button type=\"button\" class=\"close\" data-dismiss=\"modal\">&times;</button>
-          <h4 class=\"modal-title\">".$user."\'s portfolios</h4>
-        </div>
-        <div class=\"modal-body\">
-          <p>List of portfolios dynamically generated.</p>
-        </div>
-        <div class=\"modal-footer\">
-          <button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\">Close</button>
-        </div>
-      </div>
-      
-    </div>
-  </div>";
+my $usernameLink="<a data-toggle=\"modal\" href=\"\#openPortfolioSelectionModal\">".$user."</a>";
+my @portfolioArray=getUserPortfolioList();
+my $portfolioSelectionModal=generatePortfolioSelectionModal();
 
 # print the header of html
 print header,start_html('Portfolio Management');
@@ -555,6 +536,47 @@ if ($action eq "register") {
 
 print end_html();
 
+#
+#
+# run sql to get the list of portfolio names
+#
+#
+sub getUserPortfolioList{
+	# select the first column
+	return ExecSQL($dbuser, $dbpasswd, "select portfolio_name from portfolio_portfolio where user_name = ".$user,"COL");
+}
+
+#
+#
+# dynamically generate the portfolio selection modal based on portfolio names.
+#
+#
+sub generatePortfolioSelectionModal {
+	$portfolioSelectionModal="<!-- Modal -->
+	<div class=\"modal fade\" id=\"openPortfolioSelectionModal\" role=\"dialog\">
+	<div class=\"modal-dialog\">
+
+	  <!-- Modal content-->
+	  <div class=\"modal-content\">
+	    <div class=\"modal-header\">
+	      <button type=\"button\" class=\"close\" data-dismiss=\"modal\">&times;</button>
+	      <h4 class=\"modal-title\">".$user."\'s portfolios</h4>
+	    </div>
+	    <div class=\"modal-body\">";
+	foreach (@portfolioArray){
+        $portfolioSelectionModal.="<p>".$_."</p>";
+    }
+	$portfolioSelectionModal.="
+	      <p>List of portfolios dynamically generated.</p>
+	    </div>
+	    <div class=\"modal-footer\">
+	      <button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\">Close</button>
+	    </div>
+	  </div>
+	  
+	</div>
+	</div>";
+}
 
 #
 #
