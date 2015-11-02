@@ -593,7 +593,7 @@ sub generatePortfolioSelectionModal {
 	      <h4 class=\"modal-title\">".$user."\'s portfolios</h4>
 	    </div>
 	    <div class=\"modal-body\">";
-	my $counter=1;
+	my $counter=0;
 	foreach (@portfolioArray){
         $portfolioSelectionModal.="<p><a href=\"test.pl?portfolioNum=$counter\">".$_."</a></p>";
         $counter=$counter+1;
@@ -616,7 +616,7 @@ sub generateUserPortfolioLogoutLine{
 	my ($user,$portfolioNum,@portfolioArray)=@_;
 	my $ret;
 	# If the portfolio array exists and portfolio index is legal.
-	if (scalar(@portfolioArray)>=$portfolioNum){
+	if (scalar(@portfolioArray)>$portfolioNum){
 		return h4($usernameLink."|<a href=\"\">".$portfolioArray[$portfolioNum].
 			"</a><span style=\"float:right;\"><a href=\"test.pl?act=logout\">Log out</a></span>");
 	}elsif (scalar(@portfolioArray)==0){
@@ -625,7 +625,7 @@ sub generateUserPortfolioLogoutLine{
 			</a><span style=\"float:right;\"><a href=\"test.pl?act=logout\">Log out</a></span>");
 	}else{
 		# If the portfolio array is shorter than portfolio index
-		return h4($usernameLink."|<a href=\"\">".$portfolioArray[scalar(@portfolioArray)].
+		return h4($usernameLink."|<a href=\"\">".$portfolioArray[scalar(@portfolioArray)-1].
 			"</a><span style=\"float:right;\"><a href=\"test.pl?act=logout\">Log out</a></span>");
 	}
 }
