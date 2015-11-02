@@ -13,7 +13,7 @@ $(document).ready(function () {
                         data: { 'act': 'cashDeposit', 'cashDepositAmount':document.getElementById("cashDepositAmount").value,
                          'currPortfolioName':document.getElementById("currPortfolioName").value },
                         }).done(function( msg ) {
-                        	alert( "Data Saved: " + msg );
+                        	alert( "Data Received: " + msg );
                     });
 	    // var cashDepositAmount = document.getElementById("cashDepositAmount").value;
 	    // var newURL='test.pl?act=cashDeposit&cashDepositAmount=';

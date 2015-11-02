@@ -436,7 +436,7 @@ if ($action eq "cashDeposit") {
 		print "Cash deposit amount must be positive. Redirecting back to overview in 3 seconds.";
 	}else{
 		ExecSQL($dbuser, $dbpasswd, "update portfolio_portfolio set cash=cash+$cashDepositAmount where user_name='$user' and portfolio_name='$currPortfolioName'",undef);
-		print "\$$cashDepositAmount has been added to your account. Redirecting back to overview in 3 seconds.";
+		print "\$$cashDepositAmount has been added to your account in $currPortfolioName of user $user. Redirecting back to overview in 3 seconds.";
 	}
 	print "</center>";
 }
