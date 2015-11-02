@@ -353,6 +353,7 @@ if (defined(param("portfolioNum"))) {
 }
 # This is the line that appears at the top with switching portfolios, logout and stuff.
 my $userPortfolioLogoutLine=generateUserPortfolioLogoutLine($user,$portfolioNum,@portfolioArray);
+my $userPortfolioCash=getUserPortfolioCash($user,$portfolioArray[$portfolioNum]);
 
 # print the header of html
 print header,start_html('Portfolio Management');
@@ -420,6 +421,24 @@ if ($action eq "deleteCurrPortfolio") {
 	}
 	print "</center>";
 }
+# cashDeposit
+#
+# Change the amount of cash in database and inform the user.
+#
+if ($action eq "cashDeposit") { 
+	my $cashDepositAmount=param("cashDepositAmount");
+	print "<head>
+				<meta http-equiv=\"refresh\" content=\"3;url=test.pl\" />
+			</head>";
+	print "<center>";
+	if ($cashDepositAmount<=0){
+		print "Cash deposit amount must be positive. Redirecting back to overview in 3 seconds.";
+	}else{
+		ExecSQL($dbuser, $dbpasswd, "update portfolio_portfolio cash=cash+$cashDepositAmount where user_name='$user' and portfolio_name='$currPortfolioName'",undef);
+		print "\$$cashDepositAmount has been added to your account. Redirecting back to overview in 3 seconds.";
+	}
+	print "</center>";
+}
 
 
 if ($action eq "base") {
@@ -442,9 +461,10 @@ if ($action eq "base") {
 				   -onClick=>"DeleteClicked()").
 			"</div>
 			<span style=\"float:right;\"><a href=\"\">Edit transactions</a>|<a href=\"\">Edit this portfolio</a>|
-			<a href=\"test.pl?act=deleteCurrPortfolio&currPortfolioName=$portfolioArray[$portfolioNum]\">Delete this portfolio</a></span>";
-			 #create a link aligned to the right on the same line
-			
+			<a href=\"test.pl?act=deleteCurrPortfolio&currPortfolioName=$portfolioArray[$portfolioNum]\" 
+			onclick=\"return confirm('Are you sure? Deleting a portfolio cannot be undone.')\">Delete this portfolio</a></span>";#create a link aligned to the right on the same line
+		my $cashDepositModel=generateCashDepositModal($user,$portfolioArray[$portfolioNum]);
+		my $sharedStringForCash="<p>\tCash - \$$userPortfolioCash <a href=\"\">Deposit</a> / <a href=\"\">Withdraw</a>";
 
  		print 
 		"<link rel=\"stylesheet\" href=\"http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css\">
@@ -474,7 +494,7 @@ if ($action eq "base") {
 		           )
 		        ),
 			"</form>",
-			"<p>\tCash - <a href=\"\">Deposit</a> / <a href=\"\">Withdraw</a>",
+			$sharedStringForCash,
 			"</div>",
 			# STATISTICS
 			"<div id=\"statistics\" class=\"tab-pane fade\">\n",
@@ -492,7 +512,7 @@ if ($action eq "base") {
 		           )
 		        ),
 			"</form>",
-			"<p>\tCash - <a href=\"\">Deposit</a> / <a href=\"\">Withdraw</a>",
+			$sharedStringForCash,
 			"</div>",
 			# PERFORMANCES
 			"<div id=\"performances\" class=\"tab-pane fade\">\n",
@@ -528,7 +548,7 @@ if ($action eq "base") {
 		           )
 		        ),
 			"</form>",
-			"<p>\tCash - <a href=\"\">Deposit</a> / <a href=\"\">Withdraw</a>",
+			$sharedStringForCash,
 			"</div>",
 		"</div>", # the div for tab-content
 		"</div>",# the div of the container.
@@ -588,12 +608,23 @@ sub getUserPortfolioList{
 
 #
 #
+# run sql to get the list of portfolio names
+#
+#
+sub getUserPortfolioCash{
+	my ($user,$currPortfolioName)=@_;
+	# select the first column
+	return ExecSQL($dbuser, $dbpasswd, "select cash from portfolio_portfolio where portfolio_name=? and user_name=?","COL",currPortfolioName,$user);
+}
+
+#
+#
 # dynamically generate the portfolio selection modal based on portfolio names.
 #
 #
 sub generatePortfolioSelectionModal {
 	my (@portfolioArray)=@_;
-	$portfolioSelectionModal="<!-- Modal -->
+	my $portfolioSelectionModal="<!-- Modal -->
 	<div class=\"modal fade\" id=\"openPortfolioSelectionModal\" role=\"dialog\">
 	<div class=\"modal-dialog\">
 
@@ -621,6 +652,34 @@ sub generatePortfolioSelectionModal {
 	  </div>
 	</div>
 	</div>";
+	return $portfolioSelectionModal;
+}
+
+sub generateCashDepositModal{
+	my ($user,$currPortfolioName)=@_;
+	my $cashDepositModel="<!-- Modal -->
+	<div class=\"modal fade\" id=\"openPortfolioSelectionModal\" role=\"dialog\">
+	<div class=\"modal-dialog\">
+
+	  <!-- Modal content-->
+	  <div class=\"modal-content\">
+	    <div class=\"modal-header\">
+	      <button type=\"button\" class=\"close\" data-dismiss=\"modal\">&times;</button>
+	      <h4 class=\"modal-title\">Deposit cash to $user\'s $currPortfolioName portfolio.</h4>
+	    </div>
+	    <div class=\"modal-body\">
+	    </div>
+	    <div class=\"modal-footer\">
+	    	<form role=\"form\" id=\"cashDepositForm\">
+				<label for=\"cashDepositAmount\">Amount you want to add to your account:</label>
+				<input type=\"text\" class=\"form-control\" id=\"cashDepositAmount\">
+				<button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\" id=\"cashDepositSubmit\">Submit</button>
+	    	</form>
+	    </div>
+	  </div>
+	</div>
+	</div>";
+
 }
 
 sub generateUserPortfolioLogoutLine{
@@ -628,15 +687,15 @@ sub generateUserPortfolioLogoutLine{
 	my $ret;
 	# If the portfolio array exists and portfolio index is legal.
 	if (scalar(@portfolioArray)>$portfolioNum){
-		return h4($usernameLink."|<a href=\"\#openPortfolioSelectionModal\">".$portfolioArray[$portfolioNum].
+		return h4($usernameLink."|<a data-toggle=\"modal\" href=\"\#openPortfolioSelectionModal\">".$portfolioArray[$portfolioNum].
 			"</a><span style=\"float:right;\"><a href=\"test.pl?act=logout\">Log out</a></span>");
 	}elsif (scalar(@portfolioArray)==0){
 		# If the portfolio array does not exist.
-		return h4($usernameLink."|<a href=\"\#openPortfolioSelectionModal\">Please create a portfolio
+		return h4($usernameLink."|<a data-toggle=\"modal\" href=\"\#openPortfolioSelectionModal\">Please create a portfolio
 			</a><span style=\"float:right;\"><a href=\"test.pl?act=logout\">Log out</a></span>");
 	}else{
 		# If the portfolio array is shorter than portfolio index
-		return h4($usernameLink."|<a href=\"\#openPortfolioSelectionModal\">".$portfolioArray[scalar(@portfolioArray)-1].
+		return h4($usernameLink."|<a data-toggle=\"modal\" href=\"\#openPortfolioSelectionModal\">".$portfolioArray[scalar(@portfolioArray)-1].
 			"</a><span style=\"float:right;\"><a href=\"test.pl?act=logout\">Log out</a></span>");
 	}
 }
