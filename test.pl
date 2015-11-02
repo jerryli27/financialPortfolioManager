@@ -345,9 +345,8 @@ my $usernameLink="<a href=\"\">username</a>";
 
 my @portfolioArray=("portfolio1","portfolio2");
 
-
-print header,
-	"<center>";
+# print the header of html
+print header;
 
 # LOGIN
 #
@@ -356,6 +355,7 @@ print header,
 # 
 #
 if ($action eq "login") { 
+	print "<center>";
   if ($logincomplain) { 
     print "Login failed.  Try again.<p>"
   } 
@@ -369,8 +369,20 @@ if ($action eq "login") {
 		submit,
 		  end_form;
   }
+  print "</center>";
 }
+#
+# If we are being asked to log out, we already deleted the cookie in previous section of the code.
+# We just need to print notification to user.
+#
+if ($action eq "logout") {
+	print 
+	start_html('Portfolio Management'),
+	"<head>
+        <meta http-equiv=\"refresh\" content=\"3;url=test.pl\" />
+    </head>"
 
+}
 
 
 if ($action eq "base") {
@@ -394,7 +406,7 @@ if ($action eq "base") {
 		$cssStyleHeader,
 		start_html('Portfolio'),
 		h3($usernameLink."|<a href=\"".$portfolioArray[0]."\">".$portfolioArray[0].
-			"</a><span style=\"float:right;\"><a href=\"\">Log out</a></span>"), 
+			"</a><span style=\"float:right;\"><a href=\"test.pl?act=logout\">Log out</a></span>"), 
 			# The span here makes the text aligned to the right while the rest of the file stays left aligned
 		$tabBarBody,
 		# The div of each individual tab
@@ -502,7 +514,7 @@ if ($action eq "base") {
 } 	
 
 if ($action eq "register") {
-	print start_html('Registration');
+	print start_html('Registration'),"<center>";
 	if (!$run){
 		$run = 1;
 		print h2("Register for Portfolio Management"),
@@ -527,12 +539,12 @@ if ($action eq "register") {
 	}
 	print "<p><a href=\"test.pl?act=login\">Login</a></p>";
 	print "<p><a href=\"test.pl?act=base&run=1\">Return</a></p>";
+	print "</center>";
 } 	
 
 
 
 
-print "</center>";
 print end_html();
 
 
