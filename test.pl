@@ -615,7 +615,7 @@ sub getUserPortfolioList{
 sub getUserPortfolioCash{
 	my ($user,$currPortfolioName)=@_;
 	# select the first column
-	return ExecSQL($dbuser, $dbpasswd, "select cash from portfolio_portfolio where portfolio_name=? and user_name=?","COL",currPortfolioName,$user);
+	return ExecSQL($dbuser, $dbpasswd, "select cash from portfolio_portfolio where portfolio_name=? and user_name=?","COL",$currPortfolioName,$user);
 }
 
 #
