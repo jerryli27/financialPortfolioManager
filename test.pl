@@ -380,12 +380,124 @@ if ($action eq "base") {
 		"<p>Please <a href=\"test.pl?act=register\">register</a></p>",
 		"<p>or <a href=\"test.pl?act=login\">login</a></p>";
  	} else {
- 		print h2("You have logged in");
+ 		# print h2("You have logged in");
  		#
  		# the majority of printing should come here
  		#
  		#
  		#
+
+ 		print 
+		"<link rel=\"stylesheet\" href=\"http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css\">
+	 	<script src=\"https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js\"></script>
+		<script src=\"http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js\"></script>",
+		$cssStyleHeader,
+		start_html('Portfolio'),
+		h3($usernameLink."|<a href=\"".$portfolioArray[0]."\">".$portfolioArray[0].
+			"</a><span style=\"float:right;\"><a href=\"\">Log out</a></span>"), 
+			# The span here makes the text aligned to the right while the rest of the file stays left aligned
+		$tabBarBody,
+		# The div of each individual tab
+
+		"<div class=\"tab-content\">",
+			# OVERVIEW
+		    "<div id=\"overview\" class=\"tab-pane fade in active\">",
+		    "<div>\t",
+			button(-name=>'deleteButton',
+				   -value=>'Delete',
+				   -onClick=>"DeleteClicked()"),
+			"</div>",
+			"<span style=\"float:right;\"><a href=\"\">Edit transactions</a>|<a href=\"\">Edit portfolio</a>|<a href=\"\">Delete portfolio</a></span>", #create a link aligned to the right on the same line
+			"<form name=\"tableForm\" action=\"\" method=\"post\">",
+			table({-width=>'100%', -border=>'0'},
+		           #caption('When Should You Eat Your Vegetables?'),
+		           Tr({-align=>'CENTER',-valign=>'TOP'},
+		           [
+		              th(['<input type="checkbox" name="checkAll" value=""/>', 'Symbol','Last price','Change',"Volume","Open","Close","High","Low"]),
+		              td(['<input type="checkbox" name="checkboxGE" value=""/>','<a href=\"\">GE</a>',15.70,"0.24(1.55%)","4.1T", 26.94, 27.55, 27.91, 26.8]),
+		              td(['<input type="checkbox" name="checkboxAPLL" value=""/>','<a href=\"\">APLL</a>',15.70,"0.24(1.55%)","4.1T", 26.94, 27.55, 27.91, 26.8]),
+		              td(['<input type="checkbox" name="checkboxFB" value=""/>','<a href=\"\">FB</a>',15.70,"0.24(1.55%)","4.1T", 26.94, 27.55, 27.91, 26.8]),
+		           ]
+		           )
+		        ),
+			"</form>",
+			"<p>\tCash - <a href=\"\">Deposit</a> / <a href=\"\">Withdraw</a>",
+			"</div>",
+			# STATISTICS
+			"<div id=\"statistics\" class=\"tab-pane fade\">\n",
+			button(-name=>'deleteButton',
+				   -value=>'Delete',
+				   -onClick=>"DeleteClicked()"),
+			"<span style=\"float:right;\"><a href=\"\">Edit transactions</a>|<a href=\"\">Edit portfolio</a>|<a href=\"\">Delete portfolio</a></span>", #create a link aligned to the right on the same line
+			"<form name=\"tableForm\" action=\"\" method=\"post\">",
+			table({-width=>'100%', -border=>'0'},
+		           #caption('When Should You Eat Your Vegetables?'),
+		           Tr({-align=>'CENTER',-valign=>'TOP'},
+		           [
+		              th(['<input type="checkbox" name="checkAll" value=""/>', 'Symbol','Last price','Change',"Volume","Open","Close","High","Low"]),
+		              td(['<input type="checkbox" name="checkboxGE" value=""/>','<a href=\"\">GE</a>',15.70,"0.24(1.55%)","4.1T", 26.94, 27.55, 27.91, 26.8]),
+		              td(['<input type="checkbox" name="checkboxAPLL" value=""/>','<a href=\"\">APLL</a>',15.70,"0.24(1.55%)","4.1T", 26.94, 27.55, 27.91, 26.8]),
+		              td(['<input type="checkbox" name="checkboxFB" value=""/>','<a href=\"\">FB</a>',15.70,"0.24(1.55%)","4.1T", 26.94, 27.55, 27.91, 26.8]),
+		           ]
+		           )
+		        ),
+			"</form>",
+			"<p>\tCash - <a href=\"\">Deposit</a> / <a href=\"\">Withdraw</a>",
+			"</div>",
+			# PERFORMANCES
+			"<div id=\"performances\" class=\"tab-pane fade\">\n",
+			"<div>\t",
+			button(-name=>'deleteButton',
+				   -value=>'Delete',
+				   -onClick=>"DeleteClicked()"),
+			"</div>",
+			"<span style=\"float:right;\"><a href=\"\">Edit transactions</a>|<a href=\"\">Edit portfolio</a>|<a href=\"\">Delete portfolio</a></span>", #create a link aligned to the right on the same line
+			"<form name=\"tableForm\" action=\"\" method=\"post\">",
+			table({-width=>'100%', -border=>'0'},
+		           #caption('When Should You Eat Your Vegetables?'),
+		           Tr({-align=>'CENTER',-valign=>'TOP'},
+		           [
+		              th(['<input type="checkbox" name="checkAll" value=""/>', 'Symbol','Last price','Change',"Volume","Open","Close","High","Low"]),
+		              td(['<input type="checkbox" name="checkboxGE" value=""/>','<a href=\"\">GE</a>',15.70,"0.24(1.55%)","4.1T", 26.94, 27.55, 27.91, 26.8]),
+		              td(['<input type="checkbox" name="checkboxAPLL" value=""/>','<a href=\"\">APLL</a>',15.70,"0.24(1.55%)","4.1T", 26.94, 27.55, 27.91, 26.8]),
+		              td(['<input type="checkbox" name="checkboxFB" value=""/>','<a href=\"\">FB</a>',15.70,"0.24(1.55%)","4.1T", 26.94, 27.55, 27.91, 26.8]),
+		           ]
+		           )
+		        ),
+			"</form>",
+			"<p>\tCash - <a href=\"\">Deposit</a> / <a href=\"\">Withdraw</a>",
+			"</div>",
+			# TRANSACTIONS
+			"<div id=\"transactions\" class=\"tab-pane fade\">\n",
+				"<div>\t",
+				button(-name=>'deleteButton',
+					   -value=>'Delete',
+					   -onClick=>"DeleteClicked()"),
+				"</div>",
+			"<span style=\"float:right;\"><a href=\"\">Edit transactions</a>|<a href=\"\">Edit portfolio</a>|<a href=\"\">Delete portfolio</a></span>", #create a link aligned to the right on the same line
+			"<form name=\"tableForm\" action=\"\" method=\"post\">",
+			table({-width=>'100%', -border=>'0'},
+		           #caption('When Should You Eat Your Vegetables?'),
+		           Tr({-align=>'CENTER',-valign=>'TOP'},
+		           [
+		              th(['<input type="checkbox" name="checkAll" value=""/>', 'Symbol','Last price','Change',"Volume","Open","Close","High","Low"]),
+		              td(['<input type="checkbox" name="checkboxGE" value=""/>','<a href=\"\">GE</a>',15.70,"0.24(1.55%)","4.1T", 26.94, 27.55, 27.91, 26.8]),
+		              td(['<input type="checkbox" name="checkboxAPLL" value=""/>','<a href=\"\">APLL</a>',15.70,"0.24(1.55%)","4.1T", 26.94, 27.55, 27.91, 26.8]),
+		              td(['<input type="checkbox" name="checkboxFB" value=""/>','<a href=\"\">FB</a>',15.70,"0.24(1.55%)","4.1T", 26.94, 27.55, 27.91, 26.8]),
+		           ]
+		           )
+		        ),
+			"</form>",
+			"<p>\tCash - <a href=\"\">Deposit</a> / <a href=\"\">Withdraw</a>",
+			"</div>",
+		"</div>", # the div for tab-content
+		"</div>",# the div of the container.
+		"</body>",
+		#
+		# The Javascript portion of our app
+		#
+	    "<script type=\"text/javascript\" src=\"test.js\"> </script>"
+		;
  	}
 } 	
 
@@ -418,117 +530,7 @@ if ($action eq "register") {
 } 	
 
 
-# print header,
-# 	"<link rel=\"stylesheet\" href=\"http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css\">
-#  	<script src=\"https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js\"></script>
-# 	<script src=\"http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js\"></script>",
-# 	$cssStyleHeader,
-# 	start_html('Portfolio'),
-# 	h3($usernameLink."|<a href=\"".$portfolioArray[0]."\">".$portfolioArray[0].
-# 		"</a><span style=\"float:right;\"><a href=\"\">Log out</a></span>"), 
-# 		# The span here makes the text aligned to the right while the rest of the file stays left aligned
-# 	$tabBarBody,
-# 	# The div of each individual tab
 
-# 	"<div class=\"tab-content\">",
-# 		# OVERVIEW
-# 	    "<div id=\"overview\" class=\"tab-pane fade in active\">",
-# 	    "<div>\t",
-# 		button(-name=>'deleteButton',
-# 			   -value=>'Delete',
-# 			   -onClick=>"DeleteClicked()"),
-# 		"</div>",
-# 		"<span style=\"float:right;\"><a href=\"\">Edit transactions</a>|<a href=\"\">Edit portfolio</a>|<a href=\"\">Delete portfolio</a></span>", #create a link aligned to the right on the same line
-# 		"<form name=\"tableForm\" action=\"\" method=\"post\">",
-# 		table({-width=>'100%', -border=>'0'},
-# 	           #caption('When Should You Eat Your Vegetables?'),
-# 	           Tr({-align=>'CENTER',-valign=>'TOP'},
-# 	           [
-# 	              th(['<input type="checkbox" name="checkAll" value=""/>', 'Symbol','Last price','Change',"Volume","Open","Close","High","Low"]),
-# 	              td(['<input type="checkbox" name="checkboxGE" value=""/>','<a href=\"\">GE</a>',15.70,"0.24(1.55%)","4.1T", 26.94, 27.55, 27.91, 26.8]),
-# 	              td(['<input type="checkbox" name="checkboxAPLL" value=""/>','<a href=\"\">APLL</a>',15.70,"0.24(1.55%)","4.1T", 26.94, 27.55, 27.91, 26.8]),
-# 	              td(['<input type="checkbox" name="checkboxFB" value=""/>','<a href=\"\">FB</a>',15.70,"0.24(1.55%)","4.1T", 26.94, 27.55, 27.91, 26.8]),
-# 	           ]
-# 	           )
-# 	        ),
-# 		"</form>",
-# 		"<p>\tCash - <a href=\"\">Deposit</a> / <a href=\"\">Withdraw</a>",
-# 		"</div>",
-# 		# STATISTICS
-# 		"<div id=\"statistics\" class=\"tab-pane fade\">\n",
-# 		button(-name=>'deleteButton',
-# 			   -value=>'Delete',
-# 			   -onClick=>"DeleteClicked()"),
-# 		"<span style=\"float:right;\"><a href=\"\">Edit transactions</a>|<a href=\"\">Edit portfolio</a>|<a href=\"\">Delete portfolio</a></span>", #create a link aligned to the right on the same line
-# 		"<form name=\"tableForm\" action=\"\" method=\"post\">",
-# 		table({-width=>'100%', -border=>'0'},
-# 	           #caption('When Should You Eat Your Vegetables?'),
-# 	           Tr({-align=>'CENTER',-valign=>'TOP'},
-# 	           [
-# 	              th(['<input type="checkbox" name="checkAll" value=""/>', 'Symbol','Last price','Change',"Volume","Open","Close","High","Low"]),
-# 	              td(['<input type="checkbox" name="checkboxGE" value=""/>','<a href=\"\">GE</a>',15.70,"0.24(1.55%)","4.1T", 26.94, 27.55, 27.91, 26.8]),
-# 	              td(['<input type="checkbox" name="checkboxAPLL" value=""/>','<a href=\"\">APLL</a>',15.70,"0.24(1.55%)","4.1T", 26.94, 27.55, 27.91, 26.8]),
-# 	              td(['<input type="checkbox" name="checkboxFB" value=""/>','<a href=\"\">FB</a>',15.70,"0.24(1.55%)","4.1T", 26.94, 27.55, 27.91, 26.8]),
-# 	           ]
-# 	           )
-# 	        ),
-# 		"</form>",
-# 		"<p>\tCash - <a href=\"\">Deposit</a> / <a href=\"\">Withdraw</a>",
-# 		"</div>",
-# 		# PERFORMANCES
-# 		"<div id=\"performances\" class=\"tab-pane fade\">\n",
-# 		"<div>\t",
-# 		button(-name=>'deleteButton',
-# 			   -value=>'Delete',
-# 			   -onClick=>"DeleteClicked()"),
-# 		"</div>",
-# 		"<span style=\"float:right;\"><a href=\"\">Edit transactions</a>|<a href=\"\">Edit portfolio</a>|<a href=\"\">Delete portfolio</a></span>", #create a link aligned to the right on the same line
-# 		"<form name=\"tableForm\" action=\"\" method=\"post\">",
-# 		table({-width=>'100%', -border=>'0'},
-# 	           #caption('When Should You Eat Your Vegetables?'),
-# 	           Tr({-align=>'CENTER',-valign=>'TOP'},
-# 	           [
-# 	              th(['<input type="checkbox" name="checkAll" value=""/>', 'Symbol','Last price','Change',"Volume","Open","Close","High","Low"]),
-# 	              td(['<input type="checkbox" name="checkboxGE" value=""/>','<a href=\"\">GE</a>',15.70,"0.24(1.55%)","4.1T", 26.94, 27.55, 27.91, 26.8]),
-# 	              td(['<input type="checkbox" name="checkboxAPLL" value=""/>','<a href=\"\">APLL</a>',15.70,"0.24(1.55%)","4.1T", 26.94, 27.55, 27.91, 26.8]),
-# 	              td(['<input type="checkbox" name="checkboxFB" value=""/>','<a href=\"\">FB</a>',15.70,"0.24(1.55%)","4.1T", 26.94, 27.55, 27.91, 26.8]),
-# 	           ]
-# 	           )
-# 	        ),
-# 		"</form>",
-# 		"<p>\tCash - <a href=\"\">Deposit</a> / <a href=\"\">Withdraw</a>",
-# 		"</div>",
-# 		# TRANSACTIONS
-# 		"<div id=\"transactions\" class=\"tab-pane fade\">\n",
-# 			"<div>\t",
-# 			button(-name=>'deleteButton',
-# 				   -value=>'Delete',
-# 				   -onClick=>"DeleteClicked()"),
-# 			"</div>",
-# 		"<span style=\"float:right;\"><a href=\"\">Edit transactions</a>|<a href=\"\">Edit portfolio</a>|<a href=\"\">Delete portfolio</a></span>", #create a link aligned to the right on the same line
-# 		"<form name=\"tableForm\" action=\"\" method=\"post\">",
-# 		table({-width=>'100%', -border=>'0'},
-# 	           #caption('When Should You Eat Your Vegetables?'),
-# 	           Tr({-align=>'CENTER',-valign=>'TOP'},
-# 	           [
-# 	              th(['<input type="checkbox" name="checkAll" value=""/>', 'Symbol','Last price','Change',"Volume","Open","Close","High","Low"]),
-# 	              td(['<input type="checkbox" name="checkboxGE" value=""/>','<a href=\"\">GE</a>',15.70,"0.24(1.55%)","4.1T", 26.94, 27.55, 27.91, 26.8]),
-# 	              td(['<input type="checkbox" name="checkboxAPLL" value=""/>','<a href=\"\">APLL</a>',15.70,"0.24(1.55%)","4.1T", 26.94, 27.55, 27.91, 26.8]),
-# 	              td(['<input type="checkbox" name="checkboxFB" value=""/>','<a href=\"\">FB</a>',15.70,"0.24(1.55%)","4.1T", 26.94, 27.55, 27.91, 26.8]),
-# 	           ]
-# 	           )
-# 	        ),
-# 		"</form>",
-# 		"<p>\tCash - <a href=\"\">Deposit</a> / <a href=\"\">Withdraw</a>",
-# 		"</div>",
-# 	"</div>", # the div for tab-content
-# 	"</div>",# the div of the container.
-# 	"</body>",
-# 	#
-# 	# The Javascript portion of our app
-# 	#
-#     "<script type=\"text/javascript\" src=\"test.js\"> </script>",
-# 	end_html();
 
 print "</center>";
 print end_html();
