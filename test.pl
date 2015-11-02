@@ -465,7 +465,7 @@ if ($action eq "base") {
 			<a href=\"test.pl?act=deleteCurrPortfolio&currPortfolioName=$portfolioArray[$portfolioNum]\" 
 			onclick=\"return confirm('Are you sure? Deleting a portfolio cannot be undone.')\">Delete this portfolio</a></span>";#create a link aligned to the right on the same line
 		my $cashDepositModel=generateCashDepositModal($user,$portfolioArray[$portfolioNum]);
-		my $sharedStringForCash="<p>\tCash - \$$userPortfolioCash <a data-toggle=\"modal\" href=\"\#cashDepositModel\">Deposit</a> / <a href=\"\">Withdraw</a>";
+		my $sharedStringForCash="<p>\tCash - \$$userPortfolioCash <a data-toggle=\"modal\" href=\"\#cashDepositModel\">Deposit</a> / <a href=\"\">Withdraw</a> $cashDepositModel";
 
  		print 
 		"<link rel=\"stylesheet\" href=\"http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css\">
