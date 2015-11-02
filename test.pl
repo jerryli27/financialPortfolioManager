@@ -392,7 +392,7 @@ if ($action eq "createNewPortfolio") {
 	print "<center>";
 	if (length($newPortfolioName)<=0){
 		print "You need to enter a portfolio name. Redirecting back to overview in 3 seconds.";
-	}elsif  (length($newPortfolioName)<=0){
+	}elsif  (length($newPortfolioName)>64){
 		print "The portfolio name has to be less than 64 characters. Redirecting back to overview in 3 seconds.";
 	}else{
 		ExecSQL($dbuser, $dbpasswd, "insert into portfolio_portfolio values('$newPortfolioName','$user',0)",undef);
@@ -400,7 +400,26 @@ if ($action eq "createNewPortfolio") {
 	}
 	print "</center>";
 }
-
+# deleteCurrPortfolio
+#
+# delete the current portfolio. The current portfolio is determined by passing in the current portfolio name.
+#
+if ($action eq "deleteCurrPortfolio") { 
+	my $currPortfolioName=param("currPortfolioName");
+	print "<head>
+				<meta http-equiv=\"refresh\" content=\"3;url=test.pl\" />
+			</head>";
+	print "<center>";
+	if (length($currPortfolioName)<=0){
+		print "Parameter passing error! You need to enter a portfolio name if you want to delete a portfolio. Redirecting back to overview in 3 seconds.";
+	}elsif  (length($currPortfolioName)>64){
+		print "Parameter passing error! The portfolio name has to be less than 64 characters if you want to delete a portfolio. Redirecting back to overview in 3 seconds.";
+	}else{
+		ExecSQL($dbuser, $dbpasswd, "delete from portfolio_portfolio where user_name='$user' and portfolio_name='$currPortfolioName'",undef);
+		print "The portfolio $currPortfolioName has been deleted. Redirecting back to overview in 3 seconds.";
+	}
+	print "</center>";
+}
 
 
 if ($action eq "base") {
@@ -416,6 +435,16 @@ if ($action eq "base") {
  		#
  		#
  		#
+ 		my $sharedTopPartOfTabs="
+			<p><div>".
+			button(-name=>'deleteButton',
+				   -value=>'Delete',
+				   -onClick=>"DeleteClicked()").
+			"</div>
+			<span style=\"float:right;\"><a href=\"\">Edit transactions</a>|<a href=\"\">Edit this portfolio</a>|
+			<a href=\"test.pl?act=deleteCurrPortfolio&currPortfolioName=$portfolioArray[$portfolioNum]\">Delete this portfolio</a></span>";
+			 #create a link aligned to the right on the same line
+			
 
  		print 
 		"<link rel=\"stylesheet\" href=\"http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css\">
@@ -431,13 +460,8 @@ if ($action eq "base") {
 		"<div class=\"tab-content\">",
 			# OVERVIEW
 		    "<div id=\"overview\" class=\"tab-pane fade in active\">",
-		    "<div>\t",
-			button(-name=>'deleteButton',
-				   -value=>'Delete',
-				   -onClick=>"DeleteClicked()"),
-			"</div>",
-			"<span style=\"float:right;\"><a href=\"\">Edit transactions</a>|<a href=\"\">Edit portfolio</a>|<a href=\"\">Delete portfolio</a></span>", #create a link aligned to the right on the same line
-			"<form name=\"tableForm\" action=\"\" method=\"post\">",
+		    $sharedTopPartOfTabs,
+		    "<form name=\"tableForm\" action=\"\" method=\"post\">",
 			table({-width=>'100%', -border=>'0'},
 		           #caption('When Should You Eat Your Vegetables?'),
 		           Tr({-align=>'CENTER',-valign=>'TOP'},
@@ -454,10 +478,7 @@ if ($action eq "base") {
 			"</div>",
 			# STATISTICS
 			"<div id=\"statistics\" class=\"tab-pane fade\">\n",
-			button(-name=>'deleteButton',
-				   -value=>'Delete',
-				   -onClick=>"DeleteClicked()"),
-			"<span style=\"float:right;\"><a href=\"\">Edit transactions</a>|<a href=\"\">Edit portfolio</a>|<a href=\"\">Delete portfolio</a></span>", #create a link aligned to the right on the same line
+			$sharedTopPartOfTabs,
 			"<form name=\"tableForm\" action=\"\" method=\"post\">",
 			table({-width=>'100%', -border=>'0'},
 		           #caption('When Should You Eat Your Vegetables?'),
@@ -475,12 +496,7 @@ if ($action eq "base") {
 			"</div>",
 			# PERFORMANCES
 			"<div id=\"performances\" class=\"tab-pane fade\">\n",
-			"<div>\t",
-			button(-name=>'deleteButton',
-				   -value=>'Delete',
-				   -onClick=>"DeleteClicked()"),
-			"</div>",
-			"<span style=\"float:right;\"><a href=\"\">Edit transactions</a>|<a href=\"\">Edit portfolio</a>|<a href=\"\">Delete portfolio</a></span>", #create a link aligned to the right on the same line
+			$sharedTopPartOfTabs,
 			"<form name=\"tableForm\" action=\"\" method=\"post\">",
 			table({-width=>'100%', -border=>'0'},
 		           #caption('When Should You Eat Your Vegetables?'),
@@ -498,12 +514,7 @@ if ($action eq "base") {
 			"</div>",
 			# TRANSACTIONS
 			"<div id=\"transactions\" class=\"tab-pane fade\">\n",
-				"<div>\t",
-				button(-name=>'deleteButton',
-					   -value=>'Delete',
-					   -onClick=>"DeleteClicked()"),
-				"</div>",
-			"<span style=\"float:right;\"><a href=\"\">Edit transactions</a>|<a href=\"\">Edit portfolio</a>|<a href=\"\">Delete portfolio</a></span>", #create a link aligned to the right on the same line
+			$sharedTopPartOfTabs,
 			"<form name=\"tableForm\" action=\"\" method=\"post\">",
 			table({-width=>'100%', -border=>'0'},
 		           #caption('When Should You Eat Your Vegetables?'),
@@ -617,15 +628,15 @@ sub generateUserPortfolioLogoutLine{
 	my $ret;
 	# If the portfolio array exists and portfolio index is legal.
 	if (scalar(@portfolioArray)>$portfolioNum){
-		return h4($usernameLink."|<a href=\"\">".$portfolioArray[$portfolioNum].
+		return h4($usernameLink."|<a href=\"\#openPortfolioSelectionModal\">".$portfolioArray[$portfolioNum].
 			"</a><span style=\"float:right;\"><a href=\"test.pl?act=logout\">Log out</a></span>");
 	}elsif (scalar(@portfolioArray)==0){
 		# If the portfolio array does not exist.
-		return h4($usernameLink."|<a href=\"\">please create a portfolio
+		return h4($usernameLink."|<a href=\"\#openPortfolioSelectionModal\">Please create a portfolio
 			</a><span style=\"float:right;\"><a href=\"test.pl?act=logout\">Log out</a></span>");
 	}else{
 		# If the portfolio array is shorter than portfolio index
-		return h4($usernameLink."|<a href=\"\">".$portfolioArray[scalar(@portfolioArray)-1].
+		return h4($usernameLink."|<a href=\"\#openPortfolioSelectionModal\">".$portfolioArray[scalar(@portfolioArray)-1].
 			"</a><span style=\"float:right;\"><a href=\"test.pl?act=logout\">Log out</a></span>");
 	}
 }
