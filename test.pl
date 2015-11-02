@@ -122,7 +122,15 @@ if (defined(param("debug"))) {
   } else {
     $debug = 1;
   }
+}else {
+  if (defined($inputdebugcookiecontent)) { 
+    $debug = $inputdebugcookiecontent;
+  } else {
+    # debug default from script
+  }
 }
+
+$outputdebugcookiecontent=$debug;
 
  
 #
@@ -178,6 +186,57 @@ if ($action eq "login") {
   }
 } 
 
+#
+# If we are being asked to log out, then if 
+# we have a cookie, we should delete it.
+#
+if ($action eq "logout") {
+  $deletecookie=1;
+  $action = "base";
+  $user = "anon";
+  $password = "anonanon";
+  $run = 1;
+}
+
+
+my @outputcookies;
+
+#
+# OK, so now we have user/password
+# and we *may* have an output cookie.   If we have a cookie, we'll send it right 
+# back to the user.
+#
+# We force the expiration date on the generated page to be immediate so
+# that the browsers won't cache it.
+#
+if (defined($outputcookiecontent)) { 
+  my $cookie=cookie(-name=>$cookiename,
+		    -value=>$outputcookiecontent,
+		    -expires=>($deletecookie ? '-1h' : '+1h'));
+  push @outputcookies, $cookie;
+} 
+#
+# We also send back a debug cookie
+#
+#
+if (defined($outputdebugcookiecontent)) { 
+  my $cookie=cookie(-name=>$debugcookiename,
+		    -value=>$outputdebugcookiecontent);
+  push @outputcookies, $cookie;
+}
+
+#
+# Headers and cookies sent back to client
+#
+# The page immediately expires so that it will be refetched if the
+# client ever needs to update it
+#
+print header(-expires=>'now', -cookie=>\@outputcookies);
+
+#
+# Now we finally begin generating back HTML
+#
+#
 
 # style header for tab bar
 my $cssStyleHeader="<style type=\"text/css\">
