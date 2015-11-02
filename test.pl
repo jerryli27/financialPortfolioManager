@@ -615,7 +615,8 @@ sub getUserPortfolioList{
 sub getUserPortfolioCash{
 	my ($user,$currPortfolioName)=@_;
 	# select the first column
-	return ExecSQL($dbuser, $dbpasswd, "select cash from portfolio_portfolio where portfolio_name=? and user_name=?","COL",$currPortfolioName,$user)[0];
+	my @ret=ExecSQL($dbuser, $dbpasswd, "select cash from portfolio_portfolio where portfolio_name=? and user_name=?","COL",$currPortfolioName,$user);
+	return $ret[0];
 }
 
 #
@@ -667,8 +668,6 @@ sub generateCashDepositModal{
 	    <div class=\"modal-header\">
 	      <button type=\"button\" class=\"close\" data-dismiss=\"modal\">&times;</button>
 	      <h4 class=\"modal-title\">Deposit cash to $user\'s $currPortfolioName portfolio.</h4>
-	    </div>
-	    <div class=\"modal-body\">
 	    </div>
 	    <div class=\"modal-footer\">
 	    	<form role=\"form\" id=\"cashDepositForm\">
