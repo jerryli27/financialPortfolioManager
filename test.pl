@@ -343,8 +343,8 @@ my $tabBarBody="
 
 my $usernameLink="<a data-toggle=\"modal\" href=\"\#openPortfolioSelectionModal\">username</a>";
 my @portfolioArray=("portfolio1","portfolio2");
-my portfolioSelectionModal="<!-- Modal -->
-  <div class=\"modal fade\" id=\"myModal\" role=\"dialog\">
+my $portfolioSelectionModal="<!-- Modal -->
+  <div class=\"modal fade\" id=\"openPortfolioSelectionModal\" role=\"dialog\">
     <div class=\"modal-dialog\">
     
       <!-- Modal content-->
