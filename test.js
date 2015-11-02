@@ -10,7 +10,8 @@ $(document).ready(function () {
 		$.ajax({
                         type: 'POST',
                         url: 'test.pl',
-                        data: { 'act': 'cashDeposit', 'cashDepositAmount'=document.getElementById("cashDepositAmount").value) },
+                        data: { 'act': 'cashDeposit', 'cashDepositAmount'=document.getElementById("cashDepositAmount").value,
+                         'currPortfolioName'=document.getElementById("currPortfolioName").value) },
                         }).done(function( msg ) {
                         	alert( "Data Saved: " + msg );
                     });

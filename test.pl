@@ -426,6 +426,7 @@ if ($action eq "deleteCurrPortfolio") {
 # Change the amount of cash in database and inform the user.
 #
 if ($action eq "cashDeposit") { 
+	my $currPortfolioName=param("currPortfolioName");
 	my $cashDepositAmount=param("cashDepositAmount");
 	print "<head>
 				<meta http-equiv=\"refresh\" content=\"3;url=test.pl\" />
@@ -687,15 +688,15 @@ sub generateUserPortfolioLogoutLine{
 	my $ret;
 	# If the portfolio array exists and portfolio index is legal.
 	if (scalar(@portfolioArray)>$portfolioNum){
-		return h4($usernameLink."|<a data-toggle=\"modal\" href=\"\#openPortfolioSelectionModal\">".$portfolioArray[$portfolioNum].
+		return h4($usernameLink."|<a data-toggle=\"modal\" href=\"\#openPortfolioSelectionModal\" id=\"currPortfolioName\">".$portfolioArray[$portfolioNum].
 			"</a><span style=\"float:right;\"><a href=\"test.pl?act=logout\">Log out</a></span>");
 	}elsif (scalar(@portfolioArray)==0){
 		# If the portfolio array does not exist.
-		return h4($usernameLink."|<a data-toggle=\"modal\" href=\"\#openPortfolioSelectionModal\">Please create a portfolio
+		return h4($usernameLink."|<a data-toggle=\"modal\" href=\"\#openPortfolioSelectionModal\" id=\"currPortfolioName\">Please create a portfolio
 			</a><span style=\"float:right;\"><a href=\"test.pl?act=logout\">Log out</a></span>");
 	}else{
 		# If the portfolio array is shorter than portfolio index
-		return h4($usernameLink."|<a data-toggle=\"modal\" href=\"\#openPortfolioSelectionModal\">".$portfolioArray[scalar(@portfolioArray)-1].
+		return h4($usernameLink."|<a data-toggle=\"modal\" href=\"\#openPortfolioSelectionModal\" id=\"currPortfolioName\">".$portfolioArray[scalar(@portfolioArray)-1].
 			"</a><span style=\"float:right;\"><a href=\"test.pl?act=logout\">Log out</a></span>");
 	}
 }
