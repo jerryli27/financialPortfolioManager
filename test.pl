@@ -404,12 +404,12 @@ if ($action eq "newTranaction") {
 	# if ($cashWithdrawAmount<=0){
 	# 	print "Cash withdraw amount must be positive.";
 	# }
-	else{
+	# else{
 		# transaction_id,portfolio_name,user_name,symbol,price,timestamp,method,amount
 		ExecSQL($dbuser, $dbpasswd, "insert into portfolio_transactions 
 			values(seq_transaction_id.nextval,'$currPortfolioName','$user','$symbol','$price','$timestamp','$method','$amount')",undef);
 		print "Transaction has been inserted to portfolio $currPortfolioName of user $user.";
-	}
+	# }
 	exit 0;
 }
 
