@@ -369,6 +369,7 @@ if ($action eq "cashDeposit") {
 		ExecSQL($dbuser, $dbpasswd, "update portfolio_portfolio set cash=cash+$cashDepositAmount where user_name='$user' and portfolio_name='$currPortfolioName'",undef);
 		print "\$$cashDepositAmount has been added to your account in $currPortfolioName of user $user.";
 	}
+	return;
 }
 # cashWithdraw
 #
@@ -383,6 +384,7 @@ if ($action eq "cashWithdraw") {
 		ExecSQL($dbuser, $dbpasswd, "update portfolio_portfolio set cash=cash-$cashWithdrawAmount where user_name='$user' and portfolio_name='$currPortfolioName'",undef);
 		print "\$$cashWithdrawAmount has been deducted from your account in $currPortfolioName of user $user.";
 	}
+	return;
 }
 
 # print the header of html
@@ -476,10 +478,10 @@ if ($action eq "base") {
 			<span style=\"float:right;\"><a href=\"\">Edit transactions</a>|<a href=\"\">Edit this portfolio</a>|
 			<a href=\"test.pl?act=deleteCurrPortfolio&currPortfolioName=$portfolioArray[$portfolioNum]\" 
 			onclick=\"return confirm('Are you sure? Deleting a portfolio cannot be undone.')\">Delete this portfolio</a></span>";#create a link aligned to the right on the same line
-		my $cashDepositModel=generateCashDepositModal($user,$portfolioArray[$portfolioNum]);
-		my $cashWithdrawModel=generateCashWithdrawModal($user,$portfolioArray[$portfolioNum]);
-		my $sharedStringForCash="<p>\tCash - \$$userPortfolioCash <a data-toggle=\"modal\" href=\"\#cashDepositModel\">Deposit</a> 
-		/ <a data-toggle=\"modal\" href=\"\#cashWithdrawModel\">Withdraw</a> $cashDepositModel $cashWithdrawModel";
+		my $cashDepositModal=generateCashDepositModal($user,$portfolioArray[$portfolioNum]);
+		my $cashWithdrawModal=generateCashWithdrawModal($user,$portfolioArray[$portfolioNum]);
+		my $sharedStringForCash="<p>\tCash - \$$userPortfolioCash <a data-toggle=\"modal\" href=\"\#cashDepositModal\">Deposit</a> 
+		/ <a data-toggle=\"modal\" href=\"\#cashWithdrawModal\">Withdraw</a> $cashDepositModal $cashWithdrawModal";
 
  		print 
 		"<link rel=\"stylesheet\" href=\"http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css\">
@@ -677,8 +679,8 @@ sub generatePortfolioSelectionModal {
 #
 sub generateCashDepositModal{
 	my ($user,$currPortfolioName)=@_;
-	my $cashDepositModel="<!-- Modal -->
-	<div class=\"modal fade\" id=\"cashDepositModel\" role=\"dialog\">
+	my $cashDepositModal="<!-- Modal -->
+	<div class=\"modal fade\" id=\"cashDepositModal\" role=\"dialog\">
 	<div class=\"modal-dialog\">
 
 	  <!-- Modal content-->
@@ -697,6 +699,7 @@ sub generateCashDepositModal{
 	  </div>
 	</div>
 	</div>";
+	return $cashDepositModal;
 }
 #
 #
@@ -705,7 +708,7 @@ sub generateCashDepositModal{
 #
 sub generateCashWithdrawModal{
 	my ($user,$currPortfolioName)=@_;
-	my $cashDepositModel="<!-- Modal -->
+	my $cashWithdrawModal="<!-- Modal -->
 	<div class=\"modal fade\" id=\"cashWithdrawModal\" role=\"dialog\">
 	<div class=\"modal-dialog\">
 
@@ -725,6 +728,7 @@ sub generateCashWithdrawModal{
 	  </div>
 	</div>
 	</div>";
+	return $cashWithdrawModal;
 }
 
 sub generateUserPortfolioLogoutLine{
