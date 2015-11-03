@@ -122,7 +122,15 @@ if (defined(param("debug"))) {
   } else {
     $debug = 1;
   }
+}else {
+  if (defined($inputdebugcookiecontent)) { 
+    $debug = $inputdebugcookiecontent;
+  } else {
+    # debug default from script
+  }
 }
+
+$outputdebugcookiecontent=$debug;
 
  
 #
@@ -178,6 +186,57 @@ if ($action eq "login") {
   }
 } 
 
+#
+# If we are being asked to log out, then if 
+# we have a cookie, we should delete it.
+#
+if ($action eq "logout") {
+  $deletecookie=1;
+  $action = "base";
+  $user = "anon";
+  $password = "anonanon";
+  $run = 1;
+}
+
+
+my @outputcookies;
+
+#
+# OK, so now we have user/password
+# and we *may* have an output cookie.   If we have a cookie, we'll send it right 
+# back to the user.
+#
+# We force the expiration date on the generated page to be immediate so
+# that the browsers won't cache it.
+#
+if (defined($outputcookiecontent)) { 
+  my $cookie=cookie(-name=>$cookiename,
+		    -value=>$outputcookiecontent,
+		    -expires=>($deletecookie ? '-1h' : '+1h'));
+  push @outputcookies, $cookie;
+} 
+#
+# We also send back a debug cookie
+#
+#
+if (defined($outputdebugcookiecontent)) { 
+  my $cookie=cookie(-name=>$debugcookiename,
+		    -value=>$outputdebugcookiecontent);
+  push @outputcookies, $cookie;
+}
+
+#
+# Headers and cookies sent back to client
+#
+# The page immediately expires so that it will be refetched if the
+# client ever needs to update it
+#
+print header(-expires=>'now', -cookie=>\@outputcookies);
+
+#
+# Now we finally begin generating back HTML
+#
+#
 
 # style header for tab bar
 my $cssStyleHeader="<style type=\"text/css\">
@@ -282,13 +341,54 @@ my $tabBarBody="
 	        </ul>" # Deleted the div and body here
 	;
 
-my $usernameLink="<a href=\"\">username</a>";
+my $usernameLink="<a data-toggle=\"modal\" href=\"\#openPortfolioSelectionModal\">".$user."</a>";
+my @portfolioArray=getUserPortfolioList($user);
+my $portfolioSelectionModal=generatePortfolioSelectionModal(@portfolioArray);
+my $portfolioNum; # *******NOTE: I think we need to store which portfolio the user visited in the database (Just an index or the name of it). 
+# So when the user first entered, or when the user switch from one portfolio to another, update that.
+if (defined(param("portfolioNum"))) { 
+  $portfolioNum=param("portfolioNum");
+} else {
+  $portfolioNum=1;
+}
+# This is the line that appears at the top with switching portfolios, logout and stuff.
+my $userPortfolioLogoutLine=generateUserPortfolioLogoutLine($user,$portfolioNum,@portfolioArray);
+my $userPortfolioCash=getUserPortfolioCash($user,$portfolioArray[$portfolioNum]);
 
-my @portfolioArray=("portfolio1","portfolio2");
+# The cash deposit and cash withdraw does not print html
+# cashDeposit
+#
+# Change the amount of cash in database and inform the user.
+#
+if ($action eq "cashDeposit") { 
+	my $currPortfolioName=param("currPortfolioName");
+	my $cashDepositAmount=param("cashDepositAmount");
+	if ($cashDepositAmount<=0){
+		print "Cash deposit amount must be positive.";
+	}else{
+		ExecSQL($dbuser, $dbpasswd, "update portfolio_portfolio set cash=cash+$cashDepositAmount where user_name='$user' and portfolio_name='$currPortfolioName'",undef);
+		print "\$$cashDepositAmount has been added to your account in $currPortfolioName of user $user.";
+	}
+	exit 0;
+}
+# cashWithdraw
+#
+# Change the amount of cash in database and inform the user.
+#
+if ($action eq "cashWithdraw") { 
+	my $currPortfolioName=param("currPortfolioName");
+	my $cashWithdrawAmount=param("cashWithdrawAmount");
+	if ($cashWithdrawAmount<=0){
+		print "Cash withdraw amount must be positive.";
+	}else{
+		ExecSQL($dbuser, $dbpasswd, "update portfolio_portfolio set cash=cash-$cashWithdrawAmount where user_name='$user' and portfolio_name='$currPortfolioName'",undef);
+		print "\$$cashWithdrawAmount has been deducted from your account in $currPortfolioName of user $user.";
+	}
+	exit 0;
+}
 
-
-print header,
-	"<center>";
+# print the header of html
+print header,start_html('Portfolio Management');
 
 # LOGIN
 #
@@ -297,6 +397,7 @@ print header,
 # 
 #
 if ($action eq "login") { 
+	print "<center>";
   if ($logincomplain) { 
     print "Login failed.  Try again.<p>"
   } 
@@ -310,28 +411,163 @@ if ($action eq "login") {
 		submit,
 		  end_form;
   }
+  print "</center>";
+}
+# createNewPortfolio
+#
+# creates a new portfolio in the database. If the portfolio name is more than 64 characters, inform the user.
+#
+if ($action eq "createNewPortfolio") { 
+	my $newPortfolioName=param("newPortfolioName");
+	print "<head>
+				<meta http-equiv=\"refresh\" content=\"3;url=test.pl\" />
+			</head>";
+	print "<center>";
+	if (length($newPortfolioName)<=0){
+		print "You need to enter a portfolio name. Redirecting back to overview in 3 seconds.";
+	}elsif  (length($newPortfolioName)>64){
+		print "The portfolio name has to be less than 64 characters. Redirecting back to overview in 3 seconds.";
+	}else{
+		ExecSQL($dbuser, $dbpasswd, "insert into portfolio_portfolio values('$newPortfolioName','$user',0)",undef);
+		print "The portfolio $newPortfolioName has been created. Redirecting back to overview in 3 seconds.";
+	}
+	print "</center>";
+}
+# deleteCurrPortfolio
+#
+# delete the current portfolio. The current portfolio is determined by passing in the current portfolio name.
+#
+if ($action eq "deleteCurrPortfolio") { 
+	my $currPortfolioName=param("currPortfolioName");
+	print "<head>
+				<meta http-equiv=\"refresh\" content=\"3;url=test.pl\" />
+			</head>";
+	print "<center>";
+	if (length($currPortfolioName)<=0){
+		print "Parameter passing error! You need to enter a portfolio name if you want to delete a portfolio. Redirecting back to overview in 3 seconds.";
+	}elsif  (length($currPortfolioName)>64){
+		print "Parameter passing error! The portfolio name has to be less than 64 characters if you want to delete a portfolio. Redirecting back to overview in 3 seconds.";
+	}else{
+		ExecSQL($dbuser, $dbpasswd, "delete from portfolio_portfolio where user_name='$user' and portfolio_name='$currPortfolioName'",undef);
+		print "The portfolio $currPortfolioName has been deleted. Redirecting back to overview in 3 seconds.";
+	}
+	print "</center>";
 }
 
 
 
 if ($action eq "base") {
-	print start_html('Portfolio Management');
+	
 	if ($user eq "anon") { 
 	print h2("Welcome to portfolio management. You are currently anonymous"),
 		"<p>Please <a href=\"test.pl?act=register\">register</a></p>",
 		"<p>or <a href=\"test.pl?act=login\">login</a></p>";
  	} else {
- 		print h2("You have logged in");
+ 		# print h2("You have logged in");
  		#
  		# the majority of printing should come here
  		#
  		#
  		#
+ 		my $sharedTopPartOfTabs="
+			<p><div>".
+			button(-name=>'deleteButton',
+				   -value=>'Delete',
+				   -onClick=>"DeleteClicked()").
+			"</div>
+			<span style=\"float:right;\"><a href=\"\">Edit transactions</a>|<a href=\"\">Edit this portfolio</a>|
+			<a href=\"test.pl?act=deleteCurrPortfolio&currPortfolioName=$portfolioArray[$portfolioNum]\" 
+			onclick=\"return confirm('Are you sure? Deleting a portfolio cannot be undone.')\">Delete this portfolio</a></span>";#create a link aligned to the right on the same line
+		my $cashDepositModal=generateCashDepositModal($user,$portfolioArray[$portfolioNum]);
+		my $cashWithdrawModal=generateCashWithdrawModal($user,$portfolioArray[$portfolioNum]);
+		my $sharedStringForCash="<p>\tCash - \$$userPortfolioCash <a data-toggle=\"modal\" href=\"\#cashDepositModal\">Deposit</a> 
+		/ <a data-toggle=\"modal\" href=\"\#cashWithdrawModal\">Withdraw</a> $cashDepositModal $cashWithdrawModal";
+
+ 		print 
+		"<link rel=\"stylesheet\" href=\"http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css\">
+	 	<script src=\"https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js\"></script>
+		<script src=\"http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js\"></script>",
+		$cssStyleHeader,
+		$userPortfolioLogoutLine, 
+			# The span here makes the text aligned to the right while the rest of the file stays left aligned
+		$portfolioSelectionModal, # html for modal(hidden unless click on username)
+		$tabBarBody,
+		# The div of each individual tab
+
+		"<div class=\"tab-content\">",
+			# OVERVIEW
+		    "<div id=\"overview\" class=\"tab-pane fade in active\">",
+		    $sharedTopPartOfTabs,
+		    "<form name=\"tableForm\" action=\"\" method=\"post\">",
+			table({-width=>'100%', -border=>'0'},
+		           #caption('When Should You Eat Your Vegetables?'),
+		           Tr({-align=>'CENTER',-valign=>'TOP'},
+		           [
+		              th(['<input type="checkbox" name="checkAll" value=""/>', 'Symbol','Last price','Change',"Volume","Open","Close","High","Low"]),
+		              td(['<input type="checkbox" name="checkboxGE" value=""/>','<a href=\"\">GE</a>',15.70,"0.24(1.55%)","4.1T", 26.94, 27.55, 27.91, 26.8]),
+		              td(['<input type="checkbox" name="checkboxAPLL" value=""/>','<a href=\"\">APLL</a>',15.70,"0.24(1.55%)","4.1T", 26.94, 27.55, 27.91, 26.8]),
+		              td(['<input type="checkbox" name="checkboxFB" value=""/>','<a href=\"\">FB</a>',15.70,"0.24(1.55%)","4.1T", 26.94, 27.55, 27.91, 26.8]),
+		           ]
+		           )
+		        ),
+			"</form>",
+			$sharedStringForCash,
+			"</div>",
+			# STATISTICS
+			"<div id=\"statistics\" class=\"tab-pane fade\">\n",
+			$sharedTopPartOfTabs,
+			"<form name=\"tableForm\" action=\"\" method=\"post\">",
+			table({-width=>'100%', -border=>'0'},
+		           #caption('When Should You Eat Your Vegetables?'),
+		           Tr({-align=>'CENTER',-valign=>'TOP'},
+		           [
+		              th(['<input type="checkbox" name="checkAll" value=""/>', 'Symbol','Last price','Change',"Volume","Open","Close","High","Low"]),
+		              td(['<input type="checkbox" name="checkboxGE" value=""/>','<a href=\"\">GE</a>',15.70,"0.24(1.55%)","4.1T", 26.94, 27.55, 27.91, 26.8]),
+		              td(['<input type="checkbox" name="checkboxAPLL" value=""/>','<a href=\"\">APLL</a>',15.70,"0.24(1.55%)","4.1T", 26.94, 27.55, 27.91, 26.8]),
+		              td(['<input type="checkbox" name="checkboxFB" value=""/>','<a href=\"\">FB</a>',15.70,"0.24(1.55%)","4.1T", 26.94, 27.55, 27.91, 26.8]),
+		           ]
+		           )
+		        ),
+			"</form>",
+			$sharedStringForCash,
+			"</div>",
+			# PERFORMANCES
+			"<div id=\"performances\" class=\"tab-pane fade\">\n",
+			$sharedTopPartOfTabs,
+			"<form name=\"tableForm\" action=\"\" method=\"post\">",
+			table({-width=>'100%', -border=>'0'},
+		           #caption('When Should You Eat Your Vegetables?'),
+		           Tr({-align=>'CENTER',-valign=>'TOP'},
+		           [
+		              th(['<input type="checkbox" name="checkAll" value=""/>', 'Symbol','Last price','Change',"Volume","Open","Close","High","Low"]),
+		              td(['<input type="checkbox" name="checkboxGE" value=""/>','<a href=\"\">GE</a>',15.70,"0.24(1.55%)","4.1T", 26.94, 27.55, 27.91, 26.8]),
+		              td(['<input type="checkbox" name="checkboxAPLL" value=""/>','<a href=\"\">APLL</a>',15.70,"0.24(1.55%)","4.1T", 26.94, 27.55, 27.91, 26.8]),
+		              td(['<input type="checkbox" name="checkboxFB" value=""/>','<a href=\"\">FB</a>',15.70,"0.24(1.55%)","4.1T", 26.94, 27.55, 27.91, 26.8]),
+		           ]
+		           )
+		        ),
+			"</form>",
+			"<p>\tCash - <a href=\"\">Deposit</a> / <a href=\"\">Withdraw</a>",
+			"</div>",
+			# TRANSACTIONS
+			"<div id=\"transactions\" class=\"tab-pane fade\">\n",
+			$sharedTopPartOfTabs,
+			generateTransactionsTable($user,$portfolioArray[$portfolioNum]),
+			$sharedStringForCash,
+			"</div>",
+		"</div>", # the div for tab-content
+		"</div>",# the div of the container.
+		"</body>",
+		#
+		# The Javascript portion of our app
+		#
+	    "<script type=\"text/javascript\" src=\"test.js\"> </script>"
+		;
  	}
 } 	
 
 if ($action eq "register") {
-	print start_html('Registration');
+	print "<center>";
 	if (!$run){
 		$run = 1;
 		print h2("Register for Portfolio Management"),
@@ -356,124 +592,172 @@ if ($action eq "register") {
 	}
 	print "<p><a href=\"test.pl?act=login\">Login</a></p>";
 	print "<p><a href=\"test.pl?act=base&run=1\">Return</a></p>";
+	print "</center>";
 } 	
 
 
-# print header,
-# 	"<link rel=\"stylesheet\" href=\"http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css\">
-#  	<script src=\"https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js\"></script>
-# 	<script src=\"http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js\"></script>",
-# 	$cssStyleHeader,
-# 	start_html('Portfolio'),
-# 	h3($usernameLink."|<a href=\"".$portfolioArray[0]."\">".$portfolioArray[0].
-# 		"</a><span style=\"float:right;\"><a href=\"\">Log out</a></span>"), 
-# 		# The span here makes the text aligned to the right while the rest of the file stays left aligned
-# 	$tabBarBody,
-# 	# The div of each individual tab
 
-# 	"<div class=\"tab-content\">",
-# 		# OVERVIEW
-# 	    "<div id=\"overview\" class=\"tab-pane fade in active\">",
-# 	    "<div>\t",
-# 		button(-name=>'deleteButton',
-# 			   -value=>'Delete',
-# 			   -onClick=>"DeleteClicked()"),
-# 		"</div>",
-# 		"<span style=\"float:right;\"><a href=\"\">Edit transactions</a>|<a href=\"\">Edit portfolio</a>|<a href=\"\">Delete portfolio</a></span>", #create a link aligned to the right on the same line
-# 		"<form name=\"tableForm\" action=\"\" method=\"post\">",
-# 		table({-width=>'100%', -border=>'0'},
-# 	           #caption('When Should You Eat Your Vegetables?'),
-# 	           Tr({-align=>'CENTER',-valign=>'TOP'},
-# 	           [
-# 	              th(['<input type="checkbox" name="checkAll" value=""/>', 'Symbol','Last price','Change',"Volume","Open","Close","High","Low"]),
-# 	              td(['<input type="checkbox" name="checkboxGE" value=""/>','<a href=\"\">GE</a>',15.70,"0.24(1.55%)","4.1T", 26.94, 27.55, 27.91, 26.8]),
-# 	              td(['<input type="checkbox" name="checkboxAPLL" value=""/>','<a href=\"\">APLL</a>',15.70,"0.24(1.55%)","4.1T", 26.94, 27.55, 27.91, 26.8]),
-# 	              td(['<input type="checkbox" name="checkboxFB" value=""/>','<a href=\"\">FB</a>',15.70,"0.24(1.55%)","4.1T", 26.94, 27.55, 27.91, 26.8]),
-# 	           ]
-# 	           )
-# 	        ),
-# 		"</form>",
-# 		"<p>\tCash - <a href=\"\">Deposit</a> / <a href=\"\">Withdraw</a>",
-# 		"</div>",
-# 		# STATISTICS
-# 		"<div id=\"statistics\" class=\"tab-pane fade\">\n",
-# 		button(-name=>'deleteButton',
-# 			   -value=>'Delete',
-# 			   -onClick=>"DeleteClicked()"),
-# 		"<span style=\"float:right;\"><a href=\"\">Edit transactions</a>|<a href=\"\">Edit portfolio</a>|<a href=\"\">Delete portfolio</a></span>", #create a link aligned to the right on the same line
-# 		"<form name=\"tableForm\" action=\"\" method=\"post\">",
-# 		table({-width=>'100%', -border=>'0'},
-# 	           #caption('When Should You Eat Your Vegetables?'),
-# 	           Tr({-align=>'CENTER',-valign=>'TOP'},
-# 	           [
-# 	              th(['<input type="checkbox" name="checkAll" value=""/>', 'Symbol','Last price','Change',"Volume","Open","Close","High","Low"]),
-# 	              td(['<input type="checkbox" name="checkboxGE" value=""/>','<a href=\"\">GE</a>',15.70,"0.24(1.55%)","4.1T", 26.94, 27.55, 27.91, 26.8]),
-# 	              td(['<input type="checkbox" name="checkboxAPLL" value=""/>','<a href=\"\">APLL</a>',15.70,"0.24(1.55%)","4.1T", 26.94, 27.55, 27.91, 26.8]),
-# 	              td(['<input type="checkbox" name="checkboxFB" value=""/>','<a href=\"\">FB</a>',15.70,"0.24(1.55%)","4.1T", 26.94, 27.55, 27.91, 26.8]),
-# 	           ]
-# 	           )
-# 	        ),
-# 		"</form>",
-# 		"<p>\tCash - <a href=\"\">Deposit</a> / <a href=\"\">Withdraw</a>",
-# 		"</div>",
-# 		# PERFORMANCES
-# 		"<div id=\"performances\" class=\"tab-pane fade\">\n",
-# 		"<div>\t",
-# 		button(-name=>'deleteButton',
-# 			   -value=>'Delete',
-# 			   -onClick=>"DeleteClicked()"),
-# 		"</div>",
-# 		"<span style=\"float:right;\"><a href=\"\">Edit transactions</a>|<a href=\"\">Edit portfolio</a>|<a href=\"\">Delete portfolio</a></span>", #create a link aligned to the right on the same line
-# 		"<form name=\"tableForm\" action=\"\" method=\"post\">",
-# 		table({-width=>'100%', -border=>'0'},
-# 	           #caption('When Should You Eat Your Vegetables?'),
-# 	           Tr({-align=>'CENTER',-valign=>'TOP'},
-# 	           [
-# 	              th(['<input type="checkbox" name="checkAll" value=""/>', 'Symbol','Last price','Change',"Volume","Open","Close","High","Low"]),
-# 	              td(['<input type="checkbox" name="checkboxGE" value=""/>','<a href=\"\">GE</a>',15.70,"0.24(1.55%)","4.1T", 26.94, 27.55, 27.91, 26.8]),
-# 	              td(['<input type="checkbox" name="checkboxAPLL" value=""/>','<a href=\"\">APLL</a>',15.70,"0.24(1.55%)","4.1T", 26.94, 27.55, 27.91, 26.8]),
-# 	              td(['<input type="checkbox" name="checkboxFB" value=""/>','<a href=\"\">FB</a>',15.70,"0.24(1.55%)","4.1T", 26.94, 27.55, 27.91, 26.8]),
-# 	           ]
-# 	           )
-# 	        ),
-# 		"</form>",
-# 		"<p>\tCash - <a href=\"\">Deposit</a> / <a href=\"\">Withdraw</a>",
-# 		"</div>",
-# 		# TRANSACTIONS
-# 		"<div id=\"transactions\" class=\"tab-pane fade\">\n",
-# 			"<div>\t",
-# 			button(-name=>'deleteButton',
-# 				   -value=>'Delete',
-# 				   -onClick=>"DeleteClicked()"),
-# 			"</div>",
-# 		"<span style=\"float:right;\"><a href=\"\">Edit transactions</a>|<a href=\"\">Edit portfolio</a>|<a href=\"\">Delete portfolio</a></span>", #create a link aligned to the right on the same line
-# 		"<form name=\"tableForm\" action=\"\" method=\"post\">",
-# 		table({-width=>'100%', -border=>'0'},
-# 	           #caption('When Should You Eat Your Vegetables?'),
-# 	           Tr({-align=>'CENTER',-valign=>'TOP'},
-# 	           [
-# 	              th(['<input type="checkbox" name="checkAll" value=""/>', 'Symbol','Last price','Change',"Volume","Open","Close","High","Low"]),
-# 	              td(['<input type="checkbox" name="checkboxGE" value=""/>','<a href=\"\">GE</a>',15.70,"0.24(1.55%)","4.1T", 26.94, 27.55, 27.91, 26.8]),
-# 	              td(['<input type="checkbox" name="checkboxAPLL" value=""/>','<a href=\"\">APLL</a>',15.70,"0.24(1.55%)","4.1T", 26.94, 27.55, 27.91, 26.8]),
-# 	              td(['<input type="checkbox" name="checkboxFB" value=""/>','<a href=\"\">FB</a>',15.70,"0.24(1.55%)","4.1T", 26.94, 27.55, 27.91, 26.8]),
-# 	           ]
-# 	           )
-# 	        ),
-# 		"</form>",
-# 		"<p>\tCash - <a href=\"\">Deposit</a> / <a href=\"\">Withdraw</a>",
-# 		"</div>",
-# 	"</div>", # the div for tab-content
-# 	"</div>",# the div of the container.
-# 	"</body>",
-# 	#
-# 	# The Javascript portion of our app
-# 	#
-#     "<script type=\"text/javascript\" src=\"test.js\"> </script>",
-# 	end_html();
 
-print "</center>";
 print end_html();
 
+#
+#
+# run sql to get the list of portfolio names
+#
+#
+sub getUserPortfolioList{
+	my ($user)=@_;
+	# select the first column
+	return ExecSQL($dbuser, $dbpasswd, "select portfolio_name from portfolio_portfolio where user_name=?","COL",$user);
+}
+
+#
+#
+# run sql to get the portfolio's cash amount.
+#
+#
+sub getUserPortfolioCash{
+	my ($user,$currPortfolioName)=@_;
+	# select the first column
+	my @ret=ExecSQL($dbuser, $dbpasswd, "select cash from portfolio_portfolio where portfolio_name=? and user_name=?","COL",$currPortfolioName,$user);
+	return $ret[0];
+}
+
+#
+#
+# dynamically generate the portfolio selection modal based on portfolio names.
+#
+#
+sub generatePortfolioSelectionModal {
+	my (@portfolioArray)=@_;
+	my $portfolioSelectionModal="<!-- Modal -->
+	<div class=\"modal fade\" id=\"openPortfolioSelectionModal\" role=\"dialog\">
+	<div class=\"modal-dialog\">
+
+	  <!-- Modal content-->
+	  <div class=\"modal-content\">
+	    <div class=\"modal-header\">
+	      <button type=\"button\" class=\"close\" data-dismiss=\"modal\">&times;</button>
+	      <h4 class=\"modal-title\">".$user."\'s portfolios</h4>
+	    </div>
+	    <div class=\"modal-body\">";
+	my $counter=0;
+	foreach (@portfolioArray){
+        $portfolioSelectionModal.="<p><a href=\"test.pl?portfolioNum=$counter\">".$_."</a></p>";
+        $counter=$counter+1;
+    }
+	$portfolioSelectionModal.="
+	    </div>
+	    <div class=\"modal-footer\">
+	    	<form role=\"form\" id=\"newPortfolioForm\">
+				<label for=\"newPortfolioName\">Your New Portfolio's Name:</label>
+				<input type=\"text\" class=\"form-control\" id=\"newPortfolioName\">
+				<button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\" id=\"newPortfolioSubmit\">Create New Portfolio</button>
+	    	</form>
+	    </div>
+	  </div>
+	</div>
+	</div>";
+	return $portfolioSelectionModal;
+}
+#
+#
+# dynamically generate the cash deposit modal based on username and portfolio names.
+#
+#
+sub generateCashDepositModal{
+	my ($user,$currPortfolioName)=@_;
+	my $cashDepositModal="<!-- Modal -->
+	<div class=\"modal fade\" id=\"cashDepositModal\" role=\"dialog\">
+	<div class=\"modal-dialog\">
+
+	  <!-- Modal content-->
+	  <div class=\"modal-content\">
+	    <div class=\"modal-header\">
+	      <button type=\"button\" class=\"close\" data-dismiss=\"modal\">&times;</button>
+	      <h4 class=\"modal-title\">Deposit cash to $user\'s $currPortfolioName portfolio.</h4>
+	    </div>
+	    <div class=\"modal-footer\">
+	    	<form role=\"form\" id=\"cashDepositForm\">
+				<label for=\"cashDepositAmount\">Amount you want to add to your account:</label>
+				<input type=\"text\" class=\"form-control\" id=\"cashDepositAmount\">
+				<button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\" id=\"cashDepositSubmit\">Submit</button>
+	    	</form>
+	    </div>
+	  </div>
+	</div>
+	</div>";
+	return $cashDepositModal;
+}
+#
+#
+# dynamically generate the cash withdraw modal based on username and portfolio names.
+#
+#
+sub generateCashWithdrawModal{
+	my ($user,$currPortfolioName)=@_;
+	my $cashWithdrawModal="<!-- Modal -->
+	<div class=\"modal fade\" id=\"cashWithdrawModal\" role=\"dialog\">
+	<div class=\"modal-dialog\">
+
+	  <!-- Modal content-->
+	  <div class=\"modal-content\">
+	    <div class=\"modal-header\">
+	      <button type=\"button\" class=\"close\" data-dismiss=\"modal\">&times;</button>
+	      <h4 class=\"modal-title\">Withdraw cash from $user\'s $currPortfolioName portfolio.</h4>
+	    </div>
+	    <div class=\"modal-footer\">
+	    	<form role=\"form\" id=\"cashWithdrawForm\">
+				<label for=\"cashWithdrawAmount\">Amount you want to withdraw from your account:</label>
+				<input type=\"text\" class=\"form-control\" id=\"cashWithdrawAmount\">
+				<button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\" id=\"cashWithdrawSubmit\">Submit</button>
+	    	</form>
+	    </div>
+	  </div>
+	</div>
+	</div>";
+	return $cashWithdrawModal;
+}
+
+sub generateUserPortfolioLogoutLine{
+	my ($user,$portfolioNum,@portfolioArray)=@_;
+	my $ret;
+	# If the portfolio array exists and portfolio index is legal.
+	if (scalar(@portfolioArray)>$portfolioNum){
+		return h4($usernameLink."|<a data-toggle=\"modal\" href=\"\#openPortfolioSelectionModal\" id=\"currPortfolioName\">".$portfolioArray[$portfolioNum].
+			"</a><span style=\"float:right;\"><a href=\"test.pl?act=logout\">Log out</a></span>");
+	}elsif (scalar(@portfolioArray)==0){
+		# If the portfolio array does not exist.
+		return h4($usernameLink."|<a data-toggle=\"modal\" href=\"\#openPortfolioSelectionModal\" id=\"currPortfolioName\">Please create a portfolio
+			</a><span style=\"float:right;\"><a href=\"test.pl?act=logout\">Log out</a></span>");
+	}else{
+		# If the portfolio array is shorter than portfolio index
+		return h4($usernameLink."|<a data-toggle=\"modal\" href=\"\#openPortfolioSelectionModal\" id=\"currPortfolioName\">".$portfolioArray[scalar(@portfolioArray)-1].
+			"</a><span style=\"float:right;\"><a href=\"test.pl?act=logout\">Log out</a></span>");
+	}
+}
+
+sub generateTransactionsTable{
+	my ($user,$currPortfolioName)=@_;
+	# The following does not work quite yet.
+	# my $ref = [
+ #              th(['<input type="checkbox" name="checkAll" value=""/>', 'Symbol','Type','Date',"Shares","Price","Cash Value","Commission"]),
+ #              td(['<input type="checkbox" name="checkboxGE" value=""/>','<a href=\"\">GE</a>',"Buy","Oct 27, 2015","100", "22.6", "\$2260", "\$10.00",]),
+ #           ];
+	my $ret=
+	"<form name=\"transactionsTableForm\" action=\"\" method=\"post\">",
+	table({-width=>'100%', -border=>'0'},
+           #caption('When Should You Eat Your Vegetables?'),
+           Tr({-align=>'CENTER',-valign=>'TOP'},
+           	[
+              th(['<input type="checkbox" name="checkAll" value=""/>', 'Symbol','Type','Date',"Shares","Price","Cash Value","Commission"]),
+              td(['<input type="checkbox" name="checkboxGE" value=""/>','<a href=\"\">GE</a>',"Buy","Oct 27, 2015","100", "22.6", "\$2260", "\$10.00",]),
+           ]
+           )
+        ),
+	"</form>";
+	return $ret;
+}
 
 #
 #
