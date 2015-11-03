@@ -376,8 +376,8 @@ if ($action eq "cashDeposit") {
 #
 if ($action eq "cashWithdraw") { 
 	my $currPortfolioName=param("currPortfolioName");
-	my $cashDepositAmount=param("cashWithdrawAmount");
-	if ($cashDepositAmount<=0){
+	my $cashWithdrawAmount=param("cashWithdrawAmount");
+	if ($cashWithdrawAmount<=0){
 		print "Cash withdraw amount must be positive.";
 	}else{
 		ExecSQL($dbuser, $dbpasswd, "update portfolio_portfolio set cash=cash-$cashWithdrawAmount where user_name='$user' and portfolio_name='$currPortfolioName'",undef);
