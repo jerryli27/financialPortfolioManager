@@ -16,16 +16,27 @@ $(document).ready(function () {
             	alert( "Data Received: " + msg );
         });
 	});
-	$("#cashWithdrawSubmit").click(function(){
-		$.ajax({
+    $("#cashWithdrawSubmit").click(function(){
+        $.ajax({
             type: 'POST',
             url: 'test.pl',
             data: { 'act': 'cashWithdraw', 'cashWithdrawAmount':document.getElementById("cashWithdrawAmount").value,
              'currPortfolioName':document.getElementById("currPortfolioName").innerHTML},
             }).done(function( msg ) {
-            	alert( "Data Received: " + msg );
+                alert( "Data Received: " + msg );
         });
-	});
+    });
+    $("#newTransactionSubmit").click(function(){
+        alert( "Got it!");
+        // $.ajax({
+        //     type: 'POST',
+        //     url: 'test.pl',
+        //     data: { 'act': 'cashWithdraw', 'cashWithdrawAmount':document.getElementById("cashWithdrawAmount").value,
+        //      'currPortfolioName':document.getElementById("currPortfolioName").innerHTML},
+        //     }).done(function( msg ) {
+        //         alert( "Data Received: " + msg );
+        // });
+    });
 });
 
 DeleteClicked = function() {
