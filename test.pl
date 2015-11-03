@@ -552,19 +552,7 @@ if ($action eq "base") {
 			# TRANSACTIONS
 			"<div id=\"transactions\" class=\"tab-pane fade\">\n",
 			$sharedTopPartOfTabs,
-			"<form name=\"tableForm\" action=\"\" method=\"post\">",
-			table({-width=>'100%', -border=>'0'},
-		           #caption('When Should You Eat Your Vegetables?'),
-		           Tr({-align=>'CENTER',-valign=>'TOP'},
-		           [
-		              th(['<input type="checkbox" name="checkAll" value=""/>', 'Symbol','Last price','Change',"Volume","Open","Close","High","Low"]),
-		              td(['<input type="checkbox" name="checkboxGE" value=""/>','<a href=\"\">GE</a>',15.70,"0.24(1.55%)","4.1T", 26.94, 27.55, 27.91, 26.8]),
-		              td(['<input type="checkbox" name="checkboxAPLL" value=""/>','<a href=\"\">APLL</a>',15.70,"0.24(1.55%)","4.1T", 26.94, 27.55, 27.91, 26.8]),
-		              td(['<input type="checkbox" name="checkboxFB" value=""/>','<a href=\"\">FB</a>',15.70,"0.24(1.55%)","4.1T", 26.94, 27.55, 27.91, 26.8]),
-		           ]
-		           )
-		        ),
-			"</form>",
+			generateTransactionsTable($user,$portfolioArray[$portfolioNum]),
 			$sharedStringForCash,
 			"</div>",
 		"</div>", # the div for tab-content
@@ -747,6 +735,23 @@ sub generateUserPortfolioLogoutLine{
 		return h4($usernameLink."|<a data-toggle=\"modal\" href=\"\#openPortfolioSelectionModal\" id=\"currPortfolioName\">".$portfolioArray[scalar(@portfolioArray)-1].
 			"</a><span style=\"float:right;\"><a href=\"test.pl?act=logout\">Log out</a></span>");
 	}
+}
+
+sub generateTransactionsTable{
+	my ($user,$currPortfolioName)=@_;
+	my @ref = (
+              th(['<input type="checkbox" name="checkAll" value=""/>', 'Symbol','Type','Date',"Shares","Price","Cash Value","Commission"]),
+              td(['<input type="checkbox" name="checkboxGE" value=""/>','<a href=\"\">GE</a>',"Buy","Oct 27, 2015","100", "22.6", "\$2260", "\$10.00",]),
+           );
+	my ret=
+	"<form name=\"transactionsTableForm\" action=\"\" method=\"post\">",
+	table({-width=>'100%', -border=>'0'},
+           #caption('When Should You Eat Your Vegetables?'),
+           Tr({-align=>'CENTER',-valign=>'TOP'},
+           @ref
+           )
+        ),
+	"</form>",
 }
 
 #
