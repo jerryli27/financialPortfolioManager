@@ -355,6 +355,36 @@ if (defined(param("portfolioNum"))) {
 my $userPortfolioLogoutLine=generateUserPortfolioLogoutLine($user,$portfolioNum,@portfolioArray);
 my $userPortfolioCash=getUserPortfolioCash($user,$portfolioArray[$portfolioNum]);
 
+# The cash deposit and cash withdraw does not print html
+# cashDeposit
+#
+# Change the amount of cash in database and inform the user.
+#
+if ($action eq "cashDeposit") { 
+	my $currPortfolioName=param("currPortfolioName");
+	my $cashDepositAmount=param("cashDepositAmount");
+	if ($cashDepositAmount<=0){
+		print "Cash deposit amount must be positive.";
+	}else{
+		ExecSQL($dbuser, $dbpasswd, "update portfolio_portfolio set cash=cash+$cashDepositAmount where user_name='$user' and portfolio_name='$currPortfolioName'",undef);
+		print "\$$cashDepositAmount has been added to your account in $currPortfolioName of user $user.";
+	}
+}
+# cashWithdraw
+#
+# Change the amount of cash in database and inform the user.
+#
+if ($action eq "cashWithdraw") { 
+	my $currPortfolioName=param("currPortfolioName");
+	my $cashDepositAmount=param("cashWithdrawAmount");
+	if ($cashDepositAmount<=0){
+		print "Cash withdraw amount must be positive.";
+	}else{
+		ExecSQL($dbuser, $dbpasswd, "update portfolio_portfolio set cash=cash-$cashWithdrawAmount where user_name='$user' and portfolio_name='$currPortfolioName'",undef);
+		print "\$$cashWithdrawAmount has been deducted from your account in $currPortfolioName of user $user.";
+	}
+}
+
 # print the header of html
 print header,start_html('Portfolio Management');
 
@@ -421,25 +451,7 @@ if ($action eq "deleteCurrPortfolio") {
 	}
 	print "</center>";
 }
-# cashDeposit
-#
-# Change the amount of cash in database and inform the user.
-#
-if ($action eq "cashDeposit") { 
-	my $currPortfolioName=param("currPortfolioName");
-	my $cashDepositAmount=param("cashDepositAmount");
-	print "<head>
-				<meta http-equiv=\"refresh\" content=\"3;url=test.pl\" />
-			</head>";
-	print "<center>";
-	if ($cashDepositAmount<=0){
-		print "Cash deposit amount must be positive. Redirecting back to overview in 3 seconds.";
-	}else{
-		ExecSQL($dbuser, $dbpasswd, "update portfolio_portfolio set cash=cash+$cashDepositAmount where user_name='$user' and portfolio_name='$currPortfolioName'",undef);
-		print "\$$cashDepositAmount has been added to your account in $currPortfolioName of user $user. Redirecting back to overview in 3 seconds.";
-	}
-	print "</center>";
-}
+
 
 
 if ($action eq "base") {
@@ -465,7 +477,9 @@ if ($action eq "base") {
 			<a href=\"test.pl?act=deleteCurrPortfolio&currPortfolioName=$portfolioArray[$portfolioNum]\" 
 			onclick=\"return confirm('Are you sure? Deleting a portfolio cannot be undone.')\">Delete this portfolio</a></span>";#create a link aligned to the right on the same line
 		my $cashDepositModel=generateCashDepositModal($user,$portfolioArray[$portfolioNum]);
-		my $sharedStringForCash="<p>\tCash - \$$userPortfolioCash <a data-toggle=\"modal\" href=\"\#cashDepositModel\">Deposit</a> / <a href=\"\">Withdraw</a> $cashDepositModel";
+		my $cashWithdrawModel=generateCashWithdrawModal($user,$portfolioArray[$portfolioNum]);
+		my $sharedStringForCash="<p>\tCash - \$$userPortfolioCash <a data-toggle=\"modal\" href=\"\#cashDepositModel\">Deposit</a> 
+		/ <a data-toggle=\"modal\" href=\"\#cashWithdrawModel\">Withdraw</a> $cashDepositModel $cashWithdrawModel";
 
  		print 
 		"<link rel=\"stylesheet\" href=\"http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css\">
@@ -609,7 +623,7 @@ sub getUserPortfolioList{
 
 #
 #
-# run sql to get the list of portfolio names
+# run sql to get the portfolio's cash amount.
 #
 #
 sub getUserPortfolioCash{
@@ -656,7 +670,11 @@ sub generatePortfolioSelectionModal {
 	</div>";
 	return $portfolioSelectionModal;
 }
-
+#
+#
+# dynamically generate the cash deposit modal based on username and portfolio names.
+#
+#
 sub generateCashDepositModal{
 	my ($user,$currPortfolioName)=@_;
 	my $cashDepositModel="<!-- Modal -->
@@ -679,7 +697,34 @@ sub generateCashDepositModal{
 	  </div>
 	</div>
 	</div>";
+}
+#
+#
+# dynamically generate the cash withdraw modal based on username and portfolio names.
+#
+#
+sub generateCashWithdrawModal{
+	my ($user,$currPortfolioName)=@_;
+	my $cashDepositModel="<!-- Modal -->
+	<div class=\"modal fade\" id=\"cashWithdrawModal\" role=\"dialog\">
+	<div class=\"modal-dialog\">
 
+	  <!-- Modal content-->
+	  <div class=\"modal-content\">
+	    <div class=\"modal-header\">
+	      <button type=\"button\" class=\"close\" data-dismiss=\"modal\">&times;</button>
+	      <h4 class=\"modal-title\">Withdraw cash from $user\'s $currPortfolioName portfolio.</h4>
+	    </div>
+	    <div class=\"modal-footer\">
+	    	<form role=\"form\" id=\"cashWithdrawForm\">
+				<label for=\"cashWithdrawAmount\">Amount you want to withdraw from your account:</label>
+				<input type=\"text\" class=\"form-control\" id=\"cashWithdrawAmount\">
+				<button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\" id=\"cashWithdrawSubmit\">Submit</button>
+	    	</form>
+	    </div>
+	  </div>
+	</div>
+	</div>";
 }
 
 sub generateUserPortfolioLogoutLine{

@@ -8,17 +8,23 @@ $(document).ready(function () {
 	
 	$("#cashDepositSubmit").click(function(){
 		$.ajax({
-                        type: 'POST',
-                        url: 'test.pl',
-                        data: { 'act': 'cashDeposit', 'cashDepositAmount':document.getElementById("cashDepositAmount").value,
-                         'currPortfolioName':document.getElementById("currPortfolioName").innerHTML},
-                        }).done(function( msg ) {
-                        	alert( "Data Received: " + msg );
-                    });
-	    // var cashDepositAmount = document.getElementById("cashDepositAmount").value;
-	    // var newURL='test.pl?act=cashDeposit&cashDepositAmount=';
-	    // newURL=newURL.concat(cashDepositAmount);
-	    // window.location.href=newURL;
+            type: 'POST',
+            url: 'test.pl',
+            data: { 'act': 'cashDeposit', 'cashDepositAmount':document.getElementById("cashDepositAmount").value,
+             'currPortfolioName':document.getElementById("currPortfolioName").innerHTML},
+            }).done(function( msg ) {
+            	alert( "Data Received: " + msg );
+        });
+	});
+	$("#cashWithdrawSubmit").click(function(){
+		$.ajax({
+            type: 'POST',
+            url: 'test.pl',
+            data: { 'act': 'cashWithdraw', 'cashWithdrawAmount':document.getElementById("cashWithdrawAmount").value,
+             'currPortfolioName':document.getElementById("currPortfolioName").innerHTML},
+            }).done(function( msg ) {
+            	alert( "Data Received: " + msg );
+        });
 	});
 });
 
