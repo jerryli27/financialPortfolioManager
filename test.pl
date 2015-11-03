@@ -369,7 +369,7 @@ if ($action eq "cashDeposit") {
 		ExecSQL($dbuser, $dbpasswd, "update portfolio_portfolio set cash=cash+$cashDepositAmount where user_name='$user' and portfolio_name='$currPortfolioName'",undef);
 		print "\$$cashDepositAmount has been added to your account in $currPortfolioName of user $user.";
 	}
-	return;
+	exit 0;
 }
 # cashWithdraw
 #
@@ -384,7 +384,7 @@ if ($action eq "cashWithdraw") {
 		ExecSQL($dbuser, $dbpasswd, "update portfolio_portfolio set cash=cash-$cashWithdrawAmount where user_name='$user' and portfolio_name='$currPortfolioName'",undef);
 		print "\$$cashWithdrawAmount has been deducted from your account in $currPortfolioName of user $user.";
 	}
-	return;
+	exit 0;
 }
 
 # print the header of html
