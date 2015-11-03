@@ -789,8 +789,8 @@ sub generateNewTransactionModal{
 		            </div>
 		        </div>
 		        <script type=\"text/javascript\">
-		            $(function () {
-		                $('#newTransactionDatetimePicker').datetimepicker();
+		            \$(function () {
+		                \$('#newTransactionDatetimePicker').datetimepicker();
 		            });
 		        </script>
 	    		<label class=\"radio-inline\">
