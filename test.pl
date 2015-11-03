@@ -739,6 +739,7 @@ sub generateUserPortfolioLogoutLine{
 
 sub generateTransactionsTable{
 	my ($user,$currPortfolioName)=@_;
+	# The following does not work quite yet.
 	my $ref = [
               th(['<input type="checkbox" name="checkAll" value=""/>', 'Symbol','Type','Date',"Shares","Price","Cash Value","Commission"]),
               td(['<input type="checkbox" name="checkboxGE" value=""/>','<a href=\"\">GE</a>',"Buy","Oct 27, 2015","100", "22.6", "\$2260", "\$10.00",]),
@@ -748,7 +749,7 @@ sub generateTransactionsTable{
 	table({-width=>'100%', -border=>'0'},
            #caption('When Should You Eat Your Vegetables?'),
            Tr({-align=>'CENTER',-valign=>'TOP'},
-           $ref
+           $ref;
            )
         ),
 	"</form>";
