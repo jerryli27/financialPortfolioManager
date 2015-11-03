@@ -752,7 +752,7 @@ sub generateTransactionsTable{
            	[
               th(['<input type="checkbox" name="checkAll" value=""/>', 'Symbol','Type','Date',"Shares","Price","Cash Value","Commission"]),
               td(['<input type="checkbox" name="checkboxGE" value=""/>','<a href=\"\">GE</a>',"Buy","Oct 27, 2015","100", "22.6", "\$2260", "\$10.00",]),
-           ];
+           ]
            )
         ),
 	"</form>";
