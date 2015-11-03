@@ -751,7 +751,7 @@ sub generateTransactionsTable{
            @ref
            )
         ),
-	"</form>",
+	"</form>";
 	return $ret;
 }
 
