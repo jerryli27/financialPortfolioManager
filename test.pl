@@ -407,7 +407,7 @@ if ($action eq "newTranaction") {
 	# else{
 		# transaction_id,portfolio_name,user_name,symbol,price,timestamp,method,amount
 		ExecSQL($dbuser, $dbpasswd, "insert into portfolio_transactions 
-			values(seq_transaction_id.nextval,'$currPortfolioName','$user','$symbol','$price','$timestamp','$method','$amount')",undef);
+			values(seq_transaction_id.nextval,'$currPortfolioName','$user','$symbol',$price,$timestamp,'$method',$amount)",undef);
 		print "Transaction has been inserted to portfolio $currPortfolioName of user $user.";
 	# }
 	exit 0;
@@ -779,7 +779,7 @@ sub generateNewTransactionModal{
 					<label for=\"amount\">Amount:</label>
 					<input type=\"text\" class=\"form-control\" id=\"amount\">
 				</div>
-				<div class='col-sm-4'>
+				<div class='col-sm-5'>
 		            <div class=\"form-group\">
 						<label for=\"newTransactionDatetimePicker\">Trade time:</label>
 		                <div class='input-group date' id='newTransactionDatetimePicker'>
@@ -796,7 +796,7 @@ sub generateNewTransactionModal{
 		            });
 		        </script>
 	    		<label class=\"radio-inline\">
-			      <input type=\"radio\" name=\"optradio\">Buy
+			      <input type=\"radio\" name=\"optradio\" checked=\"checked\">Buy
 			    </label>
 			    <label class=\"radio-inline\">
 			      <input type=\"radio\" name=\"optradio\">Sale

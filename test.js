@@ -28,14 +28,16 @@ $(document).ready(function () {
     });
     $("#newTransactionSubmit").click(function(){
         alert( "Got it!");
-        // $.ajax({
-        //     type: 'POST',
-        //     url: 'test.pl',
-        //     data: { 'act': 'cashWithdraw', 'cashWithdrawAmount':document.getElementById("cashWithdrawAmount").value,
-        //      'currPortfolioName':document.getElementById("currPortfolioName").innerHTML},
-        //     }).done(function( msg ) {
-        //         alert( "Data Received: " + msg );
-        // });
+        $.ajax({
+            type: 'POST',
+            url: 'test.pl',
+            data: { 'act': 'newTranaction', 'symbol':document.getElementById("symbol").value,'price':document.getElementById("price").value,
+            'amount':document.getElementById("amount").value,
+            'newTransactionDatetimePicker':document.getElementById("newTransactionDatetimePicker").value, //////
+             'currPortfolioName':document.getElementById("currPortfolioName").innerHTML},
+            }).done(function( msg ) {
+                alert( "Data Received: " + msg );
+        });
     });
 });
 
