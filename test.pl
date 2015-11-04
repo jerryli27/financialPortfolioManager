@@ -781,9 +781,9 @@ sub generateNewTransactionModal{
 				</div>
 				<div class='col-sm-5'>
 		            <div class=\"form-group\">
-						<label for=\"newTransactionDatetimePicker\">Trade time:</label>
-		                <div class='input-group date' id='newTransactionDatetimePicker'>
-		                    <input type='text' class=\"form-control\" />
+						<label for=\"newTransactionDatetimeDiv\">Trade time:</label>
+		                <div class='input-group date' id='newTransactionDatetimeDiv'>
+		                    <input type='text' class=\"form-control\" id='newTransactionDatetimePicker'/>
 		                    <span class=\"input-group-addon\">
 		                        <span class=\"glyphicon glyphicon-calendar\"></span>
 		                    </span>
@@ -792,7 +792,7 @@ sub generateNewTransactionModal{
 		        </div>
 		        <script type=\"text/javascript\">
 		            \$(function () {
-		                \$('#newTransactionDatetimePicker').datetimepicker();
+		                \$('#newTransactionDatetimeDiv').datetimepicker();
 		            });
 		        </script>
 	    		<label class=\"radio-inline\">
