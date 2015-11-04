@@ -504,7 +504,7 @@ if ($action eq "base") {
 			"</div>
 			<span style=\"float:right;\"><a data-toggle=\"modal\" href=\"\#newTransactionModal\">Edit transactions</a>|<a href=\"\">Edit this portfolio</a>|
 			<a href=\"test.pl?act=deleteCurrPortfolio&currPortfolioName=$portfolioArray[$portfolioNum]\" 
-			onclick=\"return confirm('Are you sure? Deleting a portfolio cannot be undone.')\">Delete this portfolio</a></span> $newTransactionModal";#create a link aligned to the right on the same line
+			onclick=\"return confirm('Are you sure? Deleting a portfolio cannot be undone.')\">Delete this portfolio</a></span>";#create a link aligned to the right on the same line
 		my $cashDepositModal=generateCashDepositModal($user,$portfolioArray[$portfolioNum]);
 		my $cashWithdrawModal=generateCashWithdrawModal($user,$portfolioArray[$portfolioNum]);
 		my $sharedStringForCash="<p>\tCash - \$$userPortfolioCash <a data-toggle=\"modal\" href=\"\#cashDepositModal\">Deposit</a> 
@@ -520,9 +520,11 @@ if ($action eq "base") {
 		$userPortfolioLogoutLine, 
 			# The span here makes the text aligned to the right while the rest of the file stays left aligned
 		$portfolioSelectionModal, # html for modal(hidden unless click on username)
+		$newTransactionModal, # modals cannot be put inside the tab contents. Otherwise it will get copied four times 
+		$cashDepositModal, # and only the modal in the first tab will be called.
+		$cashWithdrawModal,
 		$tabBarBody,
 		# The div of each individual tab
-
 		"<div class=\"tab-content\">",
 			# OVERVIEW
 		    "<div id=\"overview\" class=\"tab-pane fade in active\">",
