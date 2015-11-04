@@ -531,6 +531,7 @@ if ($action eq "base") {
 			"</form>",
 			$sharedStringForCash,
 			"</div>",
+
 			# PERFORMANCES
 			"<div id=\"performances\" class=\"tab-pane fade\">\n",
 			$sharedTopPartOfTabs,
@@ -549,11 +550,27 @@ if ($action eq "base") {
 			"</form>",
 			"<p>\tCash - <a href=\"\">Deposit</a> / <a href=\"\">Withdraw</a>",
 			"</div>",
+
 			# TRANSACTIONS
 			"<div id=\"transactions\" class=\"tab-pane fade\">\n",
-			$sharedTopPartOfTabs,
+			$sharedTopPartOfTabs;
+
+			# "<form name=\"tableForm\" action=\"\" method=\"post\">",
+			# table({-width=>'100%', -border=>'0'},
+		 #           #caption('When Should You Eat Your Vegetables?'),
+		 #           Tr({-align=>'CENTER',-valign=>'TOP'},
+		 #           [
+		 #              th(['<input type="checkbox" name="checkAll" value=""/>', 'Symbol','Last price','Change',"Volume","Open","Close","High","Low"]),
+		 #              td(['<input type="checkbox" name="checkboxGE" value=""/>','<a href=\"\">GE</a>',15.70,"0.24(1.55%)","4.1T", 26.94, 27.55, 27.91, 26.8]),
+		 #              td(['<input type="checkbox" name="checkboxAPLL" value=""/>','<a href=\"\">APLL</a>',15.70,"0.24(1.55%)","4.1T", 26.94, 27.55, 27.91, 26.8]),
+		 #              td(['<input type="checkbox" name="checkboxFB" value=""/>','<a href=\"\">FB</a>',15.70,"0.24(1.55%)","4.1T", 26.94, 27.55, 27.91, 26.8]),
+		 #           ]
+		 #           )
+		 #        ),
+			# "</form>",
+
 			generateTransactionsTable($user,$portfolioArray[$portfolioNum]),
-			$sharedStringForCash,
+			print $sharedStringForCash,
 			"</div>",
 		"</div>", # the div for tab-content
 		"</div>",# the div of the container.
@@ -737,26 +754,28 @@ sub generateUserPortfolioLogoutLine{
 	}
 }
 
+#
+# prints the transactions table given user_name and portfolio_name 
 sub generateTransactionsTable{
 	my ($user,$currPortfolioName)=@_;
-	# The following does not work quite yet.
-	# my $ref = [
- #              th(['<input type="checkbox" name="checkAll" value=""/>', 'Symbol','Type','Date',"Shares","Price","Cash Value","Commission"]),
- #              td(['<input type="checkbox" name="checkboxGE" value=""/>','<a href=\"\">GE</a>',"Buy","Oct 27, 2015","100", "22.6", "\$2260", "\$10.00",]),
- #           ];
-	my $ret=
-	"<form name=\"transactionsTableForm\" action=\"\" method=\"post\">",
+	
+	# get the transactions
+	my @rows = ExecSQL($dbuser, $dbpasswd, "select * from portfolio_transactions where user_name=? AND portfolio_name=? ORDER BY transaction_id DESC",undef,$user,$currPortfolioName);
+	
+	print "<form name=\"transactionsTableForm\" action=\"\" method=\"post\">",
 	table({-width=>'100%', -border=>'0'},
-           #caption('When Should You Eat Your Vegetables?'),
-           Tr({-align=>'CENTER',-valign=>'TOP'},
-           	[
-              th(['<input type="checkbox" name="checkAll" value=""/>', 'Symbol','Type','Date',"Shares","Price","Cash Value","Commission"]),
-              td(['<input type="checkbox" name="checkboxGE" value=""/>','<a href=\"\">GE</a>',"Buy","Oct 27, 2015","100", "22.6", "\$2260", "\$10.00",]),
-           ]
-           )
-        ),
+		Tr({-align=>'CENTER',-valign=>'TOP'},
+		[
+			th(['Transaction ID','Timestamp','Symbol',"Method","Price","Share"]),
+			# td([$table[0][0],$table[0][1],$table[0][2],$table[0][3],$table[0][4],$table[0][5]])
+			map {
+				td([
+					$$_[0],$$_[5],$$_[3],$$_[6],$$_[4],$$_[7]
+				])
+			} @rows
+		])
+	),
 	"</form>";
-	return $ret;
 }
 
 #
