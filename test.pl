@@ -440,11 +440,12 @@ if ($action eq "base") {
  		#
 		my $newTransactionModal=generateNewTransactionModal($user,$portfolioArray[$portfolioNum]);
  		my $sharedTopPartOfTabs="
-			<p><div>".
+			<p><p><div>".
 			button(-name=>'deleteButton',
 				   -value=>'Delete',
 				   -onClick=>"DeleteClicked()").
 			"</div>
+			<p>
 			<span style=\"float:right;\"><a data-toggle=\"modal\" href=\"\#newTransactionModal\">Edit transactions</a>|<a href=\"\">Edit this portfolio</a>|
 			<a href=\"test.pl?act=deleteCurrPortfolio&currPortfolioName=$portfolioArray[$portfolioNum]\" 
 			onclick=\"return confirm('Are you sure? Deleting a portfolio cannot be undone.')\">Delete this portfolio</a></span>";#create a link aligned to the right on the same line
@@ -739,6 +740,7 @@ sub generateNewTransactionModal{
 		                \$('#newTransactionDatetimeDiv').datetimepicker();
 		            });
 		        </script>
+		        <p>
 	    		<label class=\"radio-inline\">
 			      <input type=\"radio\" name=\"optradio\" checked=\"checked\" id=\"newTransactionBuy\">Buy
 			    </label>
