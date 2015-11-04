@@ -27,7 +27,7 @@ $(document).ready(function () {
         });
     });
     $("#newTransactionSubmit").click(function(){
-        alert(document.getElementById("newTransactionDatetimePicker").getDate().unix());
+        //alert(document.getElementById("newTransactionDatetimePicker").getDate().unix());
         var dateString=document.getElementById("newTransactionDatetimePicker").getDate().val();
         var timeStamp=Date.parse(dateString).getTime()/1000;
         alert(timeStamp);
