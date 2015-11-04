@@ -183,18 +183,18 @@ if (defined($outputdebugcookiecontent)) {
 #
 print header(-expires=>'now', -cookie=>\@outputcookies);
 
-my @portfolioArray=getUserPortfolioList($user);
-my $portfolioSelectionModal=generatePortfolioSelectionModal(@portfolioArray);
-my $portfolioNum; # *******NOTE: I think we need to store which portfolio the user visited in the database (Just an index or the name of it). 
-# So when the user first entered, or when the user switch from one portfolio to another, update that.
-if (defined(param("portfolioNum"))) { 
-  $portfolioNum=param("portfolioNum");
-} else {
-  $portfolioNum=1;
-}
-# This is the line that appears at the top with switching portfolios, logout and stuff.
-my $userPortfolioLogoutLine=generateUserPortfolioLogoutLine($user,$portfolioNum,@portfolioArray);
-my $userPortfolioCash=getUserPortfolioCash($user,$portfolioArray[$portfolioNum]);
+# my @portfolioArray=getUserPortfolioList($user);
+# my $portfolioSelectionModal=generatePortfolioSelectionModal(@portfolioArray);
+# my $portfolioNum; # *******NOTE: I think we need to store which portfolio the user visited in the database (Just an index or the name of it). 
+# # So when the user first entered, or when the user switch from one portfolio to another, update that.
+# if (defined(param("portfolioNum"))) { 
+#   $portfolioNum=param("portfolioNum");
+# } else {
+#   $portfolioNum=1;
+# }
+# # This is the line that appears at the top with switching portfolios, logout and stuff.
+# my $userPortfolioLogoutLine=generateUserPortfolioLogoutLine($user,$portfolioNum,@portfolioArray);
+# my $userPortfolioCash=getUserPortfolioCash($user,$portfolioArray[$portfolioNum]);
 
 
 # The cash deposit and cash withdraw does not print html
