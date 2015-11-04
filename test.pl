@@ -440,12 +440,8 @@ if ($action eq "base") {
  		#
 		my $newTransactionModal=generateNewTransactionModal($user,$portfolioArray[$portfolioNum]);
  		my $sharedTopPartOfTabs="
-			<div>".
-			button(-name=>'deleteButton',
-				   -value=>'Delete',
-				   -onClick=>"DeleteClicked()").
-			"</div>
-			<button type="button" class=\"btn btn-default\"  name=\"deleteButton\" value=\"Delete\" onclick=\"DeleteClicked()\">
+			
+			<button type=\"button\" class=\"btn btn-default\"  name=\"deleteButton\" value=\"Delete\" onclick=\"DeleteClicked()\">
   				Delete
 			</button>
 			<span style=\"float:right;\"><a data-toggle=\"modal\" href=\"\#newTransactionModal\">Edit transactions</a>|<a href=\"\">Edit this portfolio</a>|
