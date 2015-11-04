@@ -27,10 +27,6 @@ $(document).ready(function () {
         });
     });
     $("#newTransactionSubmit").click(function(){
-        //alert(document.getElementById("newTransactionDatetimePicker").getDate().unix());
-        var dateString=document.getElementById("newTransactionDatetimePicker").innerHTML;
-        var timeStamp=Date.parse(dateString)/1000;
-        alert(timeStamp);
         var method;
         if (document.getElementById("newTransactionBuy").checked){
             method="b"
@@ -45,7 +41,7 @@ $(document).ready(function () {
             url: 'test.pl',
             data: { 'act': 'newTranaction', 'symbol':document.getElementById("symbol").value,'price':document.getElementById("price").value,
             'amount':document.getElementById("amount").value,'method':method,
-            'timestamp':timeStamp,
+            'timestamp':$('#newTransactionDatetimeDiv').data("DateTimePicker").viewDate().unix(),
              'currPortfolioName':document.getElementById("currPortfolioName").innerHTML},
             }).done(function( msg ) {
                 alert( "Data Received: " + msg );

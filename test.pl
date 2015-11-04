@@ -393,7 +393,6 @@ if ($action eq "cashWithdraw") {
 #
 if ($action eq "newTranaction") { 
 	my $currPortfolioName=param("currPortfolioName");
-	my $user=param("user");
 	my $symbol=param("symbol");
 	my $price=param("price");
 	my $amount=param("amount");
