@@ -440,7 +440,7 @@ if ($action eq "base") {
  		#
 		my $newTransactionModal=generateNewTransactionModal($user,$portfolioArray[$portfolioNum]);
  		my $sharedTopPartOfTabs="
-			<br> <span class=\"glyphicon glyphicon-arrow-down\" aria-hidden=\"true\"></span>
+			<br>   <span class=\"glyphicon glyphicon-arrow-down\" aria-hidden=\"true\"></span>
 			<button type=\"button\" class=\"btn btn-default\"  name=\"deleteButton\" value=\"Delete\" onclick=\"DeleteClicked()\">
   				Delete
 			</button>
@@ -738,11 +738,11 @@ sub generateNewTransactionModal{
 		                \$('#newTransactionDatetimeDiv').datetimepicker();
 		            });
 		        </script>
-		        
-	    		<label class=\"radio\">
+		        <br><br><br><br><br><!-- Modal content-->
+	    		<label class=\"radio-inline\">
 			      <input type=\"radio\" name=\"optradio\" checked=\"checked\" id=\"newTransactionBuy\">Buy
 			    </label>
-			    <label class=\"radio\">
+			    <label class=\"radio-inline\">
 			      <input type=\"radio\" name=\"optradio\" id=\"newTransactionSell\">Sell
 			    </label>
 				<button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\" id=\"newTransactionSubmit\">Submit</button>
