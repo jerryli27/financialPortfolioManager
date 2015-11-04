@@ -234,19 +234,21 @@ if ($action eq "cashWithdraw") {
 #
 if ($action eq "newTranaction") { 
 	my $currPortfolioName=param("currPortfolioName");
-	my $user=param("user");
 	my $symbol=param("symbol");
 	my $price=param("price");
 	my $amount=param("amount");
 	my $timestamp=param("timestamp");
 	my $method=param("method");
-	if ($cashWithdrawAmount<=0){
-		print "Cash withdraw amount must be positive.";
-	}else{
+	# Commenting out error checking for now. 
+	# Also Error checking should not happen at this stage, because it is hard to return things in this subroutine,
+	# if ($cashWithdrawAmount<=0){
+	# 	print "Cash withdraw amount must be positive.";
+	# }
+	# else{
 		# transaction_id,portfolio_name,user_name,symbol,price,timestamp,method,amount
 		ExecSQL($dbuser, $dbpasswd, "insert into portfolio_transactions 
-			values(seq_transaction_id.nextval,'$currPortfolioName','$user','$symbol','$price','$timestamp','$method','$amount')",undef);
+			values(seq_transaction_id.nextval,'$currPortfolioName','$user','$symbol',$price,$timestamp,'$method',$amount)",undef);
 		print "Transaction has been inserted to portfolio $currPortfolioName of user $user.";
-	}
+	# }
 	exit 0;
 }

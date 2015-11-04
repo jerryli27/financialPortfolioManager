@@ -9,7 +9,7 @@ $(document).ready(function () {
 	$("#cashDepositSubmit").click(function(){
 		$.ajax({
             type: 'POST',
-            url: 'test.pl',
+            url: 'databaseActions.pl',
             data: { 'act': 'cashDeposit', 'cashDepositAmount':document.getElementById("cashDepositAmount").value,
              'currPortfolioName':document.getElementById("currPortfolioName").innerHTML},
             }).done(function( msg ) {
@@ -19,7 +19,7 @@ $(document).ready(function () {
     $("#cashWithdrawSubmit").click(function(){
         $.ajax({
             type: 'POST',
-            url: 'test.pl',
+            url: 'databaseActions.pl',
             data: { 'act': 'cashWithdraw', 'cashWithdrawAmount':document.getElementById("cashWithdrawAmount").value,
              'currPortfolioName':document.getElementById("currPortfolioName").innerHTML},
             }).done(function( msg ) {
@@ -38,7 +38,7 @@ $(document).ready(function () {
         }
         $.ajax({
             type: 'POST',
-            url: 'test.pl',
+            url: 'databaseActions.pl',
             data: { 'act': 'newTranaction', 'symbol':document.getElementById("symbol").value,'price':document.getElementById("price").value,
             'amount':document.getElementById("amount").value,'method':method,
             'timestamp':$('#newTransactionDatetimeDiv').data("DateTimePicker").viewDate().unix(),
