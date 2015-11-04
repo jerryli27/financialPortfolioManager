@@ -440,12 +440,14 @@ if ($action eq "base") {
  		#
 		my $newTransactionModal=generateNewTransactionModal($user,$portfolioArray[$portfolioNum]);
  		my $sharedTopPartOfTabs="
-			<p><p><div>".
+			<div>".
 			button(-name=>'deleteButton',
 				   -value=>'Delete',
 				   -onClick=>"DeleteClicked()").
 			"</div>
-			<p>
+			<button type="button" class=\"btn btn-default\"  name=\"deleteButton\" value=\"Delete\" onclick=\"DeleteClicked()\">
+  				Delete
+			</button>
 			<span style=\"float:right;\"><a data-toggle=\"modal\" href=\"\#newTransactionModal\">Edit transactions</a>|<a href=\"\">Edit this portfolio</a>|
 			<a href=\"test.pl?act=deleteCurrPortfolio&currPortfolioName=$portfolioArray[$portfolioNum]\" 
 			onclick=\"return confirm('Are you sure? Deleting a portfolio cannot be undone.')\">Delete this portfolio</a></span>";#create a link aligned to the right on the same line
@@ -710,7 +712,7 @@ sub generateNewTransactionModal{
 	      <button type=\"button\" class=\"close\" data-dismiss=\"modal\">&times;</button>
 	      <h4 class=\"modal-title\">Record a new transaction in $user\'s $currPortfolioName portfolio.</h4>
 	    </div>
-	    <div class=\"modal-footer\">
+	    <div class=\"modal-body\">
 	    	<form role=\"form\" id=\"cashWithdrawForm\">
 	    		<div class=\"col-xs-2\">
 					<label for=\"symbol\">Symbol:</label>
@@ -740,8 +742,7 @@ sub generateNewTransactionModal{
 		                \$('#newTransactionDatetimeDiv').datetimepicker();
 		            });
 		        </script>
-		        <p>
-	    		<label class=\"radio-inline\">
+	    		<label class=\"radio\">
 			      <input type=\"radio\" name=\"optradio\" checked=\"checked\" id=\"newTransactionBuy\">Buy
 			    </label>
 			    <label class=\"radio-inline\">
