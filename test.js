@@ -50,5 +50,5 @@ $(document).ready(function () {
 });
 
 DeleteClicked = function() {
-
+    alert( "Deletion yet to be implemented");
 }
