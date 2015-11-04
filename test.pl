@@ -748,6 +748,7 @@ sub generateNewTransactionModal{
 			    </label>
 				<button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\" id=\"newTransactionSubmit\">Submit</button>
 				</span>
+				<br>
 	    	</form>
 	    </div>
 	  </div>
