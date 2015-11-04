@@ -356,63 +356,6 @@ my $userPortfolioLogoutLine=generateUserPortfolioLogoutLine($user,$portfolioNum,
 my $userPortfolioCash=getUserPortfolioCash($user,$portfolioArray[$portfolioNum]);
 
 
-# The cash deposit and cash withdraw does not print html
-# cashDeposit
-#
-# Change the amount of cash in database and inform the user.
-#
-if ($action eq "cashDeposit") { 
-	my $currPortfolioName=param("currPortfolioName");
-	my $cashDepositAmount=param("cashDepositAmount");
-	if ($cashDepositAmount<=0){
-		print "Cash deposit amount must be positive.";
-	}else{
-		ExecSQL($dbuser, $dbpasswd, "update portfolio_portfolio set cash=cash+$cashDepositAmount where user_name='$user' and portfolio_name='$currPortfolioName'",undef);
-		print "\$$cashDepositAmount has been added to your account in $currPortfolioName of user $user.";
-	}
-	exit 0;
-}
-# cashWithdraw
-#
-# Change the amount of cash in database and inform the user.
-#
-if ($action eq "cashWithdraw") { 
-	my $currPortfolioName=param("currPortfolioName");
-	my $cashWithdrawAmount=param("cashWithdrawAmount");
-	if ($cashWithdrawAmount<=0){
-		print "Cash withdraw amount must be positive.";
-	}else{
-		ExecSQL($dbuser, $dbpasswd, "update portfolio_portfolio set cash=cash-$cashWithdrawAmount where user_name='$user' and portfolio_name='$currPortfolioName'",undef);
-		print "\$$cashWithdrawAmount has been deducted from your account in $currPortfolioName of user $user.";
-	}
-	exit 0;
-}
-# newTranaction
-#
-# Insert a new transaction.
-#
-if ($action eq "newTranaction") { 
-	my $currPortfolioName=param("currPortfolioName");
-	my $symbol=param("symbol");
-	my $price=param("price");
-	my $amount=param("amount");
-	my $timestamp=param("timestamp");
-	my $method=param("method");
-	# Commenting out error checking for now. 
-	# Also Error checking should not happen at this stage, because it is hard to return things in this subroutine,
-	# if ($cashWithdrawAmount<=0){
-	# 	print "Cash withdraw amount must be positive.";
-	# }
-	# else{
-		# transaction_id,portfolio_name,user_name,symbol,price,timestamp,method,amount
-		ExecSQL($dbuser, $dbpasswd, "insert into portfolio_transactions 
-			values(seq_transaction_id.nextval,'$currPortfolioName','$user','$symbol',$price,$timestamp,'$method',$amount)",undef);
-		print "Transaction has been inserted to portfolio $currPortfolioName of user $user.";
-	# }
-	exit 0;
-}
-
-
 # print the header of html
 print header,start_html('Portfolio Management');
 
