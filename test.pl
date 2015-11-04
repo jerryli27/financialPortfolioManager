@@ -739,6 +739,7 @@ sub generateNewTransactionModal{
 		            });
 		        </script>
 		        <br><br><br><br><!-- Added so many blank lines so that the buttons can start on a new line...-->
+		        <span style=\"float:right;\">
 	    		<label class=\"radio-inline\">
 			      <input type=\"radio\" name=\"optradio\" checked=\"checked\" id=\"newTransactionBuy\">Buy
 			    </label>
@@ -746,6 +747,7 @@ sub generateNewTransactionModal{
 			      <input type=\"radio\" name=\"optradio\" id=\"newTransactionSell\">Sell
 			    </label>
 				<button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\" id=\"newTransactionSubmit\">Submit</button>
+				</span>
 	    	</form>
 	    </div>
 	  </div>
