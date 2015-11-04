@@ -28,8 +28,8 @@ $(document).ready(function () {
     });
     $("#newTransactionSubmit").click(function(){
         //alert(document.getElementById("newTransactionDatetimePicker").getDate().unix());
-        var dateString=document.getElementById("newTransactionDatetimePicker").val();
-        var timeStamp=Date.parse(dateString).getTime()/1000;
+        var dateString=document.getElementById("newTransactionDatetimePicker").innerHTML;
+        var timeStamp=Date.parse(dateString)/1000;
         alert(timeStamp);
         var method;
         if (document.getElementById("newTransactionBuy").checked){

@@ -783,7 +783,7 @@ sub generateNewTransactionModal{
 		            <div class=\"form-group\">
 						<label for=\"newTransactionDatetimeDiv\">Trade time:</label>
 		                <div class='input-group date' id='newTransactionDatetimeDiv'>
-		                    <input type='text' class=\"form-control\" id='newTransactionDatetimePicker'/>
+		                    <input type='text' class=\"form-control\" data-format=\"MM/dd/yyyy HH:mm:ss PP\" id='newTransactionDatetimePicker'/>
 		                    <span class=\"input-group-addon\">
 		                        <span class=\"glyphicon glyphicon-calendar\"></span>
 		                    </span>
