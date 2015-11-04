@@ -27,13 +27,25 @@ $(document).ready(function () {
         });
     });
     $("#newTransactionSubmit").click(function(){
-        alert( "Got it!");
+        alert(document.getElementById("newTransactionDatetimePicker").getDate().unix());
+        var dateString=document.getElementById("newTransactionDatetimePicker").getDate().val();
+        var timeStamp=Date.parse(dateString).getTime()/1000;
+        alert(timeStamp);
+        var method;
+        if (document.getElementById("newTransactionBuy").checked){
+            method="b"
+        }else if (document.getElementById("newTransactionSell").checked){
+            method="s"
+        }else{
+            alert("Nothing is selected. What have you done to the radio buttons?!");
+            return;
+        }
         $.ajax({
             type: 'POST',
             url: 'test.pl',
             data: { 'act': 'newTranaction', 'symbol':document.getElementById("symbol").value,'price':document.getElementById("price").value,
-            'amount':document.getElementById("amount").value,
-            'newTransactionDatetimePicker':document.getElementById("newTransactionDatetimePicker").value, //////
+            'amount':document.getElementById("amount").value,'method':method,
+            'timestamp':timeStamp,
              'currPortfolioName':document.getElementById("currPortfolioName").innerHTML},
             }).done(function( msg ) {
                 alert( "Data Received: " + msg );

@@ -796,10 +796,10 @@ sub generateNewTransactionModal{
 		            });
 		        </script>
 	    		<label class=\"radio-inline\">
-			      <input type=\"radio\" name=\"optradio\" checked=\"checked\">Buy
+			      <input type=\"radio\" name=\"optradio\" checked=\"checked\" id=\"newTransactionBuy\">Buy
 			    </label>
 			    <label class=\"radio-inline\">
-			      <input type=\"radio\" name=\"optradio\">Sale
+			      <input type=\"radio\" name=\"optradio\" id=\"newTransactionSell\">Sell
 			    </label>
 				<button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\" id=\"newTransactionSubmit\">Submit</button>
 	    	</form>
