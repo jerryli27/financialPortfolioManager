@@ -354,7 +354,7 @@ if (defined(param("portfolioNum"))) {
 # This is the line that appears at the top with switching portfolios, logout and stuff.
 my $userPortfolioLogoutLine=generateUserPortfolioLogoutLine($user,$portfolioNum,@portfolioArray);
 my $userPortfolioCash=getUserPortfolioCash($user,$portfolioArray[$portfolioNum]);
-
+my $userPortfolioTransactionsNum;
 
 # print the header of html
 print header,start_html('Portfolio Management');
@@ -471,19 +471,7 @@ if ($action eq "base") {
 			# OVERVIEW
 		    "<div id=\"overview\" class=\"tab-pane fade in active\">",
 		    $sharedTopPartOfTabs,
-		    "<form name=\"tableForm\" action=\"\" method=\"post\">",
-			table({-width=>'100%', -border=>'0'},
-		           #caption('When Should You Eat Your Vegetables?'),
-		           Tr({-align=>'CENTER',-valign=>'TOP'},
-		           [
-		              th(['<input type="checkbox" name="checkAll" value=""/>', 'Symbol','Last price','Change',"Volume","Open","Close","High","Low"]),
-		              td(['<input type="checkbox" name="checkboxGE" value=""/>','<a href=\"\">GE</a>',15.70,"0.24(1.55%)","4.1T", 26.94, 27.55, 27.91, 26.8]),
-		              td(['<input type="checkbox" name="checkboxAPLL" value=""/>','<a href=\"\">APLL</a>',15.70,"0.24(1.55%)","4.1T", 26.94, 27.55, 27.91, 26.8]),
-		              td(['<input type="checkbox" name="checkboxFB" value=""/>','<a href=\"\">FB</a>',15.70,"0.24(1.55%)","4.1T", 26.94, 27.55, 27.91, 26.8]),
-		           ]
-		           )
-		        ),
-			"</form>",
+		    generateOverviewTable($user,$portfolioArray[$portfolioNum]),
 			$sharedStringForCash,
 			"</div>",
 			# STATISTICS
@@ -814,6 +802,40 @@ sub generateTransactionsTable{
 		])
 	),
 	"</form>";
+	#store number of transactions
+	$userPortfolioTransactionsNum=scalar(@rows);
+}
+
+#
+# returns the overview table given user_name and portfolio_name 
+sub generateOverviewTable{
+	my ($user,$currPortfolioName)=@_;
+	
+	# get the transactions
+	my @rows = ExecSQL($dbuser, $dbpasswd, 
+		"SELECT portfolio_allStocks.* FROM portfolio_allStocks,
+			(SELECT portfolio_allStocks.symbol,max(portfolio_allStocks.timestamp) AS timestamp from portfolio_allStocks where portfolio_allStocks.symbol in 
+				(SELECT DISTINCT portfolio_transactions.symbol FROM portfolio_transactions WHERE portfolio_transactions.user_name=? AND portfolio_transactions.portfolio_name=?) 
+			GROUP BY portfolio_allStocks.symbol) transactionStocks 
+		WHERE transactionStocks.timestamp=portfolio_allStocks.timestamp AND transactionStocks.symbol=portfolio_allStocks.symbol"
+		,undef,$user,$currPortfolioName);
+	
+	return "<form name=\"transactionsTableForm\" action=\"\" method=\"post\">".
+	table({-width=>'100%', -border=>'0'},
+		Tr({-align=>'CENTER',-valign=>'TOP'},
+		[
+
+			th(['Symbol','Time','Open','High','Low','Close','Volume']),
+			# td([$table[0][0],$table[0][1],$table[0][2],$table[0][3],$table[0][4],$table[0][5]])
+			map {
+				td([
+					$$_[0],$$_[1],$$_[2],$$_[3],$$_[4],$$_[5]
+				])
+			} @rows
+		])
+	).
+	"</form>";
+
 }
 
 #
