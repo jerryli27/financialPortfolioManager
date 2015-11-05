@@ -45,6 +45,12 @@ use DBI;
 # date strings into the unix epoch time (seconds since 1970)
 #
 use Time::ParseDate;
+#
+#
+# A module that makes it easy to parse the unix epoch time (seconds since 1970)
+# back into string form
+#
+use Time::Piece;
 
 #
 # Debugging
@@ -829,7 +835,7 @@ sub generateOverviewTable{
 			# td([$table[0][0],$table[0][1],$table[0][2],$table[0][3],$table[0][4],$table[0][5]])
 			map {
 				td([
-					$$_[0],$$_[1],$$_[2],$$_[3],$$_[4],$$_[5]
+					$$_[0],localtime($$_[1])->strftime('%F %T'),$$_[2],$$_[3],$$_[4],$$_[5],$$_[6]
 				])
 			} @rows
 		])
