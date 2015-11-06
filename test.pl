@@ -844,11 +844,12 @@ sub generatePerformanceTable{
 	{
 		local @ARGV;
 		@ARGV = ('APPL'); # set our command line args!
-		$results=eval { require "get_covar.pl" };
+		$results=eval { require "get_info.pl" };
 	        # the 'eval' catches the exception that occurs when
 	        # inc.pl fails to return true (which can also be alleviated
 	        # by ending "inc.pl" with a true value, such as 1; in a
 	        # line by itself).
+		print $results;
 	}
 	# my @ARGS=('APPL');
 	# # For each symbol of stocks, calculate their COV 
