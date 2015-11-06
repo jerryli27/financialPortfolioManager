@@ -831,13 +831,13 @@ sub generateOverviewTable{
 		Tr({-align=>'CENTER',-valign=>'TOP'},
 		[
 
-			th(['Symbol','Time','Open','High','Low','Close','Volume']),
+			th(['<input type="checkbox" name="checkAll" value=""/>','Symbol','Time','Open','High','Low','Close','Volume']),
 			# td([$table[0][0],$table[0][1],$table[0][2],$table[0][3],$table[0][4],$table[0][5]])
 			map {
 				td([
-					$$_[0],localtime($$_[1])->strftime('%F %T'),$$_[2],$$_[3],$$_[4],$$_[5],$$_[6]
+					'<input type="checkbox" name="check$$_[0]" value=""/>',$$_[0],localtime($$_[1])->strftime('%F %T'),$$_[2],$$_[3],$$_[4],$$_[5],$$_[6]
 				])
-			} @rows
+			} @table
 		])
 	).
 	"</form>";
@@ -866,6 +866,8 @@ sub generatePerformanceTable{
 		$table[$counter][6]=($rows[0][5]-$rows[1][5])*$$_[1];#Day's gain= amount of stocks* change in stock price
 		$counter=$counter+1;
 	}
+	my $sum;
+	map { $sum += $$_[4] } @table;
 	return "<form name=\"transactionsTableForm\" action=\"\" method=\"post\">".
 	table({-width=>'100%', -border=>'0'},
 		Tr({-align=>'CENTER',-valign=>'TOP'},
@@ -879,7 +881,8 @@ sub generatePerformanceTable{
 			} @table
 		])
 	).
-	"</form>";
+	"</form>".
+	"Sum of Gain: ".$sum."<br>";
 
 }
 
