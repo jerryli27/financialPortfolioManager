@@ -840,35 +840,19 @@ sub generatePerformanceTable{
 	my @symbols = ExecSQL($dbuser, $dbpasswd, "SELECT portfolio_transactions.symbol,min(timestamp)-86400,max(timestamp) FROM portfolio_transactions 
 		WHERE portfolio_transactions.user_name=? AND portfolio_transactions.portfolio_name=? GROUP BY symbol"
 		,undef,$user,$currPortfolioName);
-	my $results;
-	my @my_args = ('\'APPL\'');
-	my $cmd="get_info.pl".' '.join(' ',@my_args);
-	$results=`$cmd`;
-	# {
-	# 	local @ARGV;
-	# 	@ARGV = ('APPL'); # set our command line args!
-	# 	$results=eval { require "get_info.pl" };
-	#         # the 'eval' catches the exception that occurs when
-	#         # inc.pl fails to return true (which can also be alleviated
-	#         # by ending "inc.pl" with a true value, such as 1; in a
-	#         # line by itself).
-	# 	print $results;
-	# }
-	# my @ARGS=('APPL');
-	# # For each symbol of stocks, calculate their COV 
-	# my $results = capture($^X, "get_covar.pl", @ARGS);
-	return $results;
+	# I tried to execute outside perl script but failed.
+	my @rows = map{ExecStockSQL("SELECT * from (select * from portfolio_allStocks where symbol=$$_[0] order by timestamp DESC) where ROWNUM<=2",undef)} @symbols;
 	return "<form name=\"transactionsTableForm\" action=\"\" method=\"post\">".
 	table({-width=>'100%', -border=>'0'},
 		Tr({-align=>'CENTER',-valign=>'TOP'},
 		[
 
 			th(['Symbol','Last Price','Change','Shares','Gain','Gain %','Day\'s gain']),
-			# map {
-			# 	td([
-			# 		$$_[0],localtime($$_[1])->strftime('%F %T'),$$_[2],$$_[3],$$_[4],$$_[5],$$_[6]
-			# 	])
-			# } @rows
+			map {
+				td([
+					$$_[0],localtime($$_[1])->strftime('%F %T'),$$_[2],$$_[3],$$_[4],$$_[5],$$_[6]
+				])
+			} @rows
 		])
 	).
 	"</form>";
