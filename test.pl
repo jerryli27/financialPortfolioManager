@@ -52,11 +52,6 @@ use Time::ParseDate;
 #
 use Time::Piece;
 #
-#
-# A module that enables this script to run other perl script and get the return val
-#
-use IPC::System::Simple qw(system capture);
-#
 # Debugging
 #
 # database input and output is paired into the two arrays noted
@@ -845,9 +840,19 @@ sub generatePerformanceTable{
 	my @symbols = ExecSQL($dbuser, $dbpasswd, "SELECT portfolio_transactions.symbol,min(timestamp)-86400,max(timestamp) FROM portfolio_transactions 
 		WHERE portfolio_transactions.user_name=? AND portfolio_transactions.portfolio_name=? GROUP BY symbol"
 		,undef,$user,$currPortfolioName);
-	my @ARGS=('APPL');
-	# For each symbol of stocks, calculate their COV 
-	my $results = capture($^X, "get_covar.pl", @ARGS);
+	my $results;
+	{
+		local @ARGV;
+		@ARGV = ('APPL'); # set our command line args!
+		$results=eval { require "get_covar.pl" };
+	        # the 'eval' catches the exception that occurs when
+	        # inc.pl fails to return true (which can also be alleviated
+	        # by ending "inc.pl" with a true value, such as 1; in a
+	        # line by itself).
+	}
+	# my @ARGS=('APPL');
+	# # For each symbol of stocks, calculate their COV 
+	# my $results = capture($^X, "get_covar.pl", @ARGS);
 	return $results;
 	return "<form name=\"transactionsTableForm\" action=\"\" method=\"post\">".
 	table({-width=>'100%', -border=>'0'},
