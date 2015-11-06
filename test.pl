@@ -51,7 +51,11 @@ use Time::ParseDate;
 # back into string form
 #
 use Time::Piece;
-
+#
+#
+# A module that enables this script to run other perl script and get the return val
+#
+use IPC::System::Simple qw(system capture);
 #
 # Debugging
 #
@@ -502,19 +506,7 @@ if ($action eq "base") {
 			# PERFORMANCES
 			"<div id=\"performances\" class=\"tab-pane fade\">\n",
 			$sharedTopPartOfTabs,
-			"<form name=\"tableForm\" action=\"\" method=\"post\">",
-			table({-width=>'100%', -border=>'0'},
-		           #caption('When Should You Eat Your Vegetables?'),
-		           Tr({-align=>'CENTER',-valign=>'TOP'},
-		           [
-		              th(['<input type="checkbox" name="checkAll" value=""/>', 'Symbol','Last price','Change',"Volume","Open","Close","High","Low"]),
-		              td(['<input type="checkbox" name="checkboxGE" value=""/>','<a href=\"\">GE</a>',15.70,"0.24(1.55%)","4.1T", 26.94, 27.55, 27.91, 26.8]),
-		              td(['<input type="checkbox" name="checkboxAPLL" value=""/>','<a href=\"\">APLL</a>',15.70,"0.24(1.55%)","4.1T", 26.94, 27.55, 27.91, 26.8]),
-		              td(['<input type="checkbox" name="checkboxFB" value=""/>','<a href=\"\">FB</a>',15.70,"0.24(1.55%)","4.1T", 26.94, 27.55, 27.91, 26.8]),
-		           ]
-		           )
-		        ),
-			"</form>",
+			generatePerformanceTable($user,$portfolioArray[$portfolioNum]),
 			"<p>\tCash - <a href=\"\">Deposit</a> / <a href=\"\">Withdraw</a>",
 			"</div>",
 
@@ -838,6 +830,36 @@ sub generateOverviewTable{
 					$$_[0],localtime($$_[1])->strftime('%F %T'),$$_[2],$$_[3],$$_[4],$$_[5],$$_[6]
 				])
 			} @rows
+		])
+	).
+	"</form>";
+
+}
+
+#
+# returns the performance table given user_name and portfolio_name 
+sub generatePerformanceTable{
+	my ($user,$currPortfolioName)=@_;
+	# Get a list of all the symbols of stocks, their start date, and their end date involved in our transactions.
+	# The start date is deducted by 1 because otherwise the performance estimation may be based only on one day's data, which might not be accurate.
+	my @symbols = ExecSQL($dbuser, $dbpasswd, "SELECT portfolio_transactions.symbol,min(timestamp)-86400,max(timestamp) FROM portfolio_transactions 
+		WHERE portfolio_transactions.user_name=? AND portfolio_transactions.portfolio_name=? GROUP BY symbol"
+		,undef,$user,$currPortfolioName);
+	my @ARGS=('APPL');
+	# For each symbol of stocks, calculate their COV 
+	my $results = capture($^X, "get_covar.pl", @ARGS);
+	return $results;
+	return "<form name=\"transactionsTableForm\" action=\"\" method=\"post\">".
+	table({-width=>'100%', -border=>'0'},
+		Tr({-align=>'CENTER',-valign=>'TOP'},
+		[
+
+			th(['Symbol','Last Price','Change','Shares','Gain','Gain %','Day\'s gain']),
+			# map {
+			# 	td([
+			# 		$$_[0],localtime($$_[1])->strftime('%F %T'),$$_[2],$$_[3],$$_[4],$$_[5],$$_[6]
+			# 	])
+			# } @rows
 		])
 	).
 	"</form>";
