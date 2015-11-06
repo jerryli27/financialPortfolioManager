@@ -841,7 +841,7 @@ sub generatePerformanceTable{
 		WHERE portfolio_transactions.user_name=? AND portfolio_transactions.portfolio_name=? GROUP BY symbol"
 		,undef,$user,$currPortfolioName);
 	# I tried to execute outside perl script but failed.
-	my @rows = map{ExecStockSQL("SELECT * from (select * from portfolio_allStocks where symbol=$$_[0] order by timestamp DESC) where ROWNUM<=2",undef)} @symbols;
+	my @rows = map{ExecSQL("SELECT * from (select * from portfolio_allStocks where symbol=$$_[0] order by timestamp DESC) where ROWNUM<=2",undef)} @symbols;
 	return "<form name=\"transactionsTableForm\" action=\"\" method=\"post\">".
 	table({-width=>'100%', -border=>'0'},
 		Tr({-align=>'CENTER',-valign=>'TOP'},
