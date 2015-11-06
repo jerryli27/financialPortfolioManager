@@ -841,16 +841,19 @@ sub generatePerformanceTable{
 		WHERE portfolio_transactions.user_name=? AND portfolio_transactions.portfolio_name=? GROUP BY symbol"
 		,undef,$user,$currPortfolioName);
 	my $results;
-	{
-		local @ARGV;
-		@ARGV = ('APPL'); # set our command line args!
-		$results=eval { require "get_info.pl" };
-	        # the 'eval' catches the exception that occurs when
-	        # inc.pl fails to return true (which can also be alleviated
-	        # by ending "inc.pl" with a true value, such as 1; in a
-	        # line by itself).
-		print $results;
-	}
+	my @my_args = ('\'APPL\'');
+	my $cmd="get_info.pl".' '.join(' ',@my_args);
+	$results=`$cmd`;
+	# {
+	# 	local @ARGV;
+	# 	@ARGV = ('APPL'); # set our command line args!
+	# 	$results=eval { require "get_info.pl" };
+	#         # the 'eval' catches the exception that occurs when
+	#         # inc.pl fails to return true (which can also be alleviated
+	#         # by ending "inc.pl" with a true value, such as 1; in a
+	#         # line by itself).
+	# 	print $results;
+	# }
 	# my @ARGS=('APPL');
 	# # For each symbol of stocks, calculate their COV 
 	# my $results = capture($^X, "get_covar.pl", @ARGS);
