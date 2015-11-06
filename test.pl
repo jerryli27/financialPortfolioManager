@@ -836,8 +836,7 @@ sub generateOverviewTable{
 sub generatePerformanceTable{
 	my ($user,$currPortfolioName)=@_;
 	# Get a list of all the symbols of stocks, their start date, and their end date involved in our transactions.
-	# The start date is deducted by 1 because otherwise the performance estimation may be based only on one day's data, which might not be accurate.
-	my @symbols = ExecSQL($dbuser, $dbpasswd, "SELECT portfolio_transactions.symbol,min(timestamp)-86400,max(timestamp) FROM portfolio_transactions 
+	my @symbols = ExecSQL($dbuser, $dbpasswd, "SELECT portfolio_transactions.symbol,sum(amount),sum(price*amount) FROM portfolio_transactions 
 		WHERE portfolio_transactions.user_name=? AND portfolio_transactions.portfolio_name=? GROUP BY symbol"
 		,undef,$user,$currPortfolioName);
 	# I tried to execute outside perl script but failed.
@@ -845,9 +844,13 @@ sub generatePerformanceTable{
 	my $counter=0;
 	foreach (@symbols){
 		@rows=ExecSQL($dbuser, $dbpasswd,"SELECT * from (select * from portfolio_allStocks where symbol=\'$$_[0]\' order by timestamp DESC) where ROWNUM<=2",undef);
-		$table[$counter][0]=$rows[0][0];
-		$table[$counter][1]=$rows[0][5];
-		$table[$counter][2]=$rows[0][5]-$rows[1][5];
+		$table[$counter][0]=$rows[0][0];#Symbol
+		$table[$counter][1]=$rows[0][5];#Last price
+		$table[$counter][2]=$rows[0][5]-$rows[1][5];#change
+		$table[$counter][3]=$$_[1];#Shares
+		$table[$counter][4]=$rows[0][5]*$$_[1]-$$_[2];#Gain= current value of all stocks-the money I spent on buying them.
+		$table[$counter][5]=($rows[0][5]*$$_[1]-$$_[2])/$$_[2].'%';#Gain %= current value of all stocks-the money I spent on buying them.
+		$table[$counter][6]=($rows[0][5]-$rows[1][5])*$$_[1].'%';#Gain %= current value of all stocks-the money I spent on buying them.
 		$counter=$counter+1;
 	}
 	return "<form name=\"transactionsTableForm\" action=\"\" method=\"post\">".
@@ -858,7 +861,7 @@ sub generatePerformanceTable{
 			th(['Symbol','Last Price','Change','Shares','Gain','Gain %','Day\'s gain']),
 			map {
 				td([
-					$$_[0],$$_[1],$$_[2]
+					$$_[0],$$_[1],$$_[2],$$_[3],$$_[4],$$_[5],$$_[6]
 				])
 			} @table
 		])
