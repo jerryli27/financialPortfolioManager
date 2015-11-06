@@ -845,9 +845,9 @@ sub generatePerformanceTable{
 	my $counter=0;
 	foreach (@symbols){
 		@rows=ExecSQL($dbuser, $dbpasswd,"SELECT * from (select * from portfolio_allStocks where symbol=\'$$_[0]\' order by timestamp DESC) where ROWNUM<=2",undef);
-		@row1=@rows[0];
-		@row2=@rows[1];
-		@table[$counter]=($rows[0][0],$rows[0][5],$rows[0][5]-$rows[1][5]);
+		$table[$counter][0]=$rows[0][0];
+		$table[$counter][1]=$rows[0][5];
+		$table[$counter][2]=$rows[0][5]-$rows[1][5];
 		$counter=$counter+1;
 	}
 	return "<form name=\"transactionsTableForm\" action=\"\" method=\"post\">".
