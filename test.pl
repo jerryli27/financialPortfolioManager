@@ -476,7 +476,7 @@ if ($action eq "base") {
 			# OVERVIEW
 		    "<div id=\"overview\" class=\"tab-pane fade in active\">",
 		    $sharedTopPartOfTabs,
-		    #generateOverviewTable($user,$portfolioArray[$portfolioNum]),
+		    generateOverviewTable($user,$portfolioArray[$portfolioNum]),
 			$sharedStringForCash,
 			"</div>",
 			# STATISTICS
@@ -804,15 +804,28 @@ sub generateTransactionsTable{
 sub generateOverviewTable{
 	my ($user,$currPortfolioName)=@_;
 	
-	# get the transactions
-	my @rows = ExecSQL($dbuser, $dbpasswd, 
-		"SELECT portfolio_allStocks.* FROM portfolio_allStocks,
-			(SELECT portfolio_allStocks.symbol,max(portfolio_allStocks.timestamp) AS timestamp from portfolio_allStocks where portfolio_allStocks.symbol in 
-				(SELECT DISTINCT portfolio_transactions.symbol FROM portfolio_transactions WHERE portfolio_transactions.user_name=? AND portfolio_transactions.portfolio_name=?) 
-			GROUP BY portfolio_allStocks.symbol) transactionStocks 
-		WHERE transactionStocks.timestamp=portfolio_allStocks.timestamp AND transactionStocks.symbol=portfolio_allStocks.symbol"
-		,undef,$user,$currPortfolioName);
+	# get the overview
+	# my @rows = ExecSQL($dbuser, $dbpasswd, 
+	# 	"SELECT portfolio_allStocks.* FROM portfolio_allStocks,
+	# 		(SELECT portfolio_allStocks.symbol,max(portfolio_allStocks.timestamp) AS timestamp from portfolio_allStocks where portfolio_allStocks.symbol in 
+	# 			(SELECT DISTINCT portfolio_transactions.symbol FROM portfolio_transactions WHERE portfolio_transactions.user_name=? AND portfolio_transactions.portfolio_name=?) 
+	# 		GROUP BY portfolio_allStocks.symbol) transactionStocks 
+	# 	WHERE transactionStocks.timestamp=portfolio_allStocks.timestamp AND transactionStocks.symbol=portfolio_allStocks.symbol"
+	# 	,undef,$user,$currPortfolioName);
 	
+	# Get a list of all the symbols of stocks, their start date, and their end date involved in our transactions.
+	my @symbols = ExecSQL($dbuser, $dbpasswd, "SELECT portfolio_transactions.symbol FROM portfolio_transactions 
+		WHERE portfolio_transactions.user_name=? AND portfolio_transactions.portfolio_name=? GROUP BY symbol"
+		,undef,$user,$currPortfolioName);
+	# I tried to execute outside perl script but failed.
+	my @rows; my @table;
+	my $counter=0;
+	foreach (@symbols){
+		@rows=ExecSQL($dbuser, $dbpasswd,"SELECT * from (select * from portfolio_allStocks where symbol=\'$$_[0]\' order by timestamp DESC) where ROWNUM<=1",undef);
+		@table[$counter]=@rows[0];
+		$counter=$counter+1;
+	}
+
 	return "<form name=\"transactionsTableForm\" action=\"\" method=\"post\">".
 	table({-width=>'100%', -border=>'0'},
 		Tr({-align=>'CENTER',-valign=>'TOP'},
@@ -849,8 +862,8 @@ sub generatePerformanceTable{
 		$table[$counter][2]=$rows[0][5]-$rows[1][5];#change
 		$table[$counter][3]=$$_[1];#Shares
 		$table[$counter][4]=$rows[0][5]*$$_[1]-$$_[2];#Gain= current value of all stocks-the money I spent on buying them.
-		$table[$counter][5]=($rows[0][5]*$$_[1]-$$_[2])/$$_[2].'%';#Gain %= current value of all stocks-the money I spent on buying them.
-		$table[$counter][6]=($rows[0][5]-$rows[1][5])*$$_[1].'%';#Gain %= current value of all stocks-the money I spent on buying them.
+		$table[$counter][5]=100*($rows[0][5]*$$_[1]-$$_[2])/$$_[2].'%';#Gain %= current value of all stocks-the money I spent on buying them.
+		$table[$counter][6]=($rows[0][5]-$rows[1][5])*$$_[1];#Day's gain= amount of stocks* change in stock price
 		$counter=$counter+1;
 	}
 	return "<form name=\"transactionsTableForm\" action=\"\" method=\"post\">".
