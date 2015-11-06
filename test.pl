@@ -841,7 +841,15 @@ sub generatePerformanceTable{
 		WHERE portfolio_transactions.user_name=? AND portfolio_transactions.portfolio_name=? GROUP BY symbol"
 		,undef,$user,$currPortfolioName);
 	# I tried to execute outside perl script but failed.
-	my @rows = map{ExecSQL($dbuser, $dbpasswd,"SELECT * from (select * from portfolio_allStocks where symbol=\'$$_[0]\' order by timestamp DESC) where ROWNUM<=2",undef)} @symbols;
+	my @rows,@row1,@row2,@table;
+	my $counter=0;
+	foreach (@symbols){
+		@rows=ExecSQL($dbuser, $dbpasswd,"SELECT * from (select * from portfolio_allStocks where symbol=\'$$_[0]\' order by timestamp DESC) where ROWNUM<=2",undef);
+		@row1=@rows[0];
+		@row2=@rows[1];
+		@table[$counter]=($row1[0],$row1[5],$row1[5]-$row2[5]);
+		$counter=$counter+1;
+	}
 	return "<form name=\"transactionsTableForm\" action=\"\" method=\"post\">".
 	table({-width=>'100%', -border=>'0'},
 		Tr({-align=>'CENTER',-valign=>'TOP'},
@@ -850,9 +858,9 @@ sub generatePerformanceTable{
 			th(['Symbol','Last Price','Change','Shares','Gain','Gain %','Day\'s gain']),
 			map {
 				td([
-					$$_[0],localtime($$_[1])->strftime('%F %T'),$$_[2],$$_[3],$$_[4],$$_[5],$$_[6]
+					$$_[0],$$_[1],$$_[2]
 				])
-			} @rows
+			} @table
 		])
 	).
 	"</form>";
