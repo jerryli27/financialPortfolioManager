@@ -841,7 +841,7 @@ sub generatePerformanceTable{
 		WHERE portfolio_transactions.user_name=? AND portfolio_transactions.portfolio_name=? GROUP BY symbol"
 		,undef,$user,$currPortfolioName);
 	# I tried to execute outside perl script but failed.
-	my @rows,@row1,@row2,@table;
+	my @rows; my @row1; my @row2; my @table;
 	my $counter=0;
 	foreach (@symbols){
 		@rows=ExecSQL($dbuser, $dbpasswd,"SELECT * from (select * from portfolio_allStocks where symbol=\'$$_[0]\' order by timestamp DESC) where ROWNUM<=2",undef);
