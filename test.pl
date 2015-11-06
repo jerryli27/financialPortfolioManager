@@ -476,7 +476,7 @@ if ($action eq "base") {
 			# OVERVIEW
 		    "<div id=\"overview\" class=\"tab-pane fade in active\">",
 		    $sharedTopPartOfTabs,
-		    generateOverviewTable($user,$portfolioArray[$portfolioNum]),
+		    #generateOverviewTable($user,$portfolioArray[$portfolioNum]),
 			$sharedStringForCash,
 			"</div>",
 			# STATISTICS
