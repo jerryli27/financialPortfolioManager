@@ -26,7 +26,7 @@ use stock_data_access;
 # Default is get the data for last year.
 # You can also enter date/time.
 sub insertStockHist {
-	my ($symbol,$to,$from) = @_;
+	my ($symbol,$from,$to) = @_;
 	if (!(defined $from)){
 		$from = "last year";
 	}
@@ -70,7 +70,7 @@ sub insertStockHist {
 # Insert the historical data of a stock symbol into database
 # to and from must be unix time stamp
 sub insertStockHistUnixTime {
-	my ($symbol,$to,$from) = @_;
+	my ($symbol,$from,$to) = @_;
 	if (!(defined $from)){
 		$from = "last year";
 		$from = parsedate($from);
