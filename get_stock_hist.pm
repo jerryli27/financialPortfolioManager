@@ -27,10 +27,10 @@ use stock_data_access;
 # You can also enter date/time.
 sub insertStockHist {
 	my ($symbol,$to,$from) = @_;
-	if (defined($from)){
+	if (!(defined $from)){
 		$from = "last year";
 	}
-	if (defined($to)){
+	if (!(defined $to){
 		$to = "now";
 	}
 
