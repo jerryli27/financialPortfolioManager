@@ -53,12 +53,21 @@ sub insertStockHist {
 	my @sqlReturn;
 	foreach $row ($q->quotes()) {
 	  # my @out;
+		eval {
+			($qsymbol, $qdate, $qopen, $qhigh, $qlow, $qclose, $qvolume) = @{$row};
+		 	$qdate=parsedate($qdate);
+			my $sql="INSERT INTO portfolio_stocks
+					VALUES (\'$qsymbol\', $qdate, $qopen, $qhigh, $qlow, $qclose, $qvolume)";
+		 	@sqlReturn=ExecStockSQL(undef,$sql);
+		};
+		if ( $@ ) {
+			# # log the full error message
+			# write_log( $sth->errstr );
 
-	  ($qsymbol, $qdate, $qopen, $qhigh, $qlow, $qclose, $qvolume) = @{$row};
-	  $qdate=parsedate($qdate);
-	  my $sql="INSERT INTO portfolio_stocks
-				VALUES (\'$qsymbol\', $qdate, $qopen, $qhigh, $qlow, $qclose, $qvolume)";
-	  @sqlReturn=ExecStockSQL(undef,$sql);
+			# # and re-throw the common message 
+			# die 'HEY!!!! Something is messed up here!';
+			print("sql execution error");
+		}
 	}
 }
 #
