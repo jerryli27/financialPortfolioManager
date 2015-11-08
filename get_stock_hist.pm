@@ -139,12 +139,12 @@ sub insertStockHistUnixTime {
 			while (@data=$sth->fetchrow_array()) {
 				#push @ret, [@data];
 			}
-			$sth->finish();
 		};
 		if ( $@ ) {
 			#print("sql execution error");
 		}
 	}
+	$sth->finish();
 	$dbh->disconnect();
 }
 
