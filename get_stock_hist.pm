@@ -13,7 +13,7 @@ use Finance::Quote;
 require Exporter;
 
 @ISA=qw(Exporter);
-@EXPORT=qw(getStockHist);
+@EXPORT=qw(insertStockHist,getAllStocksHist,insertLatestStockHist);
 
 use DBI;
 # import stock_data_access because we need to exec sql
@@ -75,7 +75,7 @@ sub getAllStocksHist{
 	my @rows; my @table;
 	my $counter=0;
 	foreach (@symbols){
-		insertStockHist($symbols[counter][0],$symbols[counter][1],$to);
+		insertStockHist($symbols[$counter][0],$symbols[$counter][1],$to);
 		$counter=$counter+1;
 	}
 }
