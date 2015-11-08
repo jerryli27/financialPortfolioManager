@@ -13,7 +13,7 @@ use Finance::Quote;
 require Exporter;
 
 @ISA=qw(Exporter);
-@EXPORT=qw(insertStockHist,getAllStocksHist,insertLatestStockHist);
+@EXPORT=qw(insertStockHist getAllStocksHist insertLatestStockHist);
 
 use DBI;
 # import stock_data_access because we need to exec sql
