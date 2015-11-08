@@ -61,11 +61,6 @@ sub insertStockHist {
 		 	@sqlReturn=ExecStockSQL(undef,$sql);
 		};
 		if ( $@ ) {
-			# # log the full error message
-			# write_log( $sth->errstr );
-
-			# # and re-throw the common message 
-			# die 'HEY!!!! Something is messed up here!';
 			#print("sql execution error");
 		}
 	}
@@ -109,11 +104,6 @@ sub insertStockHistUnixTime {
 		 	@sqlReturn=ExecStockSQL(undef,$sql);
 		};
 		if ( $@ ) {
-			# # log the full error message
-			# write_log( $sth->errstr );
-
-			# # and re-throw the common message 
-			# die 'HEY!!!! Something is messed up here!';
 			#print("sql execution error");
 		}
 	}
@@ -134,7 +124,9 @@ sub getAllStocksHist{
 		print ("Inserting stock: ".$symbols[$counter][0]);
 		insertStockHistUnixTime($symbols[$counter][0],$symbols[$counter][1],$to);
 		$counter=$counter+1;
-		return; #for testing.
+		if ($counter==100){
+			return; #for testing.
+		}
 	}
 }
 
@@ -166,7 +158,7 @@ sub insertLatestStockHist{
 					$$quotes{$symbol,\"low\"}, $$quotes{$symbol,\"close\"}, $$quotes{$symbol,\"volume\"});");
 				};
 				if ( $@ ) {
-					# sql will print error message. DOn't need to do anything
+					# sql will print error message. Don't need to do anything
 				}
 			}
 			# foreach $key (@info) {
