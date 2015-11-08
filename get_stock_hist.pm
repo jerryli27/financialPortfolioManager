@@ -30,7 +30,7 @@ sub insertStockHist {
 	if (!(defined $from)){
 		$from = "last year";
 	}
-	if (!(defined $to){
+	if (!(defined $to)){
 		$to = "now";
 	}
 
@@ -80,12 +80,9 @@ sub getAllStocksHist{
 	}
 }
 
+
 sub insertLatestStockHist{
-
-
 	@info=("date","time","high","low","close","open","volume","last");
-
-
 	# Get a list of all the symbols of stocks, their start date, and their end date involved in our transactions.
 	my @symbols = ExecStockSQL(undef,"SELECT DISTINCT symbol FROM portfolio_allStocks");
 
