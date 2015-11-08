@@ -18,9 +18,13 @@ require Exporter;
 use DBI;
 # import stock_data_access because we need to exec sql
 use stock_data_access;
-
 # Headers copied from stock_data_access.pm
 
+#
+# oracle sqlplus credential
+# 
+my $user="yfo776";
+my $pass="zv0XOar1o";
 #
 # Insert the historical data of a stock symbol into database
 # Default is get the data for last year.
@@ -96,6 +100,19 @@ sub insertStockHistUnixTime {
 
 	$q = new Finance::QuoteHist::Yahoo(%query) or die "Cannot issue query\n";
 	my @sqlReturn;
+	# I had to connect to oracle this way because we're entering thousands of tuples and speed matters.
+	# Log into database takes time and should be done only once.
+	# Sorry if the code looks messy.
+
+	my $dbh;
+	$dbh = DBI->connect("DBI:Oracle:",$user,$pass);
+	if (not $dbh) { 
+	die "Can't connect to database because of ".$DBI::errstr;
+	}
+	my @data;
+	my @ret;
+	my $sth;
+
 	foreach $row ($q->quotes()) {
 	  	# The eval catches the error and do not terminate the program if there is one.
 		eval {
@@ -105,12 +122,30 @@ sub insertStockHistUnixTime {
 					VALUES (\'$qsymbol\', $qdate, $qopen, $qhigh, $qlow, $qclose, $qvolume)";
 					print("INSERT INTO portfolio_stocks
 					VALUES (\'$qsymbol\', $qdate, $qopen, $qhigh, $qlow, $qclose, $qvolume)");
-		 	@sqlReturn=ExecStockSQL(undef,$sql);
+			#send the query
+		 	my $sth = $dbh->prepare($querystring);
+
+			if (not $sth) { 
+			my $errstr="Can't prepare $querystring because of ".$DBI::errstr;
+			$dbh->disconnect();
+			die $errstr;
+			}
+			if (not $sth->execute()) { 
+				my $errstr="Can't execute $querystring because of ".$DBI::errstr;
+				$dbh->disconnect();
+				die $errstr;
+			}
+			# multirow or single column output or strings
+			while (@data=$sth->fetchrow_array()) {
+				#push @ret, [@data];
+			}
+			$sth->finish();
 		};
 		if ( $@ ) {
 			#print("sql execution error");
 		}
 	}
+	$dbh->disconnect();
 }
 
 #
