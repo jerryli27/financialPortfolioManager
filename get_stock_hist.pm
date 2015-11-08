@@ -101,6 +101,8 @@ sub insertStockHistUnixTime {
 		 	$qdate=parsedate($qdate);
 			my $sql="INSERT INTO portfolio_stocks
 					VALUES (\'$qsymbol\', $qdate, $qopen, $qhigh, $qlow, $qclose, $qvolume)";
+					print("INSERT INTO portfolio_stocks
+					VALUES (\'$qsymbol\', $qdate, $qopen, $qhigh, $qlow, $qclose, $qvolume)");
 		 	@sqlReturn=ExecStockSQL(undef,$sql);
 		};
 		if ( $@ ) {
