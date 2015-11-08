@@ -52,7 +52,7 @@ sub insertStockHist {
 	$q = new Finance::QuoteHist::Yahoo(%query) or die "Cannot issue query\n";
 	my @sqlReturn;
 	foreach $row ($q->quotes()) {
-	  # my @out;
+	  	# The eval catches the error and do not terminate the program if there is one.
 		eval {
 			($qsymbol, $qdate, $qopen, $qhigh, $qlow, $qclose, $qvolume) = @{$row};
 		 	$qdate=parsedate($qdate);
@@ -66,7 +66,7 @@ sub insertStockHist {
 
 			# # and re-throw the common message 
 			# die 'HEY!!!! Something is messed up here!';
-			print("sql execution error");
+			#print("sql execution error");
 		}
 	}
 }
@@ -100,18 +100,25 @@ sub insertLatestStockHist{
 	$con->timeout(60);
 
 	%quotes = $con->fetch("usa",@symbols);
-
+	my @sqlReturn;
 	foreach $symbol (@ARGV) {
 	    print $symbol,"\n=========\n";
 	    if (!defined($quotes{$symbol,"success"})) { 
 		# print "No Data\n";
 	    } else {
 			if (defined($quotes{$symbol,"date"})&&defined($quotes{$symbol,"time"})) {
-				my $time=parsedate($quotes{$symbol,"date"}." ".$quotes{$symbol,"time"});
-				$time = ParseDateString("epoch $time");
-	  			ExecStockSQL(undef,"INSERT INTO portfolio_stocks
-				VALUES ($symbol, $time, $$quotes{$symbol,\"open\"}, $$quotes{$symbol,\"high\"}, 
-				$$quotes{$symbol,\"low\"}, $$quotes{$symbol,\"close\"}, $$quotes{$symbol,\"volume\"});");
+				# The eval catches the error and do not terminate the program if there is one.
+				eval {
+					
+					my $time=parsedate($quotes{$symbol,"date"}." ".$quotes{$symbol,"time"});
+					$time = ParseDateString("epoch $time");
+		  			@sqlReturn=ExecStockSQL(undef,"INSERT INTO portfolio_stocks
+					VALUES ($symbol, $time, $$quotes{$symbol,\"open\"}, $$quotes{$symbol,\"high\"}, 
+					$$quotes{$symbol,\"low\"}, $$quotes{$symbol,\"close\"}, $$quotes{$symbol,\"volume\"});");
+				};
+				if ( $@ ) {
+					# sql will print error message. DOn't need to do anything
+				}
 			}
 			# foreach $key (@info) {
 			#     if (defined($quotes{$symbol,$key})) {
