@@ -67,10 +67,9 @@ sub insertStockHist {
 # You can also enter date/time.
 sub getAllStocksHist{
 	# Get a list of all the symbols of stocks, their start date, and their end date involved in our transactions.
-	my @symbols = ExecSQL($dbuser, $dbpasswd, "SELECT symbol,max(timestamp) FROM portfolio_allStocks GROUP BY symbol"
-		,undef,$user,$currPortfolioName);
+	my @symbols = ExecStockSQL(undef,"SELECT symbol,max(timestamp) FROM portfolio_allStocks GROUP BY symbol");
 	# Get current time
-	$to = parsedate($to);
+	my $to = parsedate($to);
 	$to = ParseDateString("epoch $to");
 
 	my @rows; my @table;
@@ -88,8 +87,7 @@ sub insertLatestStockHist{
 
 
 	# Get a list of all the symbols of stocks, their start date, and their end date involved in our transactions.
-	my @symbols = ExecSQL($dbuser, $dbpasswd, "SELECT DISTINCT symbol FROM portfolio_allStocks"
-		,undef,$user,$currPortfolioName);
+	my @symbols = ExecStockSQL(undef,"SELECT DISTINCT symbol FROM portfolio_allStocks");
 
 	$con=Finance::Quote->new();
 
