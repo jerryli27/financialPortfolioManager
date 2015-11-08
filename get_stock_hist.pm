@@ -124,9 +124,9 @@ sub getAllStocksHist{
 	my $counter=0;
 	foreach (@symbols){
 		print ("Inserting stock: ".$symbols[$counter][0]);
-		insertStockHistUnixTime($symbols[$counter][0],$symbols[$counter][1],$to);
+		insertStockHistUnixTime('acn',$symbols[$counter][1],$to);
 		$counter=$counter+1;
-		if ($counter==100){
+		if ($counter==1){
 			return; #for testing.
 		}
 	}
