@@ -79,18 +79,17 @@ sub insertStockHistUnixTime {
 	if (!(defined $from)){
 		$from = "last year";
 		$from = parsedate($from);
-		$from = ParseDateString("epoch $from");
 	}
 	if (!(defined $to)){
 		$to = "now";
 		$to = parsedate($to);
-		$to = ParseDateString("epoch $to");
 	}
 
 	# convert date model to what QuoteHist wants
 	# while assuring we can use Time::ParseDate parsing
 	# for compatability with everything else
-
+	$from = ParseDateString("epoch $from");
+	$to = ParseDateString("epoch $to");
 	%query = (
 		  symbols    => [$symbol],
 		  start_date => $from,
@@ -129,13 +128,13 @@ sub getAllStocksHist{
 	my @symbols = ExecStockSQL(undef,"SELECT symbol,max(timestamp) FROM portfolio_allStocks GROUP BY symbol");
 	# Get current time
 	my $to = parsedate("now");
-	$to = ParseDateString("epoch $to");
-
 	my @rows; my @table;
 	my $counter=0;
 	foreach (@symbols){
+		print ("Inserting stock: ".$symbols[$counter][0]);
 		insertStockHistUnixTime($symbols[$counter][0],$symbols[$counter][1],$to);
 		$counter=$counter+1;
+		return; #for testing.
 	}
 }
 
