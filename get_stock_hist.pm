@@ -120,19 +120,17 @@ sub insertStockHistUnixTime {
 		 	$qdate=parsedate($qdate);
 			my $sql="INSERT INTO portfolio_stocks
 					VALUES (\'$qsymbol\', $qdate, $qopen, $qhigh, $qlow, $qclose, $qvolume)";
-					print("INSERT INTO portfolio_stocks
-					VALUES (\'$qsymbol\', $qdate, $qopen, $qhigh, $qlow, $qclose, $qvolume)");
 			#send the query
 		 	my $sth = $dbh->prepare($querystring);
 
 			if (not $sth) { 
 			my $errstr="Can't prepare $querystring because of ".$DBI::errstr;
-			$dbh->disconnect();
+			#$dbh->disconnect(); #commented out this because we still need to insert the rest of data.
 			die $errstr;
 			}
 			if (not $sth->execute()) { 
 				my $errstr="Can't execute $querystring because of ".$DBI::errstr;
-				$dbh->disconnect();
+				#$dbh->disconnect();#commented out this because we still need to insert the rest of data.
 				die $errstr;
 			}
 			# multirow or single column output or strings
