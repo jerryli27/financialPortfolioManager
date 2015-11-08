@@ -86,6 +86,7 @@ sub insertStockHistUnixTime {
 	$from = ParseDateString("epoch $from");
 	$to = ParseDateString("epoch $to");
 	print ("From: ".$from." To: ".$to);
+	return;
 	%query = (
 		  symbols    => [$symbol],
 		  start_date => $from,
