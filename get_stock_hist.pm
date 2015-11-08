@@ -112,21 +112,22 @@ sub insertStockHistUnixTime {
 	my @data;
 	my @ret;
 	my $sth;
+	my $sql;
 
 	foreach $row ($q->quotes()) {
 	  	# The eval catches the error and do not terminate the program if there is one.
 		eval {
 			($qsymbol, $qdate, $qopen, $qhigh, $qlow, $qclose, $qvolume) = @{$row};
 		 	$qdate=parsedate($qdate);
-			my $sql="INSERT INTO portfolio_stocks
+			$sql="INSERT INTO portfolio_stocks
 					VALUES (\'$qsymbol\', $qdate, $qopen, $qhigh, $qlow, $qclose, $qvolume)";
 			#send the query
-		 	my $sth = $dbh->prepare($querystring);
+		 	$sth = $dbh->prepare($sql);
 
 			if (not $sth) { 
-			my $errstr="Can't prepare $querystring because of ".$DBI::errstr;
-			#$dbh->disconnect(); #commented out this because we still need to insert the rest of data.
-			die $errstr;
+				my $errstr="Can't prepare $querystring because of ".$DBI::errstr;
+				#$dbh->disconnect(); #commented out this because we still need to insert the rest of data.
+				die $errstr;
 			}
 			if (not $sth->execute()) { 
 				my $errstr="Can't execute $querystring because of ".$DBI::errstr;
@@ -176,7 +177,20 @@ sub insertLatestStockHist{
 	$con->timeout(60);
 
 	%quotes = $con->fetch("usa",@symbols);
-	my @sqlReturn;
+	# I had to connect to oracle this way because we're entering thousands of tuples and speed matters.
+	# Log into database takes time and should be done only once.
+	# Sorry if the code looks messy.
+
+	my $dbh;
+	$dbh = DBI->connect("DBI:Oracle:",$user,$pass);
+	if (not $dbh) { 
+	die "Can't connect to database because of ".$DBI::errstr;
+	}
+	my @data;
+	my @ret;
+	my $sth;
+	my $sql;
+
 	foreach $symbol (@ARGV) {
 	    print $symbol,"\n=========\n";
 	    if (!defined($quotes{$symbol,"success"})) { 
@@ -188,9 +202,26 @@ sub insertLatestStockHist{
 					
 					my $time=parsedate($quotes{$symbol,"date"}." ".$quotes{$symbol,"time"});
 					$time = ParseDateString("epoch $time");
-		  			@sqlReturn=ExecStockSQL(undef,"INSERT INTO portfolio_stocks
+					$sql="INSERT INTO portfolio_stocks
 					VALUES ($symbol, $time, $$quotes{$symbol,\"open\"}, $$quotes{$symbol,\"high\"}, 
-					$$quotes{$symbol,\"low\"}, $$quotes{$symbol,\"close\"}, $$quotes{$symbol,\"volume\"});");
+					$$quotes{$symbol,\"low\"}, $$quotes{$symbol,\"close\"}, $$quotes{$symbol,\"volume\"});";
+					#send the query
+				 	$sth = $dbh->prepare($sql);
+
+					if (not $sth) { 
+						my $errstr="Can't prepare $querystring because of ".$DBI::errstr;
+						#$dbh->disconnect(); #commented out this because we still need to insert the rest of data.
+						die $errstr;
+					}
+					if (not $sth->execute()) { 
+						my $errstr="Can't execute $querystring because of ".$DBI::errstr;
+						#$dbh->disconnect();#commented out this because we still need to insert the rest of data.
+						die $errstr;
+					}
+					# multirow or single column output or strings
+					while (@data=$sth->fetchrow_array()) {
+						#push @ret, [@data];
+					}
 				};
 				if ( $@ ) {
 					# sql will print error message. Don't need to do anything
@@ -204,5 +235,7 @@ sub insertLatestStockHist{
 	    }
 	    print "\n";
 	}
+	$sth->finish();
+	$dbh->disconnect();
 }
 
