@@ -151,8 +151,8 @@ sub insertStockHistUnixTime {
 
 #
 # Insert the historical data of all known stock symbol into database
-# Default is get the data for last year.
-# You can also enter date/time.
+# Note that this might take a while.
+# 
 sub getAllStocksHist{
 	# Get a list of all the symbols of stocks, their start date, and their end date involved in our transactions.
 	my @symbols = ExecStockSQL(undef,"SELECT symbol,max(timestamp) FROM portfolio_allStocks GROUP BY symbol");
