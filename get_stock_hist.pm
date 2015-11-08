@@ -13,7 +13,7 @@ use Finance::Quote;
 require Exporter;
 
 @ISA=qw(Exporter);
-@EXPORT=qw(insertStockHist getAllStocksHist insertLatestStockHist);
+@EXPORT=qw(insertStockHist insertStockHistUnixTime getAllStocksHist insertLatestStockHist);
 
 use DBI;
 # import stock_data_access because we need to exec sql
@@ -70,6 +70,56 @@ sub insertStockHist {
 		}
 	}
 }
+
+#
+# Insert the historical data of a stock symbol into database
+# to and from must be unix time stamp
+sub insertStockHistUnixTime {
+	my ($symbol,$to,$from) = @_;
+	if (!(defined $from)){
+		$from = "last year";
+		$from = parsedate($from);
+		$from = ParseDateString("epoch $from");
+	}
+	if (!(defined $to)){
+		$to = "now";
+		$to = parsedate($to);
+		$to = ParseDateString("epoch $to");
+	}
+
+	# convert date model to what QuoteHist wants
+	# while assuring we can use Time::ParseDate parsing
+	# for compatability with everything else
+
+	%query = (
+		  symbols    => [$symbol],
+		  start_date => $from,
+		  end_date   => $to,
+		 );
+
+
+	$q = new Finance::QuoteHist::Yahoo(%query) or die "Cannot issue query\n";
+	my @sqlReturn;
+	foreach $row ($q->quotes()) {
+	  	# The eval catches the error and do not terminate the program if there is one.
+		eval {
+			($qsymbol, $qdate, $qopen, $qhigh, $qlow, $qclose, $qvolume) = @{$row};
+		 	$qdate=parsedate($qdate);
+			my $sql="INSERT INTO portfolio_stocks
+					VALUES (\'$qsymbol\', $qdate, $qopen, $qhigh, $qlow, $qclose, $qvolume)";
+		 	@sqlReturn=ExecStockSQL(undef,$sql);
+		};
+		if ( $@ ) {
+			# # log the full error message
+			# write_log( $sth->errstr );
+
+			# # and re-throw the common message 
+			# die 'HEY!!!! Something is messed up here!';
+			#print("sql execution error");
+		}
+	}
+}
+
 #
 # Insert the historical data of all known stock symbol into database
 # Default is get the data for last year.
@@ -84,7 +134,7 @@ sub getAllStocksHist{
 	my @rows; my @table;
 	my $counter=0;
 	foreach (@symbols){
-		insertStockHist($symbols[$counter][0],$symbols[$counter][1],$to);
+		insertStockHistUnixTime($symbols[$counter][0],$symbols[$counter][1],$to);
 		$counter=$counter+1;
 	}
 }
