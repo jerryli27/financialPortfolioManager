@@ -51,6 +51,10 @@ use Time::ParseDate;
 # back into string form
 #
 use Time::Piece;
+
+use stock_data_access;
+
+
 #
 # Debugging
 #
@@ -479,23 +483,40 @@ if ($action eq "base") {
 		    generateOverviewTable($user,$portfolioArray[$portfolioNum]),
 			$sharedStringForCash,
 			"</div>",
+
 			# STATISTICS
 			"<div id=\"statistics\" class=\"tab-pane fade\">\n",
-			$sharedTopPartOfTabs,
-			"<form name=\"tableForm\" action=\"\" method=\"post\">",
+			$sharedTopPartOfTabs;
+
+			# get list of stocks symbols owned by this portfolio
+			my @symbols = ExecSQL($dbuser, $dbpasswd, "SELECT portfolio_transactions.symbol FROM portfolio_transactions WHERE portfolio_transactions.user_name=? AND portfolio_transactions.portfolio_name=? GROUP BY symbol"
+		,undef,$user,$portfolioArray[$portfolioNum]);
+
+
+			print "<form name=\"tableForm\" action=\"\" method=\"post\">",
 			table({-width=>'100%', -border=>'0'},
-		           #caption('When Should You Eat Your Vegetables?'),
-		           Tr({-align=>'CENTER',-valign=>'TOP'},
-		           [
-		              th(['<input type="checkbox" name="checkAll" value=""/>', 'Symbol','Last price','Change',"Volume","Open","Close","High","Low"]),
-		              td(['<input type="checkbox" name="checkboxGE" value=""/>','<a href=\"\">GE</a>',15.70,"0.24(1.55%)","4.1T", 26.94, 27.55, 27.91, 26.8]),
-		              td(['<input type="checkbox" name="checkboxAPLL" value=""/>','<a href=\"\">APLL</a>',15.70,"0.24(1.55%)","4.1T", 26.94, 27.55, 27.91, 26.8]),
-		              td(['<input type="checkbox" name="checkboxFB" value=""/>','<a href=\"\">FB</a>',15.70,"0.24(1.55%)","4.1T", 26.94, 27.55, 27.91, 26.8]),
-		           ]
-		           )
-		        ),
-			"</form>",
-			$sharedStringForCash,
+				Tr({-align=>'CENTER',-valign=>'TOP'},
+				[
+					th(['<input type="checkbox" name="checkAll" value=""/>','Symbol','Stddev','Beta']),
+					map {
+						td([
+							'<input type="checkbox" name="check$$_[0]" value=""/>',"<a href=\"\"> $$_[0] </a>",get_stddev($$_[0])
+						])
+					} @symbols
+				])
+			),
+			"</form>";
+			
+			# generates covariance matrix
+			my $symbolsStr = '';
+			foreach my $s (@symbols) {
+				$symbolsStr="$symbolsStr$$s[0] ";
+			}
+			my @output = `./get_covar.pl $symbolsStr`;
+			foreach my $r (@output) {
+				print h5($r);
+			}
+			print $sharedStringForCash,
 			"</div>",
 
 			# PERFORMANCES
@@ -786,7 +807,6 @@ sub generateTransactionsTable{
 		Tr({-align=>'CENTER',-valign=>'TOP'},
 		[
 			th(['Transaction ID','Timestamp','Symbol',"Method","Price","Share"]),
-			# td([$table[0][0],$table[0][1],$table[0][2],$table[0][3],$table[0][4],$table[0][5]])
 			map {
 				td([
 					$$_[0],$$_[5],$$_[3],$$_[6],$$_[4],$$_[7]
@@ -884,6 +904,15 @@ sub generatePerformanceTable{
 	"</form>".
 	"Sum of Gain: ".$sum."<br>";
 
+}
+
+#
+# get the stddev of the closing price of a particular stock
+#
+sub get_stddev {
+	my ($symbol)=@_;
+	my @rtn = ExecSQL($dbuser,$dbpasswd, "select STDDEV(close) \"stddev\" from portfolio_allStocks where symbol=?","COL",$symbol);
+	return $rtn[0];
 }
 
 #
