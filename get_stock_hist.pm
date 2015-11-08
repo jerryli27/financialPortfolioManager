@@ -56,7 +56,7 @@ sub insertStockHist {
 
 	  ($qsymbol, $qdate, $qopen, $qhigh, $qlow, $qclose, $qvolume) = @{$row};
 	  my $sql="INSERT INTO portfolio_stocks
-				VALUES ($qsymbol, $qdate, $qopen, $qhigh, $qlow, $qclose, $qvolume);"
+				VALUES ($qsymbol, $qdate, $qopen, $qhigh, $qlow, $qclose, $qvolume)";
 	  ExecStockSQL(undef,$sql);
 	}
 }
