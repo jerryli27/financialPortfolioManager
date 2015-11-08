@@ -143,7 +143,9 @@ sub insertStockHistUnixTime {
 			#print("sql execution error");
 		}
 	}
-	$sth->finish();
+	if (defined($sth)){
+		$sth->finish();
+	}
 	$dbh->disconnect();
 }
 
