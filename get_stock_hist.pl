@@ -2,5 +2,4 @@
 
 use get_stock_hist;
 insertStockHistUnixTime("acn",1151643600,1446966324);
-insertStockHistUnixTime("acn");
-#getAllStocksHist();
+getAllStocksHist();

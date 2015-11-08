@@ -125,12 +125,10 @@ sub getAllStocksHist{
 	my @rows; my @table;
 	my $counter=0;
 	foreach (@symbols){
-		print ("Inserting stock: ".$symbols[$counter][0]." Timestamp from: ".$symbols[$counter][1]." to ".$to);
-		insertStockHistUnixTime('acn',$symbols[$counter][1],$to);
+		# print ("Inserting stock: ".$symbols[$counter][0]." Timestamp from: ".$symbols[$counter][1]." to ".$to);
+		insertStockHistUnixTime($symbols[$counter][0],$symbols[$counter][1],$to);
 		$counter=$counter+1;
-		if ($counter==1){
-			return; #for testing.
-		}
+		
 	}
 }
 
