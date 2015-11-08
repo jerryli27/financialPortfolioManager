@@ -27,10 +27,10 @@ use stock_data_access;
 # You can also enter date/time.
 sub insertStockHist {
 	my ($symbol,$to,$from) = @_;
-	if ($from==undef){
+	if (defined($from)){
 		$from = "last year";
 	}
-	if ($to==undef){
+	if (defined($to)){
 		$to = "now";
 	}
 
@@ -55,8 +55,9 @@ sub insertStockHist {
 	  # my @out;
 
 	  ($qsymbol, $qdate, $qopen, $qhigh, $qlow, $qclose, $qvolume) = @{$row};
+	  $qdate=parsedate($qdate);
 	  my $sql="INSERT INTO portfolio_stocks
-				VALUES ($qsymbol, $qdate, $qopen, $qhigh, $qlow, $qclose, $qvolume)";
+				VALUES (\'$qsymbol\', $qdate, $qopen, $qhigh, $qlow, $qclose, $qvolume)";
 	  ExecStockSQL(undef,$sql);
 	}
 }
