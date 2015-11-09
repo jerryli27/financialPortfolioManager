@@ -913,7 +913,7 @@ sub generatePerformanceTable{
 		])
 	).
 	"</form>".
-	"Sum of Gain: $sum\tTotal market value: $totalValue<br>";
+	"Sum of Gain: $sum\tTotal current market value: $totalValue<br>";
 
 }
 
