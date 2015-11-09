@@ -284,8 +284,8 @@ if  ($action eq "automaticStockTrade") {
   my $lasttotalaftertradecost=$lasttotal;
 
   # I need to add ../ because the file thinks we're in databaseActions.pl instead of its parent folder.
-  open(STOCK, "$dir\/get_data.pl --close $symbol |")
-    or die "cannot open get_data.pl --close $symbol |: $!";
+  open(STOCK, "$dir/get_data.pl --close $symbol |")
+    or die "cannot open $dir/get_data.pl --close $symbol |: $!";
 
 
 
