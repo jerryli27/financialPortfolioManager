@@ -1,0 +1,7 @@
+auto trade and compare your performance with the trade performance
+predict future stock price.
+add at least a link/a note saying where all the source code/mock-ups are
+option to delete transactions*
+add the plot as a pop-up window instead of another page.*
+automatically add daily price of stock.*
+* means optional
