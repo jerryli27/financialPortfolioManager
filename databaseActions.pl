@@ -46,7 +46,12 @@ use DBI;
 # date strings into the unix epoch time (seconds since 1970)
 #
 use Time::ParseDate;
-
+#
+#
+# A module to get current working directory.
+#
+use Cwd;
+my $dir = getcwd;
 #
 # Debugging
 #
@@ -278,8 +283,10 @@ if  ($action eq "automaticStockTrade") {
   my $lasttotal=$lastcash;
   my $lasttotalaftertradecost=$lasttotal;
 
-  open(STOCK, "../get_data.pl --close $symbol |")
-    or die "cannot open get_data.pl --close $symbol |: $!";
+  # I need to add ../ because the file thinks we're in databaseActions.pl instead of its parent folder.
+  open(STOCK, "$dir/get_data.pl --close $symbol |")
+    or die "cannot open $dir/get_data.pl --close $symbol |: $!";
+
 
 
   my $cash=0;
