@@ -260,17 +260,17 @@ if  ($action eq "automaticStockTrade") {
   if (defined(param("symbol"))) { 
     $symbol=param("symbol"); 
   } else{
-    die "usage: shannon_ratchet.pl symbol initialcash tradingcost\n";
+    die "did not define symbol\n";
   }
   if (defined(param("initialcash"))) { 
     $initialcash=param("initialcash"); 
   } else{
-    die "usage: shannon_ratchet.pl symbol initialcash tradingcost\n";
+    die "did not define initialcash\n";
   }
   if (defined(param("tradecost"))) { 
     $tradecost=param("tradecost"); 
   } else{
-    die "usage: shannon_ratchet.pl symbol initialcash tradingcost\n";
+    die "did not define symbol tradecost\n";
   }
 
   my $lastcash=$initialcash;
