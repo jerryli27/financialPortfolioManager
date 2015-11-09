@@ -62,7 +62,6 @@ if ($type eq "text") {
     print $r->[0], "\t", $r->[1], "\n";
   }
   print "</pre>";
-  print $automaticStockTrading;
 
   print "</body>";
   print "</html>";
@@ -89,30 +88,7 @@ if ($type eq "text") {
   #
 
   close(GNUPLOT);
-
-  print $automaticStockTrading;
 }
-
-# The form for automatic stock trading.
-my $automaticStockTrading="
-  <div class=\"col-xs-2\">
-    <label for=\"automaticStockTradingForm\">Compare your trading strategy with Shannon-Ratchet automatic trading strategy</label>
-  </div>
-  <form role=\"form\" id=\"automaticStockTradingForm\">
-    <div class=\"col-xs-2\">
-    <label for=\"initialcash\">Initial Cash:</label>
-    <input type=\"text\" class=\"form-control\" id=\"initialcash\">
-  </div>
-    <div class=\"col-xs-2\">
-    <label for=\"tradingcost\">Trading Cost:</label>
-    <input type=\"text\" class=\"form-control\" id=\"tradingcost\">
-  </div>
-  <span style=\"float:right;\">
-  <button type=\"button\" class=\"btn btn-default\" id=\"automaticStockTradingSubmit\">Submit</button>
-  </span>
-  <br>
-  </form>
-";
 
 
 

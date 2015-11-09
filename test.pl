@@ -595,6 +595,7 @@ if ($action eq "detail") {
 	h3("Plot of Past Performance of $symbol"),
 	print "<img src=\"http://murphy.wot.eecs.northwestern.edu/~yfo776/portfolio/plot_stock.pl?type=plot&symbol=$symbol\">",
 	"</center>";
+	print generateAutomaticStockTrading();
 }
 
 
@@ -914,6 +915,30 @@ sub generatePerformanceTable{
 	"Sum of Gain: ".$sum."<br>";
 
 }
+
+# The form for automatic stock trading.
+sub generateAutomaticStockTrading{
+	return "
+  <div class=\"col-xs-2\">
+    <label for=\"automaticStockTradingForm\">Compare your trading strategy with Shannon-Ratchet automatic trading strategy</label>
+  </div>
+  <form role=\"form\" id=\"automaticStockTradingForm\">
+    <div class=\"col-xs-2\">
+    <label for=\"initialcash\">Initial Cash:</label>
+    <input type=\"text\" class=\"form-control\" id=\"initialcash\">
+  </div>
+    <div class=\"col-xs-2\">
+    <label for=\"tradingcost\">Trading Cost:</label>
+    <input type=\"text\" class=\"form-control\" id=\"tradingcost\">
+  </div>
+  <span style=\"float:right;\">
+  <button type=\"button\" class=\"btn btn-default\" id=\"automaticStockTradingSubmit\">Submit</button>
+  </span>
+  <br>
+  </form>
+"
+}
+
 
 #
 # get the stddev of the closing price of a particular stock
