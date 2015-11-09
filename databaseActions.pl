@@ -51,7 +51,8 @@ use Time::ParseDate;
 # A module that makes it easy to encode things into JSON
 # Used to pass anything useful to javascript other than HTML.
 #
-use JSON
+#use JSON
+
 #
 #
 # A module to get current working directory.

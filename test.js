@@ -58,7 +58,7 @@ $(document).ready(function () {
             data: { 'act':'automaticStockTrade','initialcash':document.getElementById("initialcash").value,'tradecost':document.getElementById("tradecost").value,
              'symbol':symbol},
             }).done(function( msg ) {
-                //alert( "Data Received: " + msg );
+                alert( "Data Received: " + msg );
                 "#automaticStockTradingResult".innerHTML=msg;
         });
     });
