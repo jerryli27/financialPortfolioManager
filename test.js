@@ -55,7 +55,7 @@ $(document).ready(function () {
         $.ajax({
             type: 'POST',
             url: 'databaseActions.pl',
-            data: { 'act':'automaticStockTrade','initialcash':document.getElementById("initialcash").value,'tradingcost':document.getElementById("tradingcost").value,
+            data: { 'act':'automaticStockTrade','initialcash':document.getElementById("initialcash").value,'tradecost':document.getElementById("tradecost").value,
              'symbol':symbol},
             }).done(function( msg ) {
                 alert( "Data Received: " + msg );

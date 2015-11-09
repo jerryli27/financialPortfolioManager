@@ -928,8 +928,8 @@ sub generateAutomaticStockTrading{
     <input type=\"text\" class=\"form-control\" id=\"initialcash\">
   </div>
     <div class=\"col-xs-2\">
-    <label for=\"tradingcost\">Trading Cost:</label>
-    <input type=\"text\" class=\"form-control\" id=\"tradingcost\">
+    <label for=\"tradecost\">Trading Cost:</label>
+    <input type=\"text\" class=\"form-control\" id=\"tradecost\">
   </div>
   <span style=\"float:right;\">
   <button type=\"button\" class=\"btn btn-default\" id=\"automaticStockTradingSubmit\">Submit</button>
