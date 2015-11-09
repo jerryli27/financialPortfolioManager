@@ -278,7 +278,7 @@ if  ($action eq "automaticStockTrade") {
   my $lasttotal=$lastcash;
   my $lasttotalaftertradecost=$lasttotal;
 
-  open(STOCK, "get_data.pl --close $symbol |")
+  open(STOCK, "../get_data.pl --close $symbol |")
     or die "cannot open get_data.pl --close $symbol |: $!";
 
 
