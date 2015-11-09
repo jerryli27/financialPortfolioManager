@@ -549,11 +549,7 @@ if ($action eq "base") {
 			"</div>",
 		"</div>", # the div for tab-content
 		"</div>",# the div of the container.
-		"</body>",
-		#
-		# The Javascript portion of our app
-		#
-	    "<script type=\"text/javascript\" src=\"test.js\"> </script>"
+		"</body>"
 		;
  	}
 } 	
@@ -595,11 +591,16 @@ if ($action eq "detail") {
 	h3("Plot of Past Performance of $symbol"),
 	print "<img src=\"http://murphy.wot.eecs.northwestern.edu/~yfo776/portfolio/plot_stock.pl?type=plot&symbol=$symbol\">",
 	"</center>";
+	print ""
 	print generateAutomaticStockTrading();
 }
 
 
 
+#
+# The Javascript portion of our app
+#
+print "<script type=\"text/javascript\" src=\"test.js\"> </script>";
 print end_html();
 
 #
