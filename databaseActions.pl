@@ -365,10 +365,10 @@ if  ($action eq "automaticStockTrade") {
   #print "$symbol\t$day\t$roi\t$roi_annual\n";
 
       
-  print "Invested:                        \t$initialcash\n";
-  print "Days:                            \t$day\n";
-  print "Total:                           \t$lasttotal (ROI=$roi % ROI-annual = $roi_annual %)\n";
-  print "Total-after \$$tradecost/day trade costs: \t$lasttotalaftertradecost (ROI=$roi_at % ROI-annual = $roi_at_annual %)\n";
+  print "Invested:                        \t$initialcash<br>";
+  print "Days:                            \t$day<br>";
+  print "Total:                           \t$lasttotal (ROI=$roi % ROI-annual = $roi_annual %)<br>";
+  print "Total-after \$$tradecost/day trade costs: \t$lasttotalaftertradecost (ROI=$roi_at % ROI-annual = $roi_at_annual %)<br>";
   # my %rec_hash = ('initialcash' => $initialcash, 'day' => $day, 'lasttotal' => $lasttotal, 'roi' => $roi, 'roi_annual' => $roi_annual,
   #   'tradecost' => $tradecost, 'day' => $day, 'lasttotalaftertradecost' => $lasttotalaftertradecost, 'roi_at' => $roi_at, 'roi_at_annual' => $roi_at_annual);
   # my $json = encode_json \%rec_hash;

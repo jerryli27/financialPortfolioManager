@@ -931,11 +931,10 @@ sub generateAutomaticStockTrading{
     <label for=\"tradecost\">Trading Cost:</label>
     <input type=\"text\" class=\"form-control\" id=\"tradecost\">
   </div>
-  <span style=\"float:right;\">
   <button type=\"button\" class=\"btn btn-default\" id=\"automaticStockTradingSubmit\">Submit</button>
-  </span>
   <br>
   </form>
+  <br><br>
   <h4 id=\"automaticStockTradingResult\"></h4>
 "
 }
