@@ -4,14 +4,26 @@
 # This helps make it easy to generate active HTML content
 # from Perl
 #
+#
+# The combination of -w and use strict enforces various 
+# rules that make the script more resilient and easier to run
+# as a CGI script.
+#
+use strict;
+
+# The CGI web generation stuff
+# This helps make it easy to generate active HTML content
+# from Perl
+#
 # We'll use the "standard" procedural interface to CGI
 # instead of the OO default interface
 use CGI qw(:standard);
 # This helps printing fatal errors to the browser. 
 use CGI::Carp qw(fatalsToBrowser);
 
-# Can't pass parameters by argv because it is not command line
 
+# Can't pass parameters by argv because it is not command line
+my $symbol; my $initialcash; my $tradecost;
 if (defined(param("symbol"))) { 
   $symbol=param("symbol"); 
 } else{
@@ -28,36 +40,37 @@ if (defined(param("tradecost"))) {
   die "usage: shannon_ratchet.pl symbol initialcash tradingcost\n";
 }
 
-$lastcash=$initialcash;
-$laststock=0;
-$lasttotal=$lastcash;
-$lasttotalaftertradecost=$lasttotal;
+my $lastcash=$initialcash;
+my $laststock=0;
+my $lasttotal=$lastcash;
+my $lasttotalaftertradecost=$lasttotal;
 
 open(STOCK, "get_data.pl --close $symbol |");
 
 
-$cash=0;
-$stock=0;
-$total=0;
-$totalaftertradecost=0;
+my $cash=0;
+my $stock=0;
+my $total=0;
+my $totalaftertradecost=0;
 
-$day=0;
+my $day=0;
 
 
 
 while (<STOCK>) { 
   chomp;
-  @data=split;
-  $stockprice=$data[1];
+  my @data=split;
+  my $stockprice=$data[1];
 
-  $currenttotal=$lastcash+$laststock*$stockprice;
+  my $currenttotal=$lastcash+$laststock*$stockprice;
   if ($currenttotal<=0) {
     exit;
   }
   
-  $fractioncash=$lastcash/$currenttotal;
-  $fractionstock=($laststock*$stockprice)/$currenttotal;
-  $thistradecost=0;
+  my $fractioncash=$lastcash/$currenttotal;
+  my $fractionstock=($laststock*$stockprice)/$currenttotal;
+  my $thistradecost=0;
+  my $redistcash;
   if ($fractioncash >= 0.5 ) {
     $redistcash=($fractioncash-0.5)*$currenttotal;
     if ($redistcash>0) {
@@ -92,11 +105,11 @@ while (<STOCK>) {
 
 close(STOCK);
 
-$roi = 100.0*($lasttotal-$initialcash)/$initialcash;
-$roi_annual = $roi/($day/365.0);
+my $roi = 100.0*($lasttotal-$initialcash)/$initialcash;
+my $roi_annual = $roi/($day/365.0);
 
-$roi_at = 100.0*($lasttotalaftertradecost-$initialcash)/$initialcash;
-$roi_at_annual = $roi_at/($day/365.0);
+my $roi_at = 100.0*($lasttotalaftertradecost-$initialcash)/$initialcash;
+my $roi_at_annual = $roi_at/($day/365.0);
 
 
 #print "$symbol\t$day\t$roi\t$roi_annual\n";

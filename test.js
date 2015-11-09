@@ -55,7 +55,7 @@ $(document).ready(function () {
         $.ajax({
             type: 'POST',
             url: 'shannon_ratchet_for_browser.pl',
-            data: { 'act': 'newTranaction', 'initialcash':document.getElementById("initialcash").value,'tradingcost':document.getElementById("tradingcost").value,
+            data: { 'initialcash':document.getElementById("initialcash").value,'tradingcost':document.getElementById("tradingcost").value,
              'symbol':symbol},
             }).done(function( msg ) {
                 alert( "Data Received: " + msg );
