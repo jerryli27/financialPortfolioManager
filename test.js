@@ -59,7 +59,7 @@ $(document).ready(function () {
              'symbol':symbol},
             }).done(function( msg ) {
                 //alert( "Data Received: " + msg );
-                "#automaticStockTradingResult".innerHTML=msg;
+                document.getElementById("automaticStockTradingResult").innerHTML=msg;
         });
     });
 });
