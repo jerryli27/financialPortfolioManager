@@ -593,7 +593,7 @@ if ($action eq "detail") {
 	
 	print "<center>",
 	h3("Plot of Past Performance of $symbol"),
-	`./plot_stock.pl`,
+	print "<img src=\"http://murphy.wot.eecs.northwestern.edu/~yfo776/portfolio/plot_stock.pl?type=plot&symbol=$symbol\">",
 	"</center>";
 }
 
