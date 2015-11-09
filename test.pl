@@ -591,7 +591,6 @@ if ($action eq "detail") {
 	h3("Plot of Past Performance of $symbol"),
 	print "<img src=\"http://murphy.wot.eecs.northwestern.edu/~yfo776/portfolio/plot_stock.pl?type=plot&symbol=$symbol\">",
 	"</center>";
-	print ""
 	print generateAutomaticStockTrading();
 }
 
