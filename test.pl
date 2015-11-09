@@ -366,7 +366,12 @@ my $userPortfolioCash=getUserPortfolioCash($user,$portfolioArray[$portfolioNum])
 my $userPortfolioTransactionsNum;
 
 # print the header of html
-print header,start_html('Portfolio Management');
+print header,start_html('Portfolio Management'),
+	"<link rel=\"stylesheet\" href=\"http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css\">
+ 	<script src=\"https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js\"></script>
+	<script src=\"http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js\"></script>
+	<script src=\"//cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment-with-locales.js\"></script>
+	<script src=\"//cdn.rawgit.com/Eonasdan/bootstrap-datetimepicker/e8bddc60e73c1ec2475f827be36e1957af72e2ea/src/js/bootstrap-datetimepicker.js\"></script>";
 
 # LOGIN
 #
@@ -461,12 +466,7 @@ if ($action eq "base") {
 		my $sharedStringForCash="<p>\tCash - \$$userPortfolioCash <a data-toggle=\"modal\" href=\"\#cashDepositModal\">Deposit</a> 
 		/ <a data-toggle=\"modal\" href=\"\#cashWithdrawModal\">Withdraw</a> $cashDepositModal $cashWithdrawModal";
 
- 		print 
-		"<link rel=\"stylesheet\" href=\"http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css\">
-	 	<script src=\"https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js\"></script>
-		<script src=\"http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js\"></script>
-		<script src=\"//cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment-with-locales.js\"></script>
-		<script src=\"//cdn.rawgit.com/Eonasdan/bootstrap-datetimepicker/e8bddc60e73c1ec2475f827be36e1957af72e2ea/src/js/bootstrap-datetimepicker.js\"></script>",
+ 		print
 		$cssStyleHeader,
 		$userPortfolioLogoutLine, 
 			# The span here makes the text aligned to the right while the rest of the file stays left aligned
@@ -549,11 +549,7 @@ if ($action eq "base") {
 			"</div>",
 		"</div>", # the div for tab-content
 		"</div>",# the div of the container.
-		"</body>",
-		#
-		# The Javascript portion of our app
-		#
-	    "<script type=\"text/javascript\" src=\"test.js\"> </script>"
+		"</body>"
 		;
  	}
 } 	
@@ -595,10 +591,15 @@ if ($action eq "detail") {
 	h3("Plot of Past Performance of $symbol"),
 	print "<img src=\"http://murphy.wot.eecs.northwestern.edu/~yfo776/portfolio/plot_stock.pl?type=plot&symbol=$symbol\">",
 	"</center>";
+	print generateAutomaticStockTrading();
 }
 
 
 
+#
+# The Javascript portion of our app
+#
+print "<script type=\"text/javascript\" src=\"test.js\"> </script>";
 print end_html();
 
 #
@@ -914,6 +915,30 @@ sub generatePerformanceTable{
 	"Sum of Gain: ".$sum."<br>";
 
 }
+
+# The form for automatic stock trading.
+sub generateAutomaticStockTrading{
+	return "
+  <div class=\"col-xs-2\">
+    <label for=\"automaticStockTradingForm\">Compare your trading strategy with Shannon-Ratchet automatic trading strategy</label>
+  </div>
+  <form role=\"form\" id=\"automaticStockTradingForm\">
+    <div class=\"col-xs-2\">
+    <label for=\"initialcash\">Initial Cash:</label>
+    <input type=\"text\" class=\"form-control\" id=\"initialcash\">
+  </div>
+    <div class=\"col-xs-2\">
+    <label for=\"tradecost\">Trading Cost:</label>
+    <input type=\"text\" class=\"form-control\" id=\"tradecost\">
+  </div>
+  <button type=\"button\" class=\"btn btn-default\" id=\"automaticStockTradingSubmit\">Submit</button>
+  <br>
+  </form>
+  <br><br>
+  <h4 id=\"automaticStockTradingResult\"></h4>
+"
+}
+
 
 #
 # get the stddev of the closing price of a particular stock

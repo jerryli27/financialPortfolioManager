@@ -46,7 +46,19 @@ use DBI;
 # date strings into the unix epoch time (seconds since 1970)
 #
 use Time::ParseDate;
+#
+#
+# A module that makes it easy to encode things into JSON
+# Used to pass anything useful to javascript other than HTML.
+#
+#use JSON
 
+#
+#
+# A module to get current working directory.
+#
+use Cwd;
+my $dir = getcwd;
 #
 # Debugging
 #
@@ -251,6 +263,116 @@ if ($action eq "newTranaction") {
 		print "Transaction has been inserted to portfolio $currPortfolioName of user $user.";
 	# }
 	exit 0;
+}
+
+if  ($action eq "automaticStockTrade") {
+
+  # Can't pass parameters by argv because it is not command line
+  my $symbol; my $initialcash; my $tradecost;
+  if (defined(param("symbol"))) { 
+    $symbol=param("symbol"); 
+  } else{
+    die "did not define symbol\n";
+  }
+  if (defined(param("initialcash"))) { 
+    $initialcash=param("initialcash"); 
+  } else{
+    die "did not define initialcash\n";
+  }
+  if (defined(param("tradecost"))) { 
+    $tradecost=param("tradecost"); 
+  } else{
+    die "did not define symbol tradecost\n";
+  }
+
+  # Everything else comes from shannon_ratchet.pl
+
+  my $lastcash=$initialcash;
+  my $laststock=0;
+  my $lasttotal=$lastcash;
+  my $lasttotalaftertradecost=$lasttotal;
+
+  # I need to add ../ because the file thinks we're in databaseActions.pl instead of its parent folder.
+  open(STOCK, "$dir/get_data.pl --close $symbol |")
+    or die "cannot open $dir/get_data.pl --close $symbol |: $!";
+
+
+
+  my $cash=0;
+  my $stock=0;
+  my $total=0;
+  my $totalaftertradecost=0;
+
+  my $day=0;
+
+
+
+  while (<STOCK>) { 
+    chomp;
+    my @data=split;
+    my $stockprice=$data[1];
+
+    my $currenttotal=$lastcash+$laststock*$stockprice;
+    if ($currenttotal<=0) {
+      exit;
+    }
+    
+    my $fractioncash=$lastcash/$currenttotal;
+    my $fractionstock=($laststock*$stockprice)/$currenttotal;
+    my $thistradecost=0;
+    my $redistcash;
+    if ($fractioncash >= 0.5 ) {
+      $redistcash=($fractioncash-0.5)*$currenttotal;
+      if ($redistcash>0) {
+        $cash=$lastcash-$redistcash;
+        $stock=$laststock+$redistcash/$stockprice;
+        $thistradecost=$tradecost;
+      } else {
+        $cash=$lastcash;
+        $stock=$laststock;
+      } 
+    }  else {
+      $redistcash=($fractionstock-0.5)*$currenttotal;
+      if ($redistcash>0) {
+        $cash=$lastcash+$redistcash;
+        $stock=$laststock-$redistcash/$stockprice;
+        $thistradecost=$tradecost;
+      }
+    }
+    
+    $total=$cash+$stock*$stockprice;
+    $totalaftertradecost=($lasttotalaftertradecost-$lasttotal) - $thistradecost + $total; 
+    $lastcash=$cash;
+    $laststock=$stock;
+    $lasttotal=$total;
+    $lasttotalaftertradecost=$totalaftertradecost;
+
+    $day++;
+    
+
+  #  print STDERR "$day\t$stockprice\t$cash\t".($stock*$stockprice)."\t$stock\t$total\t$totalaftertradecost\n";
+  }
+
+  close(STOCK);
+
+  my $roi = 100.0*($lasttotal-$initialcash)/$initialcash;
+  my $roi_annual = $roi/($day/365.0);
+
+  my $roi_at = 100.0*($lasttotalaftertradecost-$initialcash)/$initialcash;
+  my $roi_at_annual = $roi_at/($day/365.0);
+
+
+  #print "$symbol\t$day\t$roi\t$roi_annual\n";
+
+      
+  print "Invested:                        \t$initialcash<br>";
+  print "Days:                            \t$day<br>";
+  print "Total:                           \t$lasttotal (ROI=$roi % ROI-annual = $roi_annual %)<br>";
+  print "Total-after \$$tradecost/day trade costs: \t$lasttotalaftertradecost (ROI=$roi_at % ROI-annual = $roi_at_annual %)<br>";
+  # my %rec_hash = ('initialcash' => $initialcash, 'day' => $day, 'lasttotal' => $lasttotal, 'roi' => $roi, 'roi_annual' => $roi_annual,
+  #   'tradecost' => $tradecost, 'day' => $day, 'lasttotalaftertradecost' => $lasttotalaftertradecost, 'roi_at' => $roi_at, 'roi_at_annual' => $roi_at_annual);
+  # my $json = encode_json \%rec_hash;
+  # print "$json\n";
 }
 
 

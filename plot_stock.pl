@@ -62,7 +62,6 @@ if ($type eq "text") {
     print $r->[0], "\t", $r->[1], "\n";
   }
   print "</pre>";
-  
 
   print "</body>";
   print "</html>";
