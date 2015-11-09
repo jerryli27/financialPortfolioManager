@@ -500,7 +500,7 @@ if ($action eq "base") {
 					th(['<input type="checkbox" name="checkAll" value=""/>','Symbol','Stddev','Beta']),
 					map {
 						td([
-							'<input type="checkbox" name="check$$_[0]" value=""/>',"<a href=\"\"> $$_[0] </a>",get_stddev($$_[0])
+							'<input type="checkbox" name="check$$_[0]" value=""/>',"<a href=\"test.pl?act=detail&type=plot&symbol=$$_[0]\"> $$_[0] </a>",get_stddev($$_[0])
 						])
 					} @symbols
 				])
@@ -587,6 +587,15 @@ if ($action eq "register") {
 	print "</center>";
 } 	
 
+if ($action eq "detail") {
+	my $symbol = param("symbol");
+	my @rows = ExecStockSQL("2D","select timestamp, close from portfolio_allStocks where symbol=? order by timestamp",$symbol);
+	
+	print "<center>",
+	h3("Plot of Past Performance of $symbol"),
+	`./plot_stock.pl`,
+	"</center>";
+}
 
 
 
@@ -809,7 +818,7 @@ sub generateTransactionsTable{
 			th(['Transaction ID','Timestamp','Symbol',"Method","Price","Share"]),
 			map {
 				td([
-					$$_[0],$$_[5],$$_[3],$$_[6],$$_[4],$$_[7]
+					"<a href=\"test.pl?act=detail&type=plot&symbol=$$_[0]\"> $$_[0] </a>",$$_[5],$$_[3],$$_[6],$$_[4],$$_[7]
 				])
 			} @rows
 		])
@@ -855,7 +864,7 @@ sub generateOverviewTable{
 			# td([$table[0][0],$table[0][1],$table[0][2],$table[0][3],$table[0][4],$table[0][5]])
 			map {
 				td([
-					'<input type="checkbox" name="check$$_[0]" value=""/>',$$_[0],localtime($$_[1])->strftime('%F %T'),$$_[2],$$_[3],$$_[4],$$_[5],$$_[6]
+					'<input type="checkbox" name="check$$_[0]" value=""/>',"<a href=\"test.pl?act=detail&type=plot&symbol=$$_[0]\"> $$_[0] </a>",localtime($$_[1])->strftime('%F %T'),$$_[2],$$_[3],$$_[4],$$_[5],$$_[6]
 				])
 			} @table
 		])
@@ -896,7 +905,7 @@ sub generatePerformanceTable{
 			th(['Symbol','Last Price','Change','Shares','Gain','Gain %','Day\'s gain']),
 			map {
 				td([
-					$$_[0],$$_[1],$$_[2],$$_[3],$$_[4],$$_[5],$$_[6]
+					"<a href=\"test.pl?act=detail&type=plot&symbol=$$_[0]\"> $$_[0] </a>",$$_[1],$$_[2],$$_[3],$$_[4],$$_[5],$$_[6]
 				])
 			} @table
 		])
