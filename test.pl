@@ -884,7 +884,7 @@ sub generatePerformanceTable{
 		,undef,$user,$currPortfolioName);
 	# I tried to execute outside perl script but failed.
 	my @rows; my @row1; my @row2; my @table;
-	my $counter=0;
+	my $counter=0;my $totalValue=0;
 	foreach (@symbols){
 		@rows=ExecSQL($dbuser, $dbpasswd,"SELECT * from (select * from portfolio_allStocks where symbol=\'$$_[0]\' order by timestamp DESC) where ROWNUM<=2",undef);
 		$table[$counter][0]=$rows[0][0];#Symbol
@@ -895,6 +895,7 @@ sub generatePerformanceTable{
 		$table[$counter][5]=100*($rows[0][5]*$$_[1]-$$_[2])/$$_[2].'%';#Gain %= current value of all stocks-the money I spent on buying them.
 		$table[$counter][6]=($rows[0][5]-$rows[1][5])*$$_[1];#Day's gain= amount of stocks* change in stock price
 		$counter=$counter+1;
+		$totalValue=$totalValue+$rows[0][5]*$$_[1] #=Last price * Shares
 	}
 	my $sum;
 	map { $sum += $$_[4] } @table;
@@ -912,7 +913,7 @@ sub generatePerformanceTable{
 		])
 	).
 	"</form>".
-	"Sum of Gain: ".$sum."<br>";
+	"Sum of Gain: $sum\tTotal market value: $totalValue<br>";
 
 }
 
