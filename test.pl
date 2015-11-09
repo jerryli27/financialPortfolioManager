@@ -366,7 +366,12 @@ my $userPortfolioCash=getUserPortfolioCash($user,$portfolioArray[$portfolioNum])
 my $userPortfolioTransactionsNum;
 
 # print the header of html
-print header,start_html('Portfolio Management');
+print header,start_html('Portfolio Management'),
+	"<link rel=\"stylesheet\" href=\"http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css\">
+ 	<script src=\"https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js\"></script>
+	<script src=\"http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js\"></script>
+	<script src=\"//cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment-with-locales.js\"></script>
+	<script src=\"//cdn.rawgit.com/Eonasdan/bootstrap-datetimepicker/e8bddc60e73c1ec2475f827be36e1957af72e2ea/src/js/bootstrap-datetimepicker.js\"></script>";
 
 # LOGIN
 #
@@ -461,12 +466,7 @@ if ($action eq "base") {
 		my $sharedStringForCash="<p>\tCash - \$$userPortfolioCash <a data-toggle=\"modal\" href=\"\#cashDepositModal\">Deposit</a> 
 		/ <a data-toggle=\"modal\" href=\"\#cashWithdrawModal\">Withdraw</a> $cashDepositModal $cashWithdrawModal";
 
- 		print 
-		"<link rel=\"stylesheet\" href=\"http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css\">
-	 	<script src=\"https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js\"></script>
-		<script src=\"http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js\"></script>
-		<script src=\"//cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment-with-locales.js\"></script>
-		<script src=\"//cdn.rawgit.com/Eonasdan/bootstrap-datetimepicker/e8bddc60e73c1ec2475f827be36e1957af72e2ea/src/js/bootstrap-datetimepicker.js\"></script>",
+ 		print
 		$cssStyleHeader,
 		$userPortfolioLogoutLine, 
 			# The span here makes the text aligned to the right while the rest of the file stays left aligned
