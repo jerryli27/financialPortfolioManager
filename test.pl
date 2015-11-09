@@ -936,7 +936,7 @@ sub generateAutomaticStockTrading{
   </span>
   <br>
   </form>
-  <p id=\"automaticStockTradingResult\"></p>
+  <h4 id=\"automaticStockTradingResult\"></h4>
 "
 }
 
