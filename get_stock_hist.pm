@@ -199,7 +199,7 @@ sub insertLatestStockHist{
 	    if (!defined($quotes{$symbol,"success"})) { 
 		 print "$symbol: No Data\n";
 	    } else {
-	    	#print($symbol);
+	    	print($symbol);
 			if (defined($quotes{$symbol,"date"})&&defined($quotes{$symbol,"time"})) {
 				# The eval catches the error and do not terminate the program if there is one.
 				eval {
@@ -207,6 +207,7 @@ sub insertLatestStockHist{
 					$sql="INSERT INTO portfolio_stocks
 					VALUES (\'$symbol\', $time, $quotes{$symbol,\"open\"}, $quotes{$symbol,\"high\"}, 
 					$quotes{$symbol,\"low\"}, $quotes{$symbol,\"close\"}, $quotes{$symbol,\"volume\"})";
+					print($sql);
 					#send the query
 				 	$sth = $dbh->prepare($sql);
 
