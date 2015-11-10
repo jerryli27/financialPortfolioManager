@@ -194,40 +194,36 @@ sub insertLatestStockHist{
 	my $sql;
 
 	foreach $symbol (@symbols) {
-	    print($symbol,"\n=========\n");
+	    #print($symbol,"\n=========\n");
 	    if (!defined($quotes{$symbol,"success"})) { 
 		# print "No Data\n";
 	    } else {
 			if (defined($quotes{$symbol,"date"})&&defined($quotes{$symbol,"time"})) {
 				# The eval catches the error and do not terminate the program if there is one.
 				eval {
-					my $time=parsedate($quotes{$symbol,"date"}." ".$quotes{$symbol,"time"});
-					#$time = ParseDateString("epoch $time");
+					my $time=parsedate($quotes{$symbol,"date"}." ".$quotes{$symbol,"time"}); #epoch time
 					$sql="INSERT INTO portfolio_stocks
 					VALUES ($symbol, $time, $quotes{$symbol,\"open\"}, $quotes{$symbol,\"high\"}, 
 					$quotes{$symbol,\"low\"}, $quotes{$symbol,\"close\"}, $quotes{$symbol,\"volume\"});";
-					print("INSERT INTO portfolio_stocks
-					VALUES ($symbol, $time, $quotes{$symbol,\"open\"}, $quotes{$symbol,\"high\"}, 
-					$quotes{$symbol,\"low\"}, $quotes{$symbol,\"close\"}, $quotes{$symbol,\"volume\"});");
 					#send the query
-				 # 	$sth = $dbh->prepare($sql);
+				 	$sth = $dbh->prepare($sql);
 
-					# if (not $sth) { 
-					# 	my $errstr="Can't prepare $querystring because of ".$DBI::errstr;
-					# 	#$dbh->disconnect(); #commented out this because we still need to insert the rest of data.
-					# 	#die $errstr;
-					# 	print($errstr);
-					# }
-					# if (not $sth->execute()) { 
-					# 	my $errstr="Can't execute $querystring because of ".$DBI::errstr;
-					# 	#$dbh->disconnect();#commented out this because we still need to insert the rest of data.
-					# 	#die $errstr;
-					# 	print($errstr);
-					# }
-					# # multirow or single column output or strings
-					# while (@data=$sth->fetchrow_array()) {
-					# 	#push @ret, [@data];
-					# }
+					if (not $sth) { 
+						my $errstr="Can't prepare $querystring because of ".$DBI::errstr;
+						#$dbh->disconnect(); #commented out this because we still need to insert the rest of data.
+						#die $errstr;
+						print($errstr);
+					}
+					if (not $sth->execute()) { 
+						my $errstr="Can't execute $querystring because of ".$DBI::errstr;
+						#$dbh->disconnect();#commented out this because we still need to insert the rest of data.
+						#die $errstr;
+						print($errstr);
+					}
+					# multirow or single column output or strings
+					while (@data=$sth->fetchrow_array()) {
+						#push @ret, [@data];
+					}
 				};
 				if ( $@ ) {
 					# sql will print error message. Don't need to do anything
