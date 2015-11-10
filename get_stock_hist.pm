@@ -202,7 +202,7 @@ sub insertLatestStockHist{
 				# The eval catches the error and do not terminate the program if there is one.
 				eval {
 					my $time=parsedate($quotes{$symbol,"date"}." ".$quotes{$symbol,"time"});
-					$time = ParseDateString("epoch $time");
+					#$time = ParseDateString("epoch $time");
 					$sql="INSERT INTO portfolio_stocks
 					VALUES ($symbol, $time, $quotes{$symbol,\"open\"}, $quotes{$symbol,\"high\"}, 
 					$quotes{$symbol,\"low\"}, $quotes{$symbol,\"close\"}, $quotes{$symbol,\"volume\"});";
