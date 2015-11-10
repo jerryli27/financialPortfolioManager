@@ -200,7 +200,6 @@ sub insertLatestStockHist{
 		 print "$symbol: No Data\n";
 	    } else {
 	    	#print($symbol);
-	    	return;
 			if (defined($quotes{$symbol,"date"})&&defined($quotes{$symbol,"time"})) {
 				# The eval catches the error and do not terminate the program if there is one.
 				eval {
