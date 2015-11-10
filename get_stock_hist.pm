@@ -197,7 +197,7 @@ sub insertLatestStockHist{
 		$symbol=$$_[0];
 	    #print($symbol,"\n=========\n");
 	    if (!defined($quotes{$symbol,"success"})) { 
-		 print "No Data\n";
+		 print "$symbol: No Data\n";
 	    } else {
 	    	#print($symbol);
 	    	return;
