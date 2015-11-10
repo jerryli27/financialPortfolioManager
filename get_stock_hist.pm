@@ -172,7 +172,8 @@ sub getAllStocksHist{
 sub insertLatestStockHist{
 	@info=("date","time","high","low","close","open","volume","last");
 	# Get a list of all the symbols of stocks, their start date, and their end date involved in our transactions.
-	my @symbols = ExecStockSQL(undef,"SELECT DISTINCT symbol FROM portfolio_allStocks");
+	my @symbols = ExecStockSQL("COL","SELECT DISTINCT symbol FROM portfolio_allStocks");
+
 	#my @symbols = ("GE");
 	$con=Finance::Quote->new();
 
@@ -193,8 +194,7 @@ sub insertLatestStockHist{
 	my $sth;
 	my $sql;
 	my $symbol;
-	foreach (@symbols) {
-		$symbol=$$_[0];
+	foreach $symbol (@symbols) {
 	    #print($symbol,"\n=========\n");
 	    if (!defined($quotes{$symbol,"success"})) { 
 		 print "$symbol: No Data\n";
