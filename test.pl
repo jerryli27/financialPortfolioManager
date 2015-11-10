@@ -500,7 +500,7 @@ if ($action eq "base") {
 					th(['<input type="checkbox" name="checkAll" value=""/>','Symbol','Stddev','Beta']),
 					map {
 						td([
-							'<input type="checkbox" name="check$$_[0]" value=""/>',"<a href=\"test.pl?act=detail&type=plot&symbol=$$_[0]\"> $$_[0] </a>",get_stddev($$_[0])
+							'<input type="checkbox" name="check$$_[0]" value=""/>',"<a href=\"test.pl?act=detail&type=plot&symbol=$$_[0]\"> $$_[0] </a>",get_stddev($$_[0]),get_beta($$_[0])
 						])
 					} @symbols
 				])
@@ -949,6 +949,17 @@ sub get_stddev {
 	my @rtn = ExecSQL($dbuser,$dbpasswd, "select STDDEV(close) \"stddev\" from portfolio_allStocks where symbol=?","COL",$symbol);
 	return $rtn[0];
 }
+
+#
+# get the beta of a stock (relative to S&P500)
+#
+sub get_beta {
+	my($symbol)=@_;
+	my @rtn = `./get_covar.pl $symbol '^GSPC'`;
+	my @covar_list = split(' ',$rtn[5]);
+	return $covar_list[1]/get_stddev("^GSPC");
+}
+
 
 #
 #
