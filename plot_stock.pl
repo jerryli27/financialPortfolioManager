@@ -61,47 +61,47 @@ if (!defined($type) || $type eq "text" || !($type eq "plot") ) {
 
 
 #my @rows = ExecStockSQL("2D","select timestamp, close from portfolio_allStocks where symbol=? order by timestamp",$symbol);
-my $rows = `$dir/time_series_symbol_project.pl $symbol 4 AWAIT 200 AR 16|`;
+my @rows = `$dir/time_series_symbol_project.pl $symbol 4 AWAIT 200 AR 16`;
 print("output:");
 print($rows);
 
-# if ($type eq "text") { 
-#   print "<pre>";
-#   foreach my $r (@rows) {
-#     print $r->[0], "\t", $r->[1], "\n";
-#   }
-#   print "</pre>";
+if ($type eq "text") { 
+  print "<pre>";
+  foreach my $r (@rows) {
+    print $r->[0], "\t", $r->[1], "\n";
+  }
+  print "</pre>";
 
-#   print "</body>";
-#   print "</html>";
+  print "</body>";
+  print "</html>";
 
-# } elsif ($type eq "plot") {
-# #
-# # This is how to drive gnuplot to produce a plot
-# # The basic idea is that we are going to send it commands and data
-# # at stdin, and it will print the graph for us to stdout
-# #
-# #
-#   open(GNUPLOT,"| gnuplot") or die "Cannot run gnuplot";
+} elsif ($type eq "plot") {
+#
+# This is how to drive gnuplot to produce a plot
+# The basic idea is that we are going to send it commands and data
+# at stdin, and it will print the graph for us to stdout
+#
+#
+  open(GNUPLOT,"| gnuplot") or die "Cannot run gnuplot";
   
-#   print GNUPLOT "set term png\n";           # we want it to produce a PNG
-#   print GNUPLOT "set output\n";             # output the PNG to stdout
-#   print GNUPLOT "plot '-' using 1:2 with linespoints\n"; # feed it data to plot
-#   foreach my $r (@rows) {
-#     if ($r->[1]==0){
-#         print GNUPLOT $r->[0], "\t", $r->[2], "\n";
-#       }else{
-#         print GNUPLOT $r->[0], "\t", $r->[1], "\n";
-#       }
-#   }
-#   print GNUPLOT "e\n"; # end of data
+  print GNUPLOT "set term png\n";           # we want it to produce a PNG
+  print GNUPLOT "set output\n";             # output the PNG to stdout
+  print GNUPLOT "plot '-' using 1:2 with linespoints\n"; # feed it data to plot
+  foreach my $r (@rows) {
+    if ($r->[1]==0){
+        print GNUPLOT $r->[0], "\t", $r->[2], "\n";
+      }else{
+        print GNUPLOT $r->[0], "\t", $r->[1], "\n";
+      }
+  }
+  print GNUPLOT "e\n"; # end of data
 
-#   #
-#   # Here gnuplot will print the image content
-#   #
+  #
+  # Here gnuplot will print the image content
+  #
 
-#   close(GNUPLOT);
-# }
+  close(GNUPLOT);
+}
 
 
 
