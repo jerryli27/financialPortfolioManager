@@ -61,8 +61,8 @@ if (!defined($type) || $type eq "text" || !($type eq "plot") ) {
 
 
 #my @rows = ExecStockSQL("2D","select timestamp, close from portfolio_allStocks where symbol=? order by timestamp",$symbol);
-my @rows = `$dir/time_series_symbol_project.pl $symbol 4 AWAIT 200 AR 16|`;
-
+#my @rows = `$dir/time_series_symbol_project.pl $symbol 4 AWAIT 200 AR 16|`;
+my @rows=(0,1);
 if ($type eq "text") { 
   print "<pre>";
   foreach my $r (@rows) {
