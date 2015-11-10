@@ -5,6 +5,12 @@ use strict;
 use CGI qw(:standard);
 use DBI;
 use Time::ParseDate;
+#
+#
+# A module to get current working directory.
+#
+use Cwd;
+my $dir = getcwd;
 
 BEGIN {
   $ENV{PORTF_DBMS}="oracle";
@@ -54,7 +60,8 @@ if (!defined($type) || $type eq "text" || !($type eq "plot") ) {
 }
 
 
-my @rows = ExecStockSQL("2D","select timestamp, close from portfolio_allStocks where symbol=? order by timestamp",$symbol);
+#my @rows = ExecStockSQL("2D","select timestamp, close from portfolio_allStocks where symbol=? order by timestamp",$symbol);
+my @rows = `$dir/time_series_symbol_project.pl $symbol 4 AWAIT 200 AR 16|`;
 
 if ($type eq "text") { 
   print "<pre>";
@@ -79,7 +86,11 @@ if ($type eq "text") {
   print GNUPLOT "set output\n";             # output the PNG to stdout
   print GNUPLOT "plot '-' using 1:2 with linespoints\n"; # feed it data to plot
   foreach my $r (@rows) {
-    print GNUPLOT $r->[0], "\t", $r->[1], "\n";
+    if ($r->[1]==0){
+        print GNUPLOT $r->[0], "\t", $r->[2], "\n";
+      }else{
+        print GNUPLOT $r->[0], "\t", $r->[1], "\n";
+      }
   }
   print GNUPLOT "e\n"; # end of data
 
