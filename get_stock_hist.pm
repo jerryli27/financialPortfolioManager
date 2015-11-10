@@ -194,7 +194,7 @@ sub insertLatestStockHist{
 	my $sql;
 
 	foreach $symbol (@ARGV) {
-	    print $symbol,"\n=========\n";
+	    print($symbol,"\n=========\n");
 	    if (!defined($quotes{$symbol,"success"})) { 
 		# print "No Data\n";
 	    } else {
