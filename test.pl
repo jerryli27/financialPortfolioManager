@@ -819,7 +819,7 @@ sub generateTransactionsTable{
 			th(['Transaction ID','Timestamp','Symbol',"Method","Price","Share"]),
 			map {
 				td([
-					"<a href=\"test.pl?act=detail&type=plot&symbol=$$_[0]\"> $$_[0] </a>",$$_[5],$$_[3],$$_[6],$$_[4],$$_[7]
+					$$_[0],$$_[5],"<a href=\"test.pl?act=detail&type=plot&symbol=$$_[3]\"> $$_[3] </a>",$$_[6],$$_[4],$$_[7]
 				])
 			} @rows
 		])
