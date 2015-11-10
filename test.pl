@@ -589,13 +589,16 @@ if ($action eq "detail") {
 	
 	print "<center>",
 	h3("Plot of Past Performance of $symbol"),
-	print "<img src=\"http://murphy.wot.eecs.northwestern.edu/~yfo776/portfolio/plot_stock.pl?type=plot&symbol=$symbol\">",
-	"</center>";
+	print "<img src=\"http://murphy.wot.eecs.northwestern.edu/~jlt709/portfolio/plot_stock.pl?type=plot&symbol=$symbol\">",
+	"</center>",
+	"<h3> Note that the last four day's data is the predicted data</h3>";
 	print generateAutomaticStockTrading();
 }
 
 
-
+print "All source code are in <a href=\"http://murphy.wot.eecs.northwestern.edu/~jlt709/portfolio\"> http://murphy.wot.eecs.northwestern.edu/~jlt709/portfolio</a> folder<br>
+Click <a href=\"http://murphy.wot.eecs.northwestern.edu/~jlt709/portfolio/Project 2 mockup.pdf\"> here</a> for the project mockup <br>
+Click <a href=\"http://murphy.wot.eecs.northwestern.edu/~jlt709/portfolio/ER Diagram.pdf\"> here</a> for the ER diagram <br>";
 #
 # The Javascript portion of our app
 #

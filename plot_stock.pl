@@ -3,8 +3,16 @@
 
 use strict;
 use CGI qw(:standard);
+# This helps printing fatal errors to the browser. 
+use CGI::Carp qw(fatalsToBrowser);
 use DBI;
 use Time::ParseDate;
+#
+#
+# A module to get current working directory.
+#
+use Cwd;
+my $dir = getcwd;
 
 BEGIN {
   $ENV{PORTF_DBMS}="oracle";
@@ -54,12 +62,26 @@ if (!defined($type) || $type eq "text" || !($type eq "plot") ) {
 }
 
 
-my @rows = ExecStockSQL("2D","select timestamp, close from portfolio_allStocks where symbol=? order by timestamp",$symbol);
+#my @rows = ExecStockSQL("2D","select timestamp, close from portfolio_allStocks where symbol=? order by timestamp",$symbol);
+my $output = `$dir/time_series_symbol_project.pl $symbol 4 AWAIT 200 AR 16`;
+my @rows=split /\s+/, $output ;
+# print(@rows);
+my $counter=0;
 
 if ($type eq "text") { 
   print "<pre>";
   foreach my $r (@rows) {
-    print $r->[0], "\t", $r->[1], "\n";
+    if ($r==0 && $counter!=0){
+      
+    }
+    elsif (($counter) %2==0){
+      print $r, "\t";
+      $counter++;
+    }
+    else{
+      print $r, "\n";
+      $counter++;
+    }
   }
   print "</pre>";
 
@@ -79,10 +101,21 @@ if ($type eq "text") {
   print GNUPLOT "set output\n";             # output the PNG to stdout
   print GNUPLOT "plot '-' using 1:2 with linespoints\n"; # feed it data to plot
   foreach my $r (@rows) {
-    print GNUPLOT $r->[0], "\t", $r->[1], "\n";
+    if ($r==0 && $counter!=0){
+      
+    }
+    elsif ($counter%2==0){
+      print GNUPLOT $r, "\t";
+      $counter++;
+    }
+    else{
+      print GNUPLOT $r, "\n";
+      $counter++;
+    }
   }
   print GNUPLOT "e\n"; # end of data
-
+  print GNUPLOT "set xlabel \"Day Number\"";
+  print GNUPLOT "set ylabel \"Price\"";
   #
   # Here gnuplot will print the image content
   #
