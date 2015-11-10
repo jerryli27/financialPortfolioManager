@@ -172,8 +172,8 @@ sub getAllStocksHist{
 sub insertLatestStockHist{
 	@info=("date","time","high","low","close","open","volume","last");
 	# Get a list of all the symbols of stocks, their start date, and their end date involved in our transactions.
-	my @symbols = ExecStockSQL(undef,"SELECT DISTINCT symbol FROM portfolio_allStocks");
-
+	#my @symbols = ExecStockSQL(undef,"SELECT DISTINCT symbol FROM portfolio_allStocks");
+	my @symbols = ("GE");
 	$con=Finance::Quote->new();
 
 	$con->timeout(60);
@@ -207,6 +207,9 @@ sub insertLatestStockHist{
 					$sql="INSERT INTO portfolio_stocks
 					VALUES ($symbol, $time, $$quotes{$symbol,\"open\"}, $$quotes{$symbol,\"high\"}, 
 					$$quotes{$symbol,\"low\"}, $$quotes{$symbol,\"close\"}, $$quotes{$symbol,\"volume\"});";
+					print ("INSERT INTO portfolio_stocks
+					VALUES ($symbol, $time, $$quotes{$symbol,\"open\"}, $$quotes{$symbol,\"high\"}, 
+					$$quotes{$symbol,\"low\"}, $$quotes{$symbol,\"close\"}, $$quotes{$symbol,\"volume\"});");
 					#send the query
 				 	$sth = $dbh->prepare($sql);
 
