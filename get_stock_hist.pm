@@ -192,13 +192,15 @@ sub insertLatestStockHist{
 	my @ret;
 	my $sth;
 	my $sql;
-
-	foreach $symbol (@symbols) {
+	my $symbol;
+	foreach (@symbols) {
+		$symbol=$$_[0];
 	    #print($symbol,"\n=========\n");
 	    if (!defined($quotes{$symbol,"success"})) { 
 		# print "No Data\n";
 	    } else {
 	    	print($symbol);
+	    	return;
 			if (defined($quotes{$symbol,"date"})&&defined($quotes{$symbol,"time"})) {
 				# The eval catches the error and do not terminate the program if there is one.
 				eval {
