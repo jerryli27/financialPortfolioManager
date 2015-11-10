@@ -596,7 +596,9 @@ if ($action eq "detail") {
 }
 
 
-
+print "All source code are in <a href=\"http://murphy.wot.eecs.northwestern.edu/~jlt709/portfolio\"> http://murphy.wot.eecs.northwestern.edu/~jlt709/portfolio</a> folder<br>
+Click <a href=\"http://murphy.wot.eecs.northwestern.edu/~jlt709/portfolio/Project 2 mockup.pdf\"> here</a> for the project mockup <br>
+Click <a href=\"http://murphy.wot.eecs.northwestern.edu/~jlt709/portfolio/ER Diagram.pdf\"> here</a> for the ER diagram <br>"
 #
 # The Javascript portion of our app
 #
