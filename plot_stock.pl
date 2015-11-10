@@ -72,7 +72,7 @@ if ($type eq "text") {
   print "<pre>";
   foreach my $r (@rows) {
     if ($counter%2==0)
-      print $r, "\t"
+      print $r, "\t";
     else
       print $r, "\n";
     $counter++;
@@ -96,7 +96,7 @@ if ($type eq "text") {
   print GNUPLOT "plot '-' using 1:2 with linespoints\n"; # feed it data to plot
   foreach my $r (@rows) {
     if ($counter%2==0)
-      print GNUPLOT $r, "\t"
+      print GNUPLOT $r, "\t";
     else
       print GNUPLOT $r, "\n";
     $counter++;
