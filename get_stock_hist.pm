@@ -204,7 +204,7 @@ sub insertLatestStockHist{
 					my $time=parsedate($quotes{$symbol,"date"}." ".$quotes{$symbol,"time"}); #epoch time
 					$sql="INSERT INTO portfolio_stocks
 					VALUES ($symbol, $time, $quotes{$symbol,\"open\"}, $quotes{$symbol,\"high\"}, 
-					$quotes{$symbol,\"low\"}, $quotes{$symbol,\"close\"}, $quotes{$symbol,\"volume\"});";
+					$quotes{$symbol,\"low\"}, $quotes{$symbol,\"close\"}, $quotes{$symbol,\"volume\"})";
 					#send the query
 				 	$sth = $dbh->prepare($sql);
 
