@@ -198,6 +198,7 @@ sub insertLatestStockHist{
 	    if (!defined($quotes{$symbol,"success"})) { 
 		# print "No Data\n";
 	    } else {
+	    	print($symbol);
 			if (defined($quotes{$symbol,"date"})&&defined($quotes{$symbol,"time"})) {
 				# The eval catches the error and do not terminate the program if there is one.
 				eval {
@@ -211,14 +212,14 @@ sub insertLatestStockHist{
 					if (not $sth) { 
 						my $errstr="Can't prepare $querystring because of ".$DBI::errstr;
 						#$dbh->disconnect(); #commented out this because we still need to insert the rest of data.
-						#die $errstr;
-						print($errstr);
+						die $errstr;
+						#print($errstr);
 					}
 					if (not $sth->execute()) { 
 						my $errstr="Can't execute $querystring because of ".$DBI::errstr;
 						#$dbh->disconnect();#commented out this because we still need to insert the rest of data.
-						#die $errstr;
-						print($errstr);
+						die $errstr;
+						#print($errstr);
 					}
 					# multirow or single column output or strings
 					while (@data=$sth->fetchrow_array()) {
