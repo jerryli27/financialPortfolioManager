@@ -172,8 +172,9 @@ sub getAllStocksHist{
 sub insertLatestStockHist{
 	@info=("date","time","high","low","close","open","volume","last");
 	# Get a list of all the symbols of stocks, their start date, and their end date involved in our transactions.
-	my @symbols = ExecStockSQL(undef,"SELECT DISTINCT symbol FROM portfolio_allStocks");
+	my @symbols = ExecStockSQL("COL","SELECT DISTINCT symbol FROM portfolio_allStocks");
 
+	#my @symbols = ("GE");
 	$con=Finance::Quote->new();
 
 	$con->timeout(60);
@@ -192,21 +193,21 @@ sub insertLatestStockHist{
 	my @ret;
 	my $sth;
 	my $sql;
-
-	foreach $symbol (@ARGV) {
-	    print $symbol,"\n=========\n";
+	my $symbol;
+	foreach $symbol (@symbols) {
+	    #print($symbol,"\n=========\n");
 	    if (!defined($quotes{$symbol,"success"})) { 
-		# print "No Data\n";
+		 print "$symbol: No Data\n";
 	    } else {
+	    	print($symbol);
 			if (defined($quotes{$symbol,"date"})&&defined($quotes{$symbol,"time"})) {
 				# The eval catches the error and do not terminate the program if there is one.
 				eval {
-					
-					my $time=parsedate($quotes{$symbol,"date"}." ".$quotes{$symbol,"time"});
-					$time = ParseDateString("epoch $time");
+					my $time=parsedate($quotes{$symbol,"date"}." ".$quotes{$symbol,"time"}); #epoch time
 					$sql="INSERT INTO portfolio_stocks
-					VALUES ($symbol, $time, $$quotes{$symbol,\"open\"}, $$quotes{$symbol,\"high\"}, 
-					$$quotes{$symbol,\"low\"}, $$quotes{$symbol,\"close\"}, $$quotes{$symbol,\"volume\"});";
+					VALUES (\'$symbol\', $time, $quotes{$symbol,\"open\"}, $quotes{$symbol,\"high\"}, 
+					$quotes{$symbol,\"low\"}, $quotes{$symbol,\"close\"}, $quotes{$symbol,\"volume\"})";
+					print($sql);
 					#send the query
 				 	$sth = $dbh->prepare($sql);
 
@@ -214,11 +215,13 @@ sub insertLatestStockHist{
 						my $errstr="Can't prepare $querystring because of ".$DBI::errstr;
 						#$dbh->disconnect(); #commented out this because we still need to insert the rest of data.
 						die $errstr;
+						#print($errstr);
 					}
 					if (not $sth->execute()) { 
 						my $errstr="Can't execute $querystring because of ".$DBI::errstr;
 						#$dbh->disconnect();#commented out this because we still need to insert the rest of data.
 						die $errstr;
+						#print($errstr);
 					}
 					# multirow or single column output or strings
 					while (@data=$sth->fetchrow_array()) {
@@ -235,9 +238,10 @@ sub insertLatestStockHist{
 			#     }
 			# }
 	    }
-	    print "\n";
 	}
-	$sth->finish();
+	if (defined($sth)){
+		$sth->finish();
+	}
 	$dbh->disconnect();
 }
 
