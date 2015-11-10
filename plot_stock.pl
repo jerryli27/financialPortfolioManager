@@ -114,7 +114,8 @@ if ($type eq "text") {
     }
   }
   print GNUPLOT "e\n"; # end of data
-
+  print GNUPLOT "set xlabel \"Day Number\"";
+  print GNUPLOT "set ylabel \"Price\"";
   #
   # Here gnuplot will print the image content
   #

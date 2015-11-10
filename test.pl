@@ -591,6 +591,7 @@ if ($action eq "detail") {
 	h3("Plot of Past Performance of $symbol"),
 	print "<img src=\"http://murphy.wot.eecs.northwestern.edu/~yfo776/portfolio/plot_stock.pl?type=plot&symbol=$symbol\">",
 	"</center>";
+	"<h3> Note that the last four day's data is the predicted data</h3>";
 	print generateAutomaticStockTrading();
 }
 
