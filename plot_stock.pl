@@ -99,6 +99,8 @@ if ($type eq "text") {
   
   print GNUPLOT "set term png\n";           # we want it to produce a PNG
   print GNUPLOT "set output\n";             # output the PNG to stdout
+  print GNUPLOT "set xlabel \"Day Number\"";
+  print GNUPLOT "set ylabel \"Price\"";
   print GNUPLOT "plot '-' using 1:2 with linespoints\n"; # feed it data to plot
   foreach my $r (@rows) {
     if ($r==0 && $counter!=0){
@@ -114,8 +116,6 @@ if ($type eq "text") {
     }
   }
   print GNUPLOT "e\n"; # end of data
-  print GNUPLOT "set xlabel \"Day Number\"";
-  print GNUPLOT "set ylabel \"Price\"";
   #
   # Here gnuplot will print the image content
   #
