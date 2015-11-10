@@ -497,10 +497,10 @@ if ($action eq "base") {
 			table({-width=>'100%', -border=>'0'},
 				Tr({-align=>'CENTER',-valign=>'TOP'},
 				[
-					th(['<input type="checkbox" name="checkAll" value=""/>','Symbol','Stddev','Beta']),
+					th(['<input type="checkbox" name="checkAll" value=""/>','Symbol','Stddev','Beta','200-Day Moving Average','200-Day High','200-Day Low','200-Day Average Volume']),
 					map {
 						td([
-							'<input type="checkbox" name="check$$_[0]" value=""/>',"<a href=\"test.pl?act=detail&type=plot&symbol=$$_[0]\"> $$_[0] </a>",get_stddev($$_[0]),get_beta($$_[0])
+							'<input type="checkbox" name="check$$_[0]" value=""/>',"<a href=\"test.pl?act=detail&type=plot&symbol=$$_[0]\"> $$_[0] </a>",get_stddev($$_[0]),get_beta($$_[0]),get_200_avg_close($$_[0]),get_200_high($$_[0]),get_200_low($$_[0]),get_200_avg_vol($$_[0])
 						])
 					} @symbols
 				])
@@ -956,9 +956,48 @@ sub get_stddev {
 sub get_beta {
 	my($symbol)=@_;
 	my @rtn = `./get_covar.pl $symbol '^GSPC'`;
-	my @covar_list = split(' ',$rtn[5]);
+	my @covar_list = split(" ",$rtn[5]);
 	return $covar_list[1]/get_stddev("^GSPC");
 }
+
+#
+# get the 200-day moving average closing price of a stock
+#
+sub get_200_avg_close {
+	my ($symbol)=@_;
+	my @rtn = ExecSQL($dbuser,$dbpasswd, "select AVG(close) from (select * from portfolio_allStocks where symbol=? order by timestamp DESC) where ROWNUM <= 200","COL",$symbol);
+	return $rtn[0];
+}
+
+#
+# get the 200-day high of a stock
+#
+sub get_200_high {
+	my ($symbol)=@_;
+	my @rtn = ExecSQL($dbuser,$dbpasswd, "select MAX(close) from (select * from portfolio_allStocks where symbol=? order by timestamp DESC) where ROWNUM <= 200","COL",$symbol);
+	return $rtn[0];
+}
+
+#
+# get the 200-day low of a stock
+#
+sub get_200_low {
+	my ($symbol)=@_;
+	my @rtn = ExecSQL($dbuser,$dbpasswd, "select MIN(close) from (select * from portfolio_allStocks where symbol=? order by timestamp DESC) where ROWNUM <= 200","COL",$symbol);
+	return $rtn[0];
+}
+
+#
+# get the 200-day average volume
+#
+sub get_200_avg_vol {
+	my ($symbol)=@_;
+	my @rtn = ExecSQL($dbuser,$dbpasswd, "select AVG(volume) from (select * from portfolio_allStocks where symbol=? order by timestamp DESC) where ROWNUM <= 200","COL",$symbol);
+	return $rtn[0];
+}
+
+
+
 
 
 #
