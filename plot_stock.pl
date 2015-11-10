@@ -71,13 +71,17 @@ my $counter=0;
 if ($type eq "text") { 
   print "<pre>";
   foreach my $r (@rows) {
-    if (($counter) %2==0){
+    if ($r==0){
+      
+    }
+    elsif (($counter) %2==0){
       print $r, "\t";
+      $counter++;
     }
     else{
       print $r, "\n";
+      $counter++;
     }
-    $counter++;
   }
   print "</pre>";
 
@@ -97,13 +101,17 @@ if ($type eq "text") {
   print GNUPLOT "set output\n";             # output the PNG to stdout
   print GNUPLOT "plot '-' using 1:2 with linespoints\n"; # feed it data to plot
   foreach my $r (@rows) {
-    if ($counter%2==0){
+    if ($r==0){
+      
+    }
+    elsif ($counter%2==0){
       print GNUPLOT $r, "\t";
+      $counter++;
     }
     else{
       print GNUPLOT $r, "\n";
+      $counter++;
     }
-    $counter++;
   }
   print GNUPLOT "e\n"; # end of data
 
