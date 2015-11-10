@@ -197,9 +197,9 @@ sub insertLatestStockHist{
 		$symbol=$$_[0];
 	    #print($symbol,"\n=========\n");
 	    if (!defined($quotes{$symbol,"success"})) { 
-		# print "No Data\n";
+		 print "No Data\n";
 	    } else {
-	    	print($symbol);
+	    	#print($symbol);
 	    	return;
 			if (defined($quotes{$symbol,"date"})&&defined($quotes{$symbol,"time"})) {
 				# The eval catches the error and do not terminate the program if there is one.
@@ -238,7 +238,6 @@ sub insertLatestStockHist{
 			#     }
 			# }
 	    }
-	    print "\n";
 	}
 	if (defined($sth)){
 		$sth->finish();
