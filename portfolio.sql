@@ -54,3 +54,5 @@ create table portfolio_transactions
   foreign key (portfolio_name,user_name) references portfolio_portfolio(portfolio_name,user_name),
   foreign key (symbol) references portfolio_stock_symbols(symbol)
   );
+
+create view portfolio_allStocks as (select * from portfolio_stocks union select * from cs339.StocksDaily);
