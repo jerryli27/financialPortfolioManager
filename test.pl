@@ -403,7 +403,7 @@ if ($action eq "login") {
 if ($action eq "createNewPortfolio") { 
 	my $newPortfolioName=param("newPortfolioName");
 	print "<head>
-				<meta http-equiv=\"refresh\" content=\"3;url=test.pl\" />
+				<meta http-equiv=\"refresh\" content=\"3;url=test.pl?portfolioNum=0\" />
 			</head>";
 	print "<center>";
 	if (length($newPortfolioName)<=0){
@@ -453,11 +453,15 @@ if ($action eq "base") {
  		#
  		#
 		my $newTransactionModal=generateNewTransactionModal($user,$portfolioArray[$portfolioNum]);
+		#
+		# Code for deleting stock symbols in a portfolio not yet implemented
+		#
+
+			# <button type=\"button\" class=\"btn btn-default\"  name=\"deleteButton\" value=\"Delete\" onclick=\"DeleteClicked()\">
+  		# 		Delete(Not)
+			# </button>
  		my $sharedTopPartOfTabs="
 			<br><span class=\"glyphicon glyphicon-arrow-down\" aria-hidden=\"true\"></span>
-			<button type=\"button\" class=\"btn btn-default\"  name=\"deleteButton\" value=\"Delete\" onclick=\"DeleteClicked()\">
-  				Delete
-			</button>
 			<span style=\"float:right;\"><a data-toggle=\"modal\" href=\"\#newTransactionModal\">Edit transactions</a>|<a href=\"\">Edit this portfolio</a>|
 			<a href=\"test.pl?act=deleteCurrPortfolio&currPortfolioName=$portfolioArray[$portfolioNum]\" 
 			onclick=\"return confirm('Are you sure? Deleting a portfolio cannot be undone.')\">Delete this portfolio</a></span>";#create a link aligned to the right on the same line
@@ -597,6 +601,7 @@ if ($action eq "detail") {
 
 
 print "All source code are in <a href=\"http://murphy.wot.eecs.northwestern.edu/~jlt709/portfolio\"> http://murphy.wot.eecs.northwestern.edu/~jlt709/portfolio</a> folder<br>
+For test purposes, you can use the user: testuser password: testuser
 Click <a href=\"http://murphy.wot.eecs.northwestern.edu/~jlt709/portfolio/Project 2 mockup.pdf\"> here</a> for the project mockup <br>
 Click <a href=\"http://murphy.wot.eecs.northwestern.edu/~jlt709/portfolio/ER Diagram.pdf\"> here</a> for the ER diagram <br>
 Click <a href=\"http://murphy.wot.eecs.northwestern.edu/~jlt709/portfolio/Relational design.txt\"> here</a> for the relational design <br>";
