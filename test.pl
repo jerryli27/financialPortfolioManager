@@ -600,7 +600,7 @@ if ($action eq "detail") {
 }
 
 
-print "All source code are in <a href=\"http://murphy.wot.eecs.northwestern.edu/~jlt709/portfolio\"> http://murphy.wot.eecs.northwestern.edu/~jlt709/portfolio</a> folder<br>
+print "All source code are in <a href=\"http://murphy.wot.eecs.northwestern.edu/~yfo776/portfolio\"> http://murphy.wot.eecs.northwestern.edu/~yfo776/portfolio</a> folder<br>
 For test purposes, you can use the user: testuser password: testuser<br>
 Click <a href=\"http://murphy.wot.eecs.northwestern.edu/~jlt709/portfolio/Project 2 mockup.pdf\"> here</a> for the project mockup <br>
 Click <a href=\"http://murphy.wot.eecs.northwestern.edu/~jlt709/portfolio/ER Diagram.pdf\"> here</a> for the ER diagram <br>
