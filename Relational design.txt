@@ -1,0 +1,9 @@
+portfolio_users(primary key (user_name), password)
+portfolio_portfolio(foreign key (user_name) references portfolio_users(user_name), unique (portfolio_name,user_name),cash)
+portfolio_stocks (PRIMARY KEY (symbol,timestamp),open, high, low,close, volume)
+portfolio_stock_symbols(foreign key (symbol) references portfolio_stocks(symbol))
+portfolio_transactions(
+  primary key (transaction_id),
+  foreign key (portfolio_name,user_name) references portfolio_portfolio(portfolio_name,user_name),
+  foreign key (symbol) references portfolio_stock_symbols(symbol)
+  price, amount, timestamp, method)
